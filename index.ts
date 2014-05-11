@@ -8,9 +8,10 @@
  */
 
 ///<reference path="typings/node/node.d.ts"/>
+///<reference path="LineInputStream.ts"/>
 
 import net = require("net");
-import LineInputStream = require("line-input-stream");
+import LineInputStream = require("LineInputStream");
 import events = require("events");
 import util = require("util");
 
@@ -29,6 +30,7 @@ class TeamSpeakClient extends events.EventEmitter
     private _executing: any;
 
     private _socket: net.Socket;
+    private _reader: LineInputStream;
 
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
@@ -55,7 +57,7 @@ class TeamSpeakClient extends events.EventEmitter
 
     private onConnect(): void
     {
-        this._reader = LineInputStream(this._socket);
+        this._reader = new LineInputStream(this._socket);
         this._reader.on("line", line =>
         {
             var s = line.trim();
@@ -70,10 +72,9 @@ class TeamSpeakClient extends events.EventEmitter
             // Server answers with:
             // [- One line containing the answer ]
             // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-            var response = undefined;
             if (s.indexOf("error") === 0)
             {
-                response = this.parseResponse(s.substr("error ".length).trim());
+                var response = this.parseResponse(s.substr("error ".length).trim());
                 this._executing.error = response;
                 if (this._executing.error.id === "0") delete this._executing.error;
                 if (this._executing.cb) this._executing.cb.call(this._executing, this._executing.error, this._executing.response,
@@ -83,11 +84,11 @@ class TeamSpeakClient extends events.EventEmitter
             } else if (s.indexOf("notify") === 0)
             {
                 s = s.substr("notify".length);
-                response = this.parseResponse(s);
+                var response = this.parseResponse(s);
                 this.emit(s.substr(0, s.indexOf(" ")), response);
             } else if (this._executing)
             {
-                response = this.parseResponse(s);
+                var response = this.parseResponse(s);
                 this._executing.rawResponse = s;
                 this._executing.response = response;
             }

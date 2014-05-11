@@ -1,7 +1,8 @@
-﻿var EventEmitter = require('events').EventEmitter,
-    Stream = require('stream'),
-    util = require('util');
+﻿///<reference path="typings/node/node.d.ts"/>
 
+import events = require("events");
+import Stream = require("stream");
+import util = require("util");
 
 var _events = {
     "line": function (line)
@@ -14,143 +15,114 @@ var _events = {
     }
 };
 
-function LineInputStream(underlyingStream, delimiter)
+class LineInputStreamClass extends Stream.Readable 
 {
-    if (!(this instanceof LineInputStream))
+    public get underlyingStream(): Stream.Readable  
     {
-        return new LineInputStream(underlyingStream);
-    }
-    if (!underlyingStream)
-    {
-        throw new Error("LineInputStream requires an underlying stream");
+        return this._underlyingStream;
     }
 
-    Stream.call(this);
-
-    this.underlyingStream = underlyingStream;
-    this.delimiter = delimiter ? delimiter : "\n";
-
-    var self = this,
-        data = "";
-
-    this.underlyingStream.on("data", function (chunk)
+    public get readable(): boolean
     {
-        data += chunk;
-        var lines = data.split(self.delimiter);
-        data = lines.pop();
-        lines.forEach(_events.line, self);
-    });
-    this.underlyingStream.on("end", function ()
+        return this._underlyingStream.readable;
+    }
+
+    /*
+    public get paused(): boolean
     {
-        if (data.length > 0)
+        return this._underlyingStream.paused;
+    }
+    */
+
+
+    private _underlyingStream: Stream.Readable;
+    private _data: string;
+
+    constructor(underlyingStream: Stream.Readable);
+    constructor(underlyingStream: Stream.Readable, delimiter: string);
+    constructor(underlyingStream: Stream.Readable, public delimiter: string = "\n")
+    {
+        super();
+        if (!underlyingStream)
+            throw new Error("LineInputStream requires an underlying stream");
+
+        this._underlyingStream = underlyingStream;
+        this._data = "";
+
+        this.initializeEvents();
+    }
+
+    private initializeEvents(): void
+    {
+        this._underlyingStream.on("data", chunk =>
         {
-            var lines = data.split(self.delimiter);
-            lines.forEach(_events.line, self);
-        }
-        _events.end.call(self);
-    });
-
-    Object.defineProperty(this, "readable", {
-        get: function ()
+            this._data += chunk;
+            var lines = this._data.split(this.delimiter);
+            this._data = lines.pop();
+            lines.forEach(_events.line, this);
+        });
+        this.underlyingStream.on("end", () =>
         {
-            return self.underlyingStream.readable;
-        },
-        enumerable: true,
+            if (this._data.length > 0)
+            {
+                var lines = this._data.split(this.delimiter);
+                lines.forEach(_events.line, this);
+            }
+            _events.end.call(this);
+        });
+    }
 
-    });
+    // Start overriding EventEmitter methods so we can pass through to underlyingStream
+    // If we get a request for an event we don't know about, pass it to the underlyingStream
+    public on(type: string, listener: Function): events.EventEmitter
+    {
+        if (!(type in _events))
+            this._underlyingStream.on(type, listener);
+        return super.on(type, listener);
+    }
+    public addListener(type: string, listener: Function): events.EventEmitter
+    {
+        return this.on(type, listener);
+    }
 
-    Object.defineProperty(this, "paused", {
-        get: function ()
-        {
-            return self.underlyingStream.paused;
-        },
-        enumerable: true,
+    public removeListener(type: string, listener: Function): events.EventEmitter
+    {
+        if (!(type in _events))
+            this._underlyingStream.removeListener(type, listener);
+        return super.removeListener(type, listener);
+    }
+    public removeAllListeners(type: string): events.EventEmitter
+    {
+        if (!(type in _events))
+            this._underlyingStream.removeAllListeners(type);
+        return super.removeAllListeners(type);
+    }
 
-    });
+    public resume(): void
+    {
+        if (this._underlyingStream.resume)
+            this._underlyingStream.resume();
+    }
+
+    public pause(): void
+    {
+        if (this._underlyingStream.pause)
+            this._underlyingStream.pause();
+    }
+
+    /*
+    public destroy(): void
+    {
+        if (this._underlyingStream.destroy)
+            this._underlyingStream.destroy();
+    }
+    */
+
+    public setEncoding(encoding: string): void
+    {
+        if (this._underlyingStream.setEncoding)
+            this._underlyingStream.setEncoding(encoding);
+    }
 }
 
-util.inherits(LineInputStream, Stream);
-
-// Start overriding EventEmitter methods so we can pass through to underlyingStream
-// If we get a request for an event we don't know about, pass it to the underlyingStream
-
-LineInputStream.prototype.addListener = function (type, listener)
-{
-    if (!(type in _events))
-    {
-        this.underlyingStream.on(type, listener);
-    }
-    EventEmitter.prototype.on.call(this, type, listener);
-
-    return this;
-};
-
-LineInputStream.prototype.on = LineInputStream.prototype.addListener;
-
-LineInputStream.prototype.removeListener = function (type, listener)
-{
-    if (!(type in _events))
-    {
-        this.underlyingStream.removeListener(type, listener);
-    }
-    EventEmitter.prototype.removeListener.call(this, type, listener);
-
-    return this;
-};
-
-LineInputStream.prototype.removeAllListeners = function (type)
-{
-    if (!(type in _events))
-    {
-        this.underlyingStream.removeAllListeners(type);
-    }
-    EventEmitter.prototype.removeAllListeners.call(this, type);
-
-    return this;
-};
-
-// End overriding EventEmitter methods
-
-// Start passthrough of Readable Stream methods for underlying stream
-LineInputStream.prototype.pause = function ()
-{
-    if (this.underlyingStream.pause)
-        this.underlyingStream.pause();
-
-    return this;
-};
-
-LineInputStream.prototype.resume = function ()
-{
-    if (this.underlyingStream.resume)
-        this.underlyingStream.resume();
-
-    return this;
-};
-
-LineInputStream.prototype.destroy = function ()
-{
-    if (this.underlyingStream.destroy)
-        this.underlyingStream.destroy();
-
-    return this;
-};
-
-LineInputStream.prototype.setEncoding = function (encoding)
-{
-    if (this.underlyingStream.setEncoding)
-        this.underlyingStream.setEncoding(encoding);
-
-    return this;
-};
-
-// End passthrough of Readable Stream methods
-
-LineInputStream.prototype.setDelimiter = function (delimiter)
-{
-    this.delimiter = delimiter;
-
-    return this;
-};
-
-module.exports = LineInputStream;
+export = LineInputStreamClass;
