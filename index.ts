@@ -7,6 +7,10 @@
  * ----------------------------------------------------------------------------
  */
 
+/*
+ * Niklas Mollenhauer <nikeee@outlook.com> ported this class to TypeScript.
+ */
+
 ///<reference path="typings/node/node.d.ts"/>
 ///<reference path="LineInputStream.ts"/>
 
@@ -85,12 +89,14 @@ class TeamSpeakClient extends events.EventEmitter
 
                 this._executing = null;
                 this.checkQueue();
-            } else if (s.indexOf("notify") === 0)
+            }
+            else if (s.indexOf("notify") === 0)
             {
                 s = s.substr("notify".length);
                 var response = this.parseResponse(s);
                 this.emit(s.substr(0, s.indexOf(" ")), response);
-            } else if (this._executing)
+            }
+            else if (this._executing)
             {
                 var response = this.parseResponse(s);
                 this._executing.rawResponse = s;
@@ -103,7 +109,7 @@ class TeamSpeakClient extends events.EventEmitter
     /*
     * Send a command to the server
     */
-    public send(cmd: string, options: string[]= null, callback: () => void = null, params: IAssoc<Object> = null): void
+    public send(cmd: string, options: string[]= null, callback: QueryCallback = null, params: IAssoc<Object> = null): void
     {
         var tosend = TeamSpeakClient.tsescape(cmd);
         options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
@@ -135,12 +141,14 @@ class TeamSpeakClient extends events.EventEmitter
             this.checkQueue();
     }
 
-    private parseResponse(s: string): any[]
+    private parseResponse(s: string): QueryResponseItem[]
     {
-        var response = [];
+        var response: QueryResponseItem[]= [];
         var records = s.split("|");
 
-        response = records.map(k =>
+        // Test this
+
+        response = <QueryResponseItem[]>records.map(k =>
         {
             var args = k.split(" ");
             var thisrec = {};
@@ -162,9 +170,10 @@ class TeamSpeakClient extends events.EventEmitter
         });
 
         if (response.length === 0)
-            response = null;
-        else if (response.length === 1)
-            response = response.shift();
+            return null;
+
+        //if (response.length === 1)
+        //    response = response.shift();
         return response;
     }
 
@@ -241,8 +250,11 @@ interface IAssoc<T>
 
 interface QueryCallback
 {
-    (item: QueueItem, error: any, response: any, rawResponse: string): void;
+    (item: QueueItem, error: any, response: QueryResponseItem[], rawResponse: string): void;
 }
+
+interface QueryResponseItem extends IAssoc<string>
+{ }
 
 interface QueueItem
 {
@@ -252,7 +264,7 @@ interface QueueItem
     text: string;
     cb: QueryCallback;
 
-    response?: any[];
+    response?: QueryResponseItem[];
     rawResponse?: string;
     error?: any;
 }
