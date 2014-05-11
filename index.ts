@@ -81,7 +81,7 @@ class TeamSpeakClient extends events.EventEmitter
             if (s.indexOf("error") === 0)
             {
                 var response = this.parseResponse(s.substr("error ".length).trim());
-                this._executing.error = response;
+                this._executing.error = <QueryError>response.shift();
 
                 if (this._executing.error.id === "0")
                     delete this._executing.error;
@@ -260,6 +260,12 @@ interface QueryCallback
 interface QueryResponseItem extends IAssoc<any>
 { }
 
+interface QueryError extends QueryResponseItem
+{
+    id: string;
+    msg: string;
+}
+
 interface QueueItem
 {
     cmd: string;
@@ -270,7 +276,7 @@ interface QueueItem
 
     response?: QueryResponseItem[];
     rawResponse?: string;
-    error?: any;
+    error?: QueryError;
 }
 
 module.exports = TeamSpeakClient;
