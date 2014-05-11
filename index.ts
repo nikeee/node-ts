@@ -39,12 +39,14 @@ class TeamSpeakClient extends events.EventEmitter
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
 
-    constructor(host: string, port: number)
+    constructor();
+    constructor(host: string);
+    constructor(host: string = TeamSpeakClient.DefaultHost, port: number = TeamSpeakClient.DefaultPort)
     {
         super();
 
-        this._host = host || TeamSpeakClient.DefaultHost;
-        this._port = port || TeamSpeakClient.DefaultPort;
+        this._host = host;
+        this._port = port;
         this._queue = [];
         this._status = -2;
 
@@ -148,16 +150,17 @@ class TeamSpeakClient extends events.EventEmitter
 
         // Test this
 
-        response = <QueryResponseItem[]>records.map(k =>
+        response = records.map<QueryResponseItem>(currentItem =>
         {
-            var args = k.split(" ");
-            var thisrec = {};
+            var args = currentItem.split(" ");
+            var thisrec: QueryResponseItem = {};
             args.forEach(v =>
             {
                 if (v.indexOf("=") > -1)
                 {
                     var key = TeamSpeakClient.tsunescape(v.substr(0, v.indexOf("=")));
                     var value = TeamSpeakClient.tsunescape(v.substr(v.indexOf("=") + 1));
+
                     if (parseInt(value, 10).toString() == value)
                         thisrec[key] = parseInt(value, 10);
                     else
@@ -253,7 +256,7 @@ interface QueryCallback
     (item: QueueItem, error: any, response: QueryResponseItem[], rawResponse: string): void;
 }
 
-interface QueryResponseItem extends IAssoc<string>
+interface QueryResponseItem extends IAssoc<any>
 { }
 
 interface QueueItem
