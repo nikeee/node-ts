@@ -96,7 +96,7 @@ export class TeamSpeakClient extends events.EventEmitter
                         response: this._executing.response,
                         rawResponse: this._executing.rawResponse
                     };
-                    if (data.error)
+                    if (data.error && data.error.id !== "0")
                         this._executing.defer.reject(<ErrorCallbackData>data);
                     else
                         this._executing.defer.resolve(<CallbackData>data);
