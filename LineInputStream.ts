@@ -34,7 +34,6 @@ class LineInputStreamClass extends Stream.Readable
     }
     */
 
-
     private _underlyingStream: Stream.Readable;
     private _data: string;
 

@@ -207,7 +207,6 @@ class TeamSpeakClient extends events.EventEmitter
         }
     }
 
-
     private static tsescape(s: string): string
     {
         var r = String(s);
