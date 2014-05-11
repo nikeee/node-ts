@@ -36,7 +36,7 @@ server). The following code prints out a JSON-array containing all
 		.then(function(response) { console.log(util.inspect(response)); })
 		.fail(function(err) {console.log("An error occurred.")})
 
-Typescript sample:
+TypeScript sample:
 
 	import ts3 = require("node-teamspeak");
 	import util = require("util");
@@ -52,11 +52,8 @@ Usage information
 -----------------
 
 * TeamSpeakClient.send is the main method that executes a command. An array
-with options, an object with parameters and a callback-function can be
-passed to the send-function. The callback-function takes two parameters:
-err (which contains an object like {id: 1, msg: "failed"} if there was an
-error) and response, which is an object which contains the answer sent
-by the server (if there was any).
+with options and an object with parameters can be passed to the send-function.
+The functioon returns a Q promise. See the TypeScript file for more information.
 * Every TeamSpeakClient-instance is an EventEmitter. You can install
 listeners to the "connect", "close" and the "error"-event. The error-event
 will only be fired if there was socket-error, not if a sent command failed.
