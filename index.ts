@@ -37,7 +37,7 @@ class TeamSpeakClient extends events.EventEmitter
 
     constructor(host: string, port: number)
     {
-        super(); //events.EventEmitter.call(this);
+        super();
         
         this._host = host || TeamSpeakClient.DefaultHost;
         this._port = port || TeamSpeakClient.DefaultPort;
@@ -99,9 +99,8 @@ class TeamSpeakClient extends events.EventEmitter
     /*
     * Send a command to the server
     */
-    public send(): void
+    public send(...args: any[]): void
     {
-        var args = Array.prototype.slice.call(arguments);
         var options = [];
         var params = {};
         var callback = undefined;
