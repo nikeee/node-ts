@@ -19,7 +19,7 @@ import LineInputStream = require("LineInputStream");
 import events = require("events");
 import util = require("util");
 
-class TeamSpeakClient extends events.EventEmitter
+export class TeamSpeakClient extends events.EventEmitter
 {
     public get host(): string
     {
@@ -111,7 +111,10 @@ class TeamSpeakClient extends events.EventEmitter
     /*
     * Send a command to the server
     */
-    public send(cmd: string, options: string[] = null, callback: QueryCallback = null, params: IAssoc<Object> = null): void
+    public send(cmd: string, callback: QueryCallback): void;
+    public send(cmd: string, callback: QueryCallback, params: IAssoc<Object>): void;
+    public send(cmd: string, callback: QueryCallback, params: IAssoc<Object>, options: string[]): void;
+    public send(cmd: string, callback: QueryCallback, params: IAssoc<Object> = {}, options: string[]= []): void
     {
         var tosend = TeamSpeakClient.tsescape(cmd);
         options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
@@ -247,26 +250,26 @@ class TeamSpeakClient extends events.EventEmitter
 
 }
 
-interface IAssoc<T>
+export interface IAssoc<T>
 {
     [key: string]: T;
 }
 
-interface QueryCallback
+export interface QueryCallback
 {
     (item: QueueItem, error: any, response: QueryResponseItem[], rawResponse: string): void;
 }
 
-interface QueryResponseItem extends IAssoc<any>
+export interface QueryResponseItem extends IAssoc<any>
 { }
 
-interface QueryError extends QueryResponseItem
+export interface QueryError extends QueryResponseItem
 {
     id: string;
     msg: string;
 }
 
-interface QueueItem
+export interface QueueItem
 {
     cmd: string;
     options: string[];
@@ -279,4 +282,4 @@ interface QueueItem
     error?: QueryError;
 }
 
-module.exports = TeamSpeakClient;
+//module.exports = TeamSpeakClient;
