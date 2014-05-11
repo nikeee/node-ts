@@ -8,7 +8,7 @@
     "url": "git://github.com/gwTumm/node-teamspeak.git"
   },
   "main": "index.js",
-  "dependencies": {"line-input-stream": ">=1.0.1"},
+  "dependencies": {"line-input-stream": ">=1.0.1", "q": ">=1.0.1"},
   "keywords": ["teamspeak", "serverquery", "ts3", "ts"],
   "optionalDependencies": {},
   "engines": {
