@@ -26,17 +26,27 @@ account "ServerAdmin" which is created during the installation of the
 server). The following code prints out a JSON-array containing all
  clients that are currently connected to the first virtual server:
 
-	var TeamSpeakClient = require("node-teamspeak"),
-		util = require("util");
+	var ts3 = require("node-teamspeak");
+	var util = require("util");
 
-	var cl = new TeamSpeakClient("##SERVERIP###");
-	cl.send("login", {client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##"}, function(err, response, rawResponse){
-		cl.send("use", {sid: 1}, function(err, response, rawResponse){
-			cl.send("clientlist", function(err, response, rawResponse){
-				console.log(util.inspect(response));
-			});
-		});
-	});
+	var cl = new ts3.TeamSpeakClient("##SERVERIP###");
+	cl.send("login", { client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##" })
+		.then(function(_) { return cl.send("use", {sid: 1}) })
+		.then(function(_) { return cl.send("clientlist")})
+		.then(function(response) { console.log(util.inspect(response)); })
+		.fail(function(err) {console.log("An error occurred.")})
+
+Typescript sample:
+
+	import ts3 = require("node-teamspeak");
+	import util = require("util");
+
+	var cl = new ts3.TeamSpeakClient("##SERVERIP###");
+	cl.send("login", { client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##" })
+		.then(_ => cl.send("use", { sid: 1 }))
+		.then(_ => cl.send("clientlist"))
+		.then(response => console.log(util.inspect(response)))
+		.fail(err => console.log("An error occurred."));
 
 Usage information
 -----------------
