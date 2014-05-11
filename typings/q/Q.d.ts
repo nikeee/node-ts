@@ -3,7 +3,7 @@
 // Definitions by: Barrie Nemetchek, Andrew Gaspar, John Reilly
 // Definitions: https://github.com/borisyankov/DefinitelyTyped  
 
-/// <reference path="../jquery/jquery.d.ts"/>
+// /// <reference path="../jquery/jquery.d.ts"/>
 
 /**
  * If value is a Q promise, returns the promise.
@@ -14,7 +14,7 @@ declare function Q<T>(promise: Q.IPromise<T>): Q.Promise<T>;
  * If value is a Q promise, returns the promise.
  * If value is a promise from another library it is coerced into a Q promise (where possible).
  */
-declare function Q<T>(promise: JQueryPromise<T>): Q.Promise<T>;
+// declare function Q<T>(promise: JQueryPromise<T>): Q.Promise<T>;
 /**
  * If value is not a promise, returns a promise that is fulfilled with value.
  */
