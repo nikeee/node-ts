@@ -111,7 +111,7 @@ class TeamSpeakClient extends events.EventEmitter
     /*
     * Send a command to the server
     */
-    public send(cmd: string, options: string[]= null, callback: QueryCallback = null, params: IAssoc<Object> = null): void
+    public send(cmd: string, options: string[] = null, callback: QueryCallback = null, params: IAssoc<Object> = null): void
     {
         var tosend = TeamSpeakClient.tsescape(cmd);
         options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
@@ -121,7 +121,7 @@ class TeamSpeakClient extends events.EventEmitter
             if (util.isArray(v))
             {
                 // Multiple values for the same key - concatenate all
-                var doptions = (<Array<string>>v).map(val =>
+                var doptions = (<Array<string>>v).map<string>(val =>
                 {
                     return TeamSpeakClient.tsescape(k) + "=" + TeamSpeakClient.tsescape(val);
                 });
@@ -132,6 +132,7 @@ class TeamSpeakClient extends events.EventEmitter
                 tosend += " " + TeamSpeakClient.tsescape(k.toString()) + "=" + TeamSpeakClient.tsescape(v.toString());
             }
         }
+
         this._queue.push({
             cmd: cmd,
             options: options,
@@ -139,18 +140,18 @@ class TeamSpeakClient extends events.EventEmitter
             text: tosend,
             cb: callback
         });
+
         if (this._status === 0)
             this.checkQueue();
     }
 
     private parseResponse(s: string): QueryResponseItem[]
     {
-        var response: QueryResponseItem[]= [];
         var records = s.split("|");
 
         // Test this
 
-        response = records.map<QueryResponseItem>(currentItem =>
+        var response = records.map<QueryResponseItem>(currentItem =>
         {
             var args = currentItem.split(" ");
             var thisrec: QueryResponseItem = {};
