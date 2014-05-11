@@ -25,9 +25,9 @@ class TeamSpeakClient extends events.EventEmitter
     private _host: string;
     private _port: number;
 
-    private _queue: any[] = null;
+    private _queue: QueueItem[] = null;
     private _status: number;
-    private _executing: any;
+    private _executing: QueueItem;
 
     private _socket: net.Socket;
     private _reader: LineInputStream;
@@ -38,7 +38,7 @@ class TeamSpeakClient extends events.EventEmitter
     constructor(host: string, port: number)
     {
         super();
-        
+
         this._host = host || TeamSpeakClient.DefaultHost;
         this._port = port || TeamSpeakClient.DefaultPort;
         this._queue = [];
@@ -76,9 +76,13 @@ class TeamSpeakClient extends events.EventEmitter
             {
                 var response = this.parseResponse(s.substr("error ".length).trim());
                 this._executing.error = response;
-                if (this._executing.error.id === "0") delete this._executing.error;
-                if (this._executing.cb) this._executing.cb.call(this._executing, this._executing.error, this._executing.response,
-                    this._executing.rawResponse);
+
+                if (this._executing.error.id === "0")
+                    delete this._executing.error;
+
+                if (this._executing.cb)
+                    this._executing.cb.call(this._executing, this._executing.error, this._executing.response, this._executing.rawResponse);
+
                 this._executing = null;
                 this.checkQueue();
             } else if (s.indexOf("notify") === 0)
@@ -99,22 +103,8 @@ class TeamSpeakClient extends events.EventEmitter
     /*
     * Send a command to the server
     */
-    public send(...args: any[]): void
+    public send(cmd: string, options: string[]= null, callback: () => void = null, params: IAssoc<Object> = null): void
     {
-        var options = [];
-        var params = {};
-        var callback = undefined;
-        var cmd = args.shift();
-        args.forEach(v =>
-        {
-            if (util.isArray(v))
-                options = v;
-            else if (typeof v === "function")
-                callback = v;
-            else
-                params = v;
-
-        });
         var tosend = TeamSpeakClient.tsescape(cmd);
         options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
         for (var k in params)
@@ -123,7 +113,7 @@ class TeamSpeakClient extends events.EventEmitter
             if (util.isArray(v))
             {
                 // Multiple values for the same key - concatenate all
-                var doptions = v.map(val =>
+                var doptions = (<Array<string>>v).map(val =>
                 {
                     return TeamSpeakClient.tsescape(k) + "=" + TeamSpeakClient.tsescape(val);
                 });
@@ -163,7 +153,7 @@ class TeamSpeakClient extends events.EventEmitter
                     if (parseInt(value, 10).toString() == value)
                         thisrec[key] = parseInt(value, 10);
                     else
-                        thisrec[key] = value;                    
+                        thisrec[key] = value;
                 }
                 else
                     thisrec[v] = "";
@@ -242,6 +232,29 @@ class TeamSpeakClient extends events.EventEmitter
         return r;
     }
 
+}
+
+interface IAssoc<T>
+{
+    [key: string]: T;
+}
+
+interface QueryCallback
+{
+    (item: QueueItem, error: any, response: any, rawResponse: string): void;
+}
+
+interface QueueItem
+{
+    cmd: string;
+    options: string[];
+    parameters: IAssoc<Object>;
+    text: string;
+    cb: QueryCallback;
+
+    response?: any[];
+    rawResponse?: string;
+    error?: any;
 }
 
 module.exports = TeamSpeakClient;
