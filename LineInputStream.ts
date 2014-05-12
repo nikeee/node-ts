@@ -3,6 +3,8 @@
 // This is a TypeScript port of bluesmoon's line-input-stream
 // Project site: https://github.com/bluesmoon/node-line-input-stream
 
+// TODO: May publish this as a new package on npmjs.
+
 import events = require("events");
 import Stream = require("stream");
 import util = require("util");
