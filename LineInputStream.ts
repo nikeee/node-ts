@@ -1,5 +1,8 @@
 ﻿///<reference path="typings/node/node.d.ts"/>
 
+// This is a TypeScript port of bluesmoon's line-input-stream
+// Project site: https://github.com/bluesmoon/node-line-input-stream
+
 import events = require("events");
 import Stream = require("stream");
 import util = require("util");
@@ -28,6 +31,7 @@ class LineInputStreamClass extends Stream.Readable
     }
 
     /*
+    // Does not seem to be available on Stream.Readable
     public get paused(): boolean
     {
         return this._underlyingStream.paused;
@@ -110,6 +114,7 @@ class LineInputStreamClass extends Stream.Readable
     }
 
     /*
+    // Does not seem to be available on Stream.Readable
     public destroy(): void
     {
         if (this._underlyingStream.destroy)
