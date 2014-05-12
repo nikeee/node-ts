@@ -17,7 +17,7 @@
 
 import Q = require("q");
 import net = require("net");
-import LineInputStream = require("LineInputStream");
+import LineInputStream = require("./LineInputStream");
 import events = require("events");
 import util = require("util");
 

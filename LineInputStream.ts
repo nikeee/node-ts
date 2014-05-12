@@ -18,7 +18,7 @@ var _events = {
     }
 };
 
-class LineInputStreamClass extends Stream.Readable 
+class LineInputStream extends Stream.Readable
 {
     public get underlyingStream(): Stream.Readable  
     {
@@ -129,4 +129,4 @@ class LineInputStreamClass extends Stream.Readable
     }
 }
 
-export = LineInputStreamClass;
+export = LineInputStream;
