@@ -3,6 +3,7 @@ bin/
 obj/
 *.user
 *.js.map
+*.suo
 
 # Include compiled index.js and LineInputStream.js for vanilla JS compabilty
 !index.js
