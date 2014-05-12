@@ -85,7 +85,7 @@ export class TeamSpeakClient extends events.EventEmitter
                 var response = this.parseResponse(s.substr("error ".length).trim());
                 this._executing.error = <QueryError>response.shift();
 
-                if (this._executing.error.id === "0")
+                if (this._executing.error.id === 0)
                     delete this._executing.error;
 
                 if (this._executing.defer)
@@ -96,7 +96,7 @@ export class TeamSpeakClient extends events.EventEmitter
                         response: this._executing.response,
                         rawResponse: this._executing.rawResponse
                     };
-                    if (data.error && data.error.id !== "0")
+                    if (data.error && data.error.id !== 0)
                         this._executing.defer.reject(<ErrorCallbackData>data);
                     else
                         this._executing.defer.resolve(<CallbackData>data);
@@ -288,7 +288,7 @@ export interface QueryResponseItem extends IAssoc<any>
 
 export interface QueryError extends QueryResponseItem
 {
-    id: string;
+    id: number;
     msg: string;
 }
 

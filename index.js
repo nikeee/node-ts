@@ -64,7 +64,7 @@ var TeamSpeakClient = (function (_super) {
                 var response = _this.parseResponse(s.substr("error ".length).trim());
                 _this._executing.error = response.shift();
 
-                if (_this._executing.error.id === "0")
+                if (_this._executing.error.id === 0)
                     delete _this._executing.error;
 
                 if (_this._executing.defer) {
@@ -74,7 +74,7 @@ var TeamSpeakClient = (function (_super) {
                         response: _this._executing.response,
                         rawResponse: _this._executing.rawResponse
                     };
-                    if (data.error && data.error.id !== "0")
+                    if (data.error && data.error.id !== 0)
                         _this._executing.defer.reject(data);
                     else
                         _this._executing.defer.resolve(data);
