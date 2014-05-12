@@ -23,27 +23,34 @@ account "ServerAdmin" which is created during the installation of the
 server). The following code prints out a JSON-array containing all
  clients that are currently connected to the first virtual server:
 
-	var TeamSpeakClient = require("node-teamspeak"),
-		util = require("util");
+	var ts3 = require("node-teamspeak");
+	var util = require("util");
 
-	var cl = new TeamSpeakClient("##SERVERIP###");
-	cl.send("login", {client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##"}, function(err, response, rawResponse){
-		cl.send("use", {sid: 1}, function(err, response, rawResponse){
-			cl.send("clientlist", function(err, response, rawResponse){
-				console.log(util.inspect(response));
-			});
-		});
-	});
+	var cl = new ts3.TeamSpeakClient("##SERVERIP###");
+	cl.send("login", { client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##" })
+		.then(function(_) { return cl.send("use", {sid: 1}) })
+		.then(function(_) { return cl.send("clientlist")})
+		.then(function(response) { console.log(util.inspect(response)); })
+		.fail(function(err) {console.log("An error occurred.")})
+
+TypeScript sample:
+
+	import ts3 = require("node-teamspeak");
+	import util = require("util");
+
+	var cl = new ts3.TeamSpeakClient("##SERVERIP###");
+	cl.send("login", { client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##" })
+		.then(_ => cl.send("use", { sid: 1 }))
+		.then(_ => cl.send("clientlist"))
+		.then(response => console.log(util.inspect(response)))
+		.fail(err => console.log("An error occurred."));
 
 Usage information
 -----------------
 
 * TeamSpeakClient.send is the main method that executes a command. An array
-with options, an object with parameters and a callback-function can be
-passed to the send-function. The callback-function takes two parameters:
-err (which contains an object like {id: 1, msg: "failed"} if there was an
-error) and response, which is an object which contains the answer sent
-by the server (if there was any).
+with options and an object with parameters can be passed to the send-function.
+The functioon returns a Q promise. See the TypeScript file for more information.
 * Every TeamSpeakClient-instance is an EventEmitter. You can install
 listeners to the "connect", "close" and the "error"-event. The error-event
 will only be fired if there was socket-error, not if a sent command failed.

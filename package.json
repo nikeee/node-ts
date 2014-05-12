@@ -1,23 +1,21 @@
 {
-  "author": "gwTumm <timklge@wh2.tu-dresden.de> (https://github.com/gwTumm)",
-  "name": "node-teamspeak",
-  "description": "TeamSpeak (R)-3-ServerQuery-Client for node.js",
-  "version": "1.0.5",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/gwTumm/node-teamspeak.git"
-  },
-  "main": "index.js",
-  "dependencies": {"line-input-stream": ">=1.0.1"},
-  "keywords": ["teamspeak", "serverquery", "ts3", "ts"],
-  "optionalDependencies": {},
-  "engines": {
-    "node": "*"
-  },
-  "bugs": {
-	"url": "https://github.com/gwTumm/node-teamspeak/issues",
-	"email": "timklge@wh2.tu-dresden.de"
-  },
-  "license": "Beerware",
-  "readmeFilename": "README.md"
+	"author": "nikeee <holzig@outlook.com> (https://github.com/nikeee)",
+	"name": "node-ts",
+	"description": "TeamSpeak®-3-ServerQuery-Client for node.js implemented using TypeScript",
+	"version": "1.0.0",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/nikeee/node-ts.git"
+	},
+	"main": "index.js",
+	"dependencies": {"q": ">=1.0.1"},
+	"keywords": ["teamspeak", "serverquery", "ts3", "ts", "typescript"],
+	"optionalDependencies": {},
+	"engines": {"node": "*"},
+	"bugs": {
+		"url": "https://github.com/nikeee/node-ts/issues",
+		"email": "holzig@outlook.com"
+	},
+	"license": "Beerware",
+	"readmeFilename": "README.md"
 }

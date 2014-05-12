@@ -12,14 +12,16 @@
  */
 
 ///<reference path="typings/node/node.d.ts"/>
+///<reference path="typings/q/Q.d.ts"/>
 ///<reference path="LineInputStream.ts"/>
 
+import Q = require("q");
 import net = require("net");
 import LineInputStream = require("LineInputStream");
 import events = require("events");
 import util = require("util");
 
-class TeamSpeakClient extends events.EventEmitter
+export class TeamSpeakClient extends events.EventEmitter
 {
     public get host(): string
     {
@@ -81,13 +83,24 @@ class TeamSpeakClient extends events.EventEmitter
             if (s.indexOf("error") === 0)
             {
                 var response = this.parseResponse(s.substr("error ".length).trim());
-                this._executing.error = response;
+                this._executing.error = <QueryError>response.shift();
 
                 if (this._executing.error.id === "0")
                     delete this._executing.error;
 
-                if (this._executing.cb)
-                    this._executing.cb.call(this._executing, this._executing.error, this._executing.response, this._executing.rawResponse);
+                if (this._executing.defer)
+                {
+                    var data: CallbackData = {
+                        item: this._executing,
+                        error: this._executing.error,
+                        response: this._executing.response,
+                        rawResponse: this._executing.rawResponse
+                    };
+                    if (data.error && data.error.id !== "0")
+                        this._executing.defer.reject(<ErrorCallbackData>data);
+                    else
+                        this._executing.defer.resolve(<CallbackData>data);
+                }
 
                 this._executing = null;
                 this.checkQueue();
@@ -111,7 +124,10 @@ class TeamSpeakClient extends events.EventEmitter
     /*
     * Send a command to the server
     */
-    public send(cmd: string, options: string[] = null, callback: QueryCallback = null, params: IAssoc<Object> = null): void
+    public send(cmd: string): Q.Promise<CallbackData>;
+    public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
+    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData>;
+    public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData>
     {
         var tosend = TeamSpeakClient.tsescape(cmd);
         options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
@@ -133,16 +149,20 @@ class TeamSpeakClient extends events.EventEmitter
             }
         }
 
+        var d = Q.defer<CallbackData>();
+
         this._queue.push({
             cmd: cmd,
             options: options,
             parameters: params,
             text: tosend,
-            cb: callback
+            defer: d
         });
 
         if (this._status === 0)
             this.checkQueue();
+
+        return d.promise;
     }
 
     private parseResponse(s: string): QueryResponseItem[]
@@ -185,7 +205,7 @@ class TeamSpeakClient extends events.EventEmitter
     * Note that they have been parsed - Access getPending()[0].text to get
     * the full text representation of the command.
     */
-    public getPending(): any
+    public getPending(): QueueItem[]
     {
         return this._queue.slice(0);
     }
@@ -193,14 +213,14 @@ class TeamSpeakClient extends events.EventEmitter
     /* Clear the queue of pending commands so that any command that is currently queued won't be executed.
     * The old queue is returned.
     */
-    public clearPending(): any[]
+    public clearPending(): QueueItem[]
     {
         var q = this._queue;
         this._queue = [];
         return q;
     }
 
-    private checkQueue()
+    private checkQueue(): void
     {
         if (!this._executing && this._queue.length >= 1)
         {
@@ -247,30 +267,42 @@ class TeamSpeakClient extends events.EventEmitter
 
 }
 
-interface IAssoc<T>
+export interface IAssoc<T>
 {
     [key: string]: T;
 }
 
-interface QueryCallback
+export interface CallbackData
 {
-    (item: QueueItem, error: any, response: QueryResponseItem[], rawResponse: string): void;
+    item: QueueItem;
+    error: QueryError;
+    response: QueryResponseItem[];
+    rawResponse: string;
 }
 
-interface QueryResponseItem extends IAssoc<any>
+export interface ErrorCallbackData extends CallbackData
 { }
 
-interface QueueItem
+export interface QueryResponseItem extends IAssoc<any>
+{ }
+
+export interface QueryError extends QueryResponseItem
+{
+    id: string;
+    msg: string;
+}
+
+export interface QueueItem
 {
     cmd: string;
     options: string[];
     parameters: IAssoc<Object>;
     text: string;
-    cb: QueryCallback;
+    defer: Q.Deferred<CallbackData>;
 
     response?: QueryResponseItem[];
     rawResponse?: string;
-    error?: any;
+    error?: QueryError;
 }
 
-module.exports = TeamSpeakClient;
+//module.exports = TeamSpeakClient;
