@@ -1,23 +1,9 @@
-/*
-* ----------------------------------------------------------------------------
-* "THE BEER-WARE LICENSE" (Revision 42):
-* <timklge@wh2.tu-dresden.de> wrote this file. As long as you retain this notice you
-* can do whatever you want with this stuff. If we meet some day, and you think
-* this stuff is worth it, you can buy me a beer in return - Tim Kluge
-* ----------------------------------------------------------------------------
-*/
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-/*
-* Niklas Mollenhauer <nikeee@outlook.com> ported this class to TypeScript.
-*/
-///<reference path="typings/node/node.d.ts"/>
-///<reference path="typings/q/Q.d.ts"/>
-///<reference path="LineInputStream.ts"/>
 var Q = require("q");
 var net = require("net");
 var LineInputStream = require("./LineInputStream");
@@ -67,7 +53,6 @@ var TeamSpeakClient = (function (_super) {
         this._reader.on("line", function (line) {
             var s = line.trim();
 
-            // Ignore two first lines sent by server ("TS3" and information message)
             if (_this._status < 0) {
                 _this._status++;
                 if (_this._status === 0)
@@ -75,9 +60,6 @@ var TeamSpeakClient = (function (_super) {
                 return;
             }
 
-            // Server answers with:
-            // [- One line containing the answer ]
-            // - "error id=XX msg=YY". ID is zero if command was executed successfully.
             if (s.indexOf("error") === 0) {
                 var response = _this.parseResponse(s.substr("error ".length).trim());
                 _this._executing.error = response.shift();
@@ -123,7 +105,6 @@ var TeamSpeakClient = (function (_super) {
         for (var k in params) {
             var v = params[k];
             if (util.isArray(v)) {
-                // Multiple values for the same key - concatenate all
                 var doptions = v.map(function (val) {
                     return TeamSpeakClient.tsescape(k) + "=" + TeamSpeakClient.tsescape(val);
                 });
@@ -152,7 +133,6 @@ var TeamSpeakClient = (function (_super) {
     TeamSpeakClient.prototype.parseResponse = function (s) {
         var records = s.split("|");
 
-        // Test this
         var response = records.map(function (currentItem) {
             var args = currentItem.split(" ");
             var thisrec = {};
@@ -174,22 +154,13 @@ var TeamSpeakClient = (function (_super) {
         if (response.length === 0)
             return null;
 
-        //if (response.length === 1)
-        //    response = response.shift();
         return response;
     };
 
-    /* Return pending commands that are going to be sent to the server.
-    * Note that they have been parsed - Access getPending()[0].text to get
-    * the full text representation of the command.
-    */
     TeamSpeakClient.prototype.getPending = function () {
         return this._queue.slice(0);
     };
 
-    /* Clear the queue of pending commands so that any command that is currently queued won't be executed.
-    * The old queue is returned.
-    */
     TeamSpeakClient.prototype.clearPending = function () {
         var q = this._queue;
         this._queue = [];
@@ -205,37 +176,33 @@ var TeamSpeakClient = (function (_super) {
 
     TeamSpeakClient.tsescape = function (s) {
         var r = String(s);
-        r = r.replace(/\\/g, "\\\\"); // Backslash
-        r = r.replace(/\//g, "\\/"); // Slash
-        r = r.replace(/\|/g, "\\p"); // Pipe
-        r = r.replace(/\;/g, "\\;"); // Semicolon
-        r = r.replace(/\n/g, "\\n"); // Newline
+        r = r.replace(/\\/g, "\\\\");
+        r = r.replace(/\//g, "\\/");
+        r = r.replace(/\|/g, "\\p");
+        r = r.replace(/\;/g, "\\;");
+        r = r.replace(/\n/g, "\\n");
 
-        //r = r.replace(/\b/g, "\\b");    // Info: Backspace fails
-        //r = r.replace(/\a/g, "\\a");    // Info: Bell fails
-        r = r.replace(/\r/g, "\\r"); // Carriage Return
-        r = r.replace(/\t/g, "\\t"); // Tab
-        r = r.replace(/\v/g, "\\v"); // Vertical Tab
-        r = r.replace(/\f/g, "\\f"); // Formfeed
-        r = r.replace(/ /g, "\\s"); // Whitespace
+        r = r.replace(/\r/g, "\\r");
+        r = r.replace(/\t/g, "\\t");
+        r = r.replace(/\v/g, "\\v");
+        r = r.replace(/\f/g, "\\f");
+        r = r.replace(/ /g, "\\s");
         return r;
     };
 
     TeamSpeakClient.tsunescape = function (s) {
         var r = String(s);
-        r = r.replace(/\\s/g, " "); // Whitespace
-        r = r.replace(/\\p/g, "|"); // Pipe
-        r = r.replace(/\\;/g, ";"); // Semicolon
-        r = r.replace(/\\n/g, "\n"); // Newline
+        r = r.replace(/\\s/g, " ");
+        r = r.replace(/\\p/g, "|");
+        r = r.replace(/\\;/g, ";");
+        r = r.replace(/\\n/g, "\n");
 
-        //r = r.replace(/\\b/g,  "\b");   // Info: Backspace fails
-        //r = r.replace(/\\a/g,  "\a");   // Info: Bell fails
-        r = r.replace(/\\f/g, "\f"); // Formfeed
-        r = r.replace(/\\r/g, "\r"); // Carriage Return
-        r = r.replace(/\\t/g, "\t"); // Tab
-        r = r.replace(/\\v/g, "\v"); // Vertical Tab
-        r = r.replace(/\\\//g, "\/"); // Slash
-        r = r.replace(/\\\\/g, "\\"); // Backslash
+        r = r.replace(/\\f/g, "\f");
+        r = r.replace(/\\r/g, "\r");
+        r = r.replace(/\\t/g, "\t");
+        r = r.replace(/\\v/g, "\v");
+        r = r.replace(/\\\//g, "\/");
+        r = r.replace(/\\\\/g, "\\");
         return r;
     };
     TeamSpeakClient.DefaultHost = "localhost";
@@ -243,4 +210,3 @@ var TeamSpeakClient = (function (_super) {
     return TeamSpeakClient;
 })(events.EventEmitter);
 exports.TeamSpeakClient = TeamSpeakClient;
-//module.exports = TeamSpeakClient;
