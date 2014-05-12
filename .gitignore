@@ -1,6 +1,9 @@
 *.js
-!index.js
 bin/
 obj/
 *.user
 *.js.map
+
+# Include compiled index.js and LineInputStream.js for vanilla JS compabilty
+!index.js
+!LineInputStream.js
