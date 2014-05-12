@@ -1,4 +1,5 @@
 *.js
+!index.js
 bin/
 obj/
 *.user

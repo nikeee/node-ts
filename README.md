@@ -18,12 +18,12 @@ Example Usage
 ----------------
 
 After registering a Server Query account using your TeamSpeak-Client, you
-can login using node-teamspeak (Alternatively, you can login as the root
+can login using node-ts (Alternatively, you can login as the root
 account "ServerAdmin" which is created during the installation of the 
 server). The following code prints out a JSON-array containing all
  clients that are currently connected to the first virtual server:
 
-	var ts3 = require("node-teamspeak");
+	var ts3 = require("node-ts");
 	var util = require("util");
 
 	var cl = new ts3.TeamSpeakClient("##SERVERIP###");
@@ -35,7 +35,7 @@ server). The following code prints out a JSON-array containing all
 
 TypeScript sample:
 
-	import ts3 = require("node-teamspeak");
+	import ts3 = require("node-ts");
 	import util = require("util");
 
 	var cl = new ts3.TeamSpeakClient("##SERVERIP###");
