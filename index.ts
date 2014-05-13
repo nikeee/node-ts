@@ -80,9 +80,11 @@ export class TeamSpeakClient extends events.EventEmitter
             // Server answers with:
             // [- One line containing the answer ]
             // - "error id=XX msg=YY". ID is zero if command was executed successfully.
+            var response: QueryResponseItem[];
+
             if (s.indexOf("error") === 0)
             {
-                var response = this.parseResponse(s.substr("error ".length).trim());
+                response = this.parseResponse(s.substr("error ".length).trim());
                 var res = response.shift();
 
                 var currentError: QueryError = {
@@ -90,10 +92,15 @@ export class TeamSpeakClient extends events.EventEmitter
                     msg: res["msg"] || ""
                 };
 
-                if (currentError.id === 0)
-                    currentError = null;
-                else
+                if (currentError.id !== 0)
+                {
                     this._executing.error = currentError;
+                    this._executing.error = null;
+                }
+                else
+                {
+                    currentError = null;
+                }
 
                 if (this._executing.defer)
                 {
@@ -115,12 +122,12 @@ export class TeamSpeakClient extends events.EventEmitter
             else if (s.indexOf("notify") === 0)
             {
                 s = s.substr("notify".length);
-                var response = this.parseResponse(s);
+                response = this.parseResponse(s);
                 this.emit(s.substr(0, s.indexOf(" ")), response);
             }
             else if (this._executing)
             {
-                var response = this.parseResponse(s);
+                response = this.parseResponse(s);
                 this._executing.rawResponse = s;
                 this._executing.response = response;
             }
