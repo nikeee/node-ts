@@ -23,6 +23,7 @@ account "ServerAdmin" which is created during the installation of the
 server). The following code prints out a JSON-array containing all
  clients that are currently connected to the first virtual server:
 
+```JavaScript
 	var ts3 = require("node-ts");
 	var util = require("util");
 
@@ -32,10 +33,13 @@ server). The following code prints out a JSON-array containing all
 		.then(function(_) { return cl.send("clientlist")})
 		.then(function(response) { console.log(util.inspect(response)); })
 		.fail(function(err) {console.log("An error occurred.")})
+```
 
 TypeScript sample:
 
-	import ts3 = require("node-ts");
+```TypeScript
+	// If you know a better war to include the .ts file that coms with the npm package, let me know.
+	import ts3 = require("./node_modules/node-ts/index");
 	import util = require("util");
 
 	var cl = new ts3.TeamSpeakClient("##SERVERIP###");
@@ -44,6 +48,7 @@ TypeScript sample:
 		.then(_ => cl.send("clientlist"))
 		.then(response => console.log(util.inspect(response)))
 		.fail(err => console.log("An error occurred."));
+```
 
 Usage information
 -----------------
