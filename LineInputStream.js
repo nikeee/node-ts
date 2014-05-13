@@ -18,6 +18,9 @@ var _events = {
 
 var LineInputStream = (function (_super) {
     __extends(LineInputStream, _super);
+    /**
+    * @constructor
+    */
     function LineInputStream(underlyingStream, delimiter) {
         if (typeof delimiter === "undefined") { delimiter = "\n"; }
         _super.call(this);
@@ -63,8 +66,9 @@ var LineInputStream = (function (_super) {
         });
     };
 
-    // Start overriding EventEmitter methods so we can pass through to underlyingStream
-    // If we get a request for an event we don't know about, pass it to the underlyingStream
+    /**
+    * Start overriding EventEmitter methods so we can pass through to underlyingStream If we get a request for an event we don't know about, pass it to the underlyingStream
+    */
     LineInputStream.prototype.on = function (type, listener) {
         if (!(type in _events))
             this._underlyingStream.on(type, listener);

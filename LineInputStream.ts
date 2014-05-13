@@ -3,7 +3,14 @@
 // This is a TypeScript port of bluesmoon's line-input-stream
 // Project site: https://github.com/bluesmoon/node-line-input-stream
 
-// TODO: May publish this as a new package on npmjs.
+/**
+ * @autor Niklas Mollenhauer <holzig@outlook.com>
+ * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
+ * @todo May publish this as a new package on npmjs.
+ * @example
+ * // creates a new instance
+ * var lis = new LineInputStream(underlyingStream);
+ */
 
 import events = require("events");
 import Stream = require("stream");
@@ -43,8 +50,17 @@ class LineInputStream extends Stream.Readable
     private _underlyingStream: Stream.Readable;
     private _data: string;
 
+    /**
+     * @constructor
+     */
     constructor(underlyingStream: Stream.Readable);
+    /**
+     * @constructor
+     */
     constructor(underlyingStream: Stream.Readable, delimiter: string);
+    /**
+     * @constructor
+     */
     constructor(underlyingStream: Stream.Readable, public delimiter: string = "\n")
     {
         super();
@@ -77,8 +93,9 @@ class LineInputStream extends Stream.Readable
         });
     }
 
-    // Start overriding EventEmitter methods so we can pass through to underlyingStream
-    // If we get a request for an event we don't know about, pass it to the underlyingStream
+    /**
+     * Start overriding EventEmitter methods so we can pass through to underlyingStream If we get a request for an event we don't know about, pass it to the underlyingStream
+     */
     public on(type: string, listener: Function): events.EventEmitter
     {
         if (!(type in _events))
