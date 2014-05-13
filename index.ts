@@ -1,14 +1,7 @@
-/*
- * ----------------------------------------------------------------------------
- * "THE BEER-WARE LICENSE" (Revision 42):
- * <timklge@wh2.tu-dresden.de> wrote this file. As long as you retain this notice you
- * can do whatever you want with this stuff. If we meet some day, and you think
- * this stuff is worth it, you can buy me a beer in return - Tim Kluge
- * ----------------------------------------------------------------------------
- */
-
-/*
- * Niklas Mollenhauer <nikeee@outlook.com> ported this class to TypeScript.
+/**
+ * @autor Niklas Mollenhauer <holzig@outlook.com>
+ * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
+ * @license Beerware/Pizzaware
  */
 
 ///<reference path="typings/node/node.d.ts"/>
@@ -21,8 +14,15 @@ import LineInputStream = require("./LineInputStream");
 import events = require("events");
 import util = require("util");
 
+/**
+ * Client that can be used to connect to a TeamSpeak server query API.
+ */
 export class TeamSpeakClient extends events.EventEmitter
 {
+    /**
+     * Gets the remote host passed to the constructor. Can be an IP address or a host name.
+     * @return {string} Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     */
     public get host(): string
     {
         return this._host;
@@ -41,8 +41,30 @@ export class TeamSpeakClient extends events.EventEmitter
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
 
+    /**
+     * Creates a new instance of TeamSpeakClient using the default values.
+     * @constructor
+     */
     constructor();
+    /**
+     * Creates a new instance of TeamSpeakClient for a specific remote host.
+     * @param {string} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     * @constructor
+     */
     constructor(host: string);
+    /**
+     * Creates a new instance of TeamSpeakClient for a specific remote host:port.
+     * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
+     * @constructor
+     */
+    constructor(host: string, port: number);
+    /**
+     * Creates a new instance of TeamSpeakClient for a specific remote host:port.
+     * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
+     * @constructor
+     */
     constructor(host: string = TeamSpeakClient.DefaultHost, port: number = TeamSpeakClient.DefaultPort)
     {
         super();
@@ -63,6 +85,9 @@ export class TeamSpeakClient extends events.EventEmitter
         this._socket.on("connect", () => this.onConnect());
     }
 
+    /**
+     * Gets called on an opened connection
+     */
     private onConnect(): void
     {
         this._reader = new LineInputStream(this._socket);
@@ -135,9 +160,9 @@ export class TeamSpeakClient extends events.EventEmitter
         this.emit("connect");
     }
 
-    /*
-    * Send a command to the server
-    */
+    /**
+     * Sends a command to the server
+     */
     // TODO: Only include constant overloads to force corrent parameterization
     public send(cmd: "login", params: LoginParams): Q.Promise<LoginCallbackData>;
     public send(cmd: "use", params: UseParams): Q.Promise<UseCallbackData>;
@@ -183,6 +208,9 @@ export class TeamSpeakClient extends events.EventEmitter
         return d.promise;
     }
 
+    /**
+     * Parses a query API response.
+     */
     private parseResponse(s: string): QueryResponseItem[]
     {
         var records = s.split("|");
@@ -219,17 +247,18 @@ export class TeamSpeakClient extends events.EventEmitter
         return response;
     }
 
-    /* Return pending commands that are going to be sent to the server.
-    * Note that they have been parsed - Access getPending()[0].text to get
-    * the full text representation of the command.
+   /**
+    * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
+    * @return {QueueItem[]} Pending commands that are going to be sent to the server.
     */
-    public getPending(): QueueItem[]
+    public get pending(): QueueItem[]
     {
         return this._queue.slice(0);
     }
 
-    /* Clear the queue of pending commands so that any command that is currently queued won't be executed.
-    * The old queue is returned.
+   /**
+    * Clears the queue of pending commands so that any command that is currently queued won't be executed.
+    * @return {QueueItem[]} Array of commands that have been removed from the queue.
     */
     public clearPending(): QueueItem[]
     {
@@ -238,6 +267,9 @@ export class TeamSpeakClient extends events.EventEmitter
         return q;
     }
 
+    /**
+     * Checks the current command queue and sends them if needed.
+     */
     private checkQueue(): void
     {
         if (!this._executing && this._queue.length >= 1)
@@ -247,6 +279,11 @@ export class TeamSpeakClient extends events.EventEmitter
         }
     }
 
+    /**
+     * Escapes a string so it can be safely used for querying the api.
+     * @param  {string} s The string to escape.
+     * @return {string}   An escaped string.
+     */
     private static tsescape(s: string): string
     {
         var r = String(s);
@@ -265,6 +302,11 @@ export class TeamSpeakClient extends events.EventEmitter
         return r;
     }
 
+    /**
+     * Unescapes a string so it can be used for processing the response of the api.
+     * @param  {string} s The string to unescape.
+     * @return {string}   An unescaped string.
+     */
     private static tsunescape(s: string): string
     {
         var r = String(s);
@@ -285,12 +327,17 @@ export class TeamSpeakClient extends events.EventEmitter
 
 }
 
+/**
+ * Represents a Key-Value object.
+ */
 export interface IAssoc<T>
 {
     [key: string]: T;
 }
 
-
+/**
+ * Represents common data returned by the api.
+ */
 export interface CallbackData
 {
     item: QueueItem;
@@ -298,6 +345,7 @@ export interface CallbackData
     response: QueryResponseItem[];
     rawResponse: string;
 }
+
 
 export interface LoginCallbackData extends CallbackData
 { }
@@ -319,18 +367,37 @@ export interface ClientListCallbackData extends CallbackData
 export interface ClientListParams extends IAssoc<any>
 { }
 
+
+/**
+ * Specialized callback data for a failed request.
+ */
 export interface ErrorCallbackData extends CallbackData
 { }
 
+/**
+ * Represents common data returned by the api during a successful response.
+ */
 export interface QueryResponseItem extends IAssoc<any>
 { }
 
+/**
+ * Item that represents a query error.
+ */
 export interface QueryError
 {
+    /**
+     * The error id.
+     */
     id: number;
+    /**
+     * Error message.
+     */
     msg: string;
 }
 
+/**
+ * Represents an item in the processing queue for the api.
+ */
 export interface QueueItem
 {
     cmd: string;
@@ -343,5 +410,3 @@ export interface QueueItem
     rawResponse?: string;
     error?: QueryError;
 }
-
-//module.exports = TeamSpeakClient;

@@ -1,17 +1,34 @@
+/**
+* @autor Niklas Mollenhauer <holzig@outlook.com>
+* @autor Tim Kluge <timklge@wh2.tu-dresden.de>
+* @license Beerware/Pizzaware
+*/
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+///<reference path="typings/node/node.d.ts"/>
+///<reference path="typings/q/Q.d.ts"/>
+///<reference path="LineInputStream.ts"/>
 var Q = require("q");
 var net = require("net");
 var LineInputStream = require("./LineInputStream");
 var events = require("events");
 var util = require("util");
 
+/**
+* Client that can be used to connect to a TeamSpeak server query API.
+*/
 var TeamSpeakClient = (function (_super) {
     __extends(TeamSpeakClient, _super);
+    /**
+    * Creates a new instance of TeamSpeakClient for a specific remote host:port.
+    * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+    * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
+    * @constructor
+    */
     function TeamSpeakClient(host, port) {
         if (typeof host === "undefined") { host = TeamSpeakClient.DefaultHost; }
         if (typeof port === "undefined") { port = TeamSpeakClient.DefaultPort; }
@@ -26,6 +43,10 @@ var TeamSpeakClient = (function (_super) {
         this.initializeConnection();
     }
     Object.defineProperty(TeamSpeakClient.prototype, "host", {
+        /**
+        * Gets the remote host passed to the constructor. Can be an IP address or a host name.
+        * @return {string} Remote host of the TeamSpeak server. Can be an IP address or a host name.
+        */
         get: function () {
             return this._host;
         },
@@ -47,12 +68,16 @@ var TeamSpeakClient = (function (_super) {
         });
     };
 
+    /**
+    * Gets called on an opened connection
+    */
     TeamSpeakClient.prototype.onConnect = function () {
         var _this = this;
         this._reader = new LineInputStream(this._socket);
         this._reader.on("line", function (line) {
             var s = line.trim();
 
+            // Ignore two first lines sent by server ("TS3" and information message)
             if (_this._status < 0) {
                 _this._status++;
                 if (_this._status === 0)
@@ -60,6 +85,9 @@ var TeamSpeakClient = (function (_super) {
                 return;
             }
 
+            // Server answers with:
+            // [- One line containing the answer ]
+            // - "error id=XX msg=YY". ID is zero if command was executed successfully.
             var response;
 
             if (s.indexOf("error") === 0) {
@@ -116,6 +144,7 @@ var TeamSpeakClient = (function (_super) {
         for (var k in params) {
             var v = params[k];
             if (util.isArray(v)) {
+                // Multiple values for the same key - concatenate all
                 var doptions = v.map(function (val) {
                     return TeamSpeakClient.tsescape(k) + "=" + TeamSpeakClient.tsescape(val);
                 });
@@ -141,9 +170,13 @@ var TeamSpeakClient = (function (_super) {
         return d.promise;
     };
 
+    /**
+    * Parses a query API response.
+    */
     TeamSpeakClient.prototype.parseResponse = function (s) {
         var records = s.split("|");
 
+        // Test this
         var response = records.map(function (currentItem) {
             var args = currentItem.split(" ");
             var thisrec = {};
@@ -165,19 +198,36 @@ var TeamSpeakClient = (function (_super) {
         if (response.length === 0)
             return null;
 
+        //if (response.length === 1)
+        //    response = response.shift();
         return response;
     };
 
-    TeamSpeakClient.prototype.getPending = function () {
-        return this._queue.slice(0);
-    };
+    Object.defineProperty(TeamSpeakClient.prototype, "pending", {
+        /**
+        * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
+        * @return {QueueItem[]} Pending commands that are going to be sent to the server.
+        */
+        get: function () {
+            return this._queue.slice(0);
+        },
+        enumerable: true,
+        configurable: true
+    });
 
+    /**
+    * Clears the queue of pending commands so that any command that is currently queued won't be executed.
+    * @return {QueueItem[]} Array of commands that have been removed from the queue.
+    */
     TeamSpeakClient.prototype.clearPending = function () {
         var q = this._queue;
         this._queue = [];
         return q;
     };
 
+    /**
+    * Checks the current command queue and sends them if needed.
+    */
     TeamSpeakClient.prototype.checkQueue = function () {
         if (!this._executing && this._queue.length >= 1) {
             this._executing = this._queue.shift();
@@ -185,35 +235,49 @@ var TeamSpeakClient = (function (_super) {
         }
     };
 
+    /**
+    * Escapes a string so it can be safely used for querying the api.
+    * @param  {string} s The string to escape.
+    * @return {string}   An escaped string.
+    */
     TeamSpeakClient.tsescape = function (s) {
         var r = String(s);
-        r = r.replace(/\\/g, "\\\\");
-        r = r.replace(/\//g, "\\/");
-        r = r.replace(/\|/g, "\\p");
-        r = r.replace(/\;/g, "\\;");
-        r = r.replace(/\n/g, "\\n");
+        r = r.replace(/\\/g, "\\\\"); // Backslash
+        r = r.replace(/\//g, "\\/"); // Slash
+        r = r.replace(/\|/g, "\\p"); // Pipe
+        r = r.replace(/\;/g, "\\;"); // Semicolon
+        r = r.replace(/\n/g, "\\n"); // Newline
 
-        r = r.replace(/\r/g, "\\r");
-        r = r.replace(/\t/g, "\\t");
-        r = r.replace(/\v/g, "\\v");
-        r = r.replace(/\f/g, "\\f");
-        r = r.replace(/ /g, "\\s");
+        //r = r.replace(/\b/g, "\\b");    // Info: Backspace fails
+        //r = r.replace(/\a/g, "\\a");    // Info: Bell fails
+        r = r.replace(/\r/g, "\\r"); // Carriage Return
+        r = r.replace(/\t/g, "\\t"); // Tab
+        r = r.replace(/\v/g, "\\v"); // Vertical Tab
+        r = r.replace(/\f/g, "\\f"); // Formfeed
+        r = r.replace(/ /g, "\\s"); // Whitespace
         return r;
     };
 
+    /**
+    * Unescapes a string so it can be used for processing the response of the api.
+    * @param  {string} s The string to unescape.
+    * @return {string}   An unescaped string.
+    */
     TeamSpeakClient.tsunescape = function (s) {
         var r = String(s);
-        r = r.replace(/\\s/g, " ");
-        r = r.replace(/\\p/g, "|");
-        r = r.replace(/\\;/g, ";");
-        r = r.replace(/\\n/g, "\n");
+        r = r.replace(/\\s/g, " "); // Whitespace
+        r = r.replace(/\\p/g, "|"); // Pipe
+        r = r.replace(/\\;/g, ";"); // Semicolon
+        r = r.replace(/\\n/g, "\n"); // Newline
 
-        r = r.replace(/\\f/g, "\f");
-        r = r.replace(/\\r/g, "\r");
-        r = r.replace(/\\t/g, "\t");
-        r = r.replace(/\\v/g, "\v");
-        r = r.replace(/\\\//g, "\/");
-        r = r.replace(/\\\\/g, "\\");
+        //r = r.replace(/\\b/g,  "\b");   // Info: Backspace fails
+        //r = r.replace(/\\a/g,  "\a");   // Info: Bell fails
+        r = r.replace(/\\f/g, "\f"); // Formfeed
+        r = r.replace(/\\r/g, "\r"); // Carriage Return
+        r = r.replace(/\\t/g, "\t"); // Tab
+        r = r.replace(/\\v/g, "\v"); // Vertical Tab
+        r = r.replace(/\\\//g, "\/"); // Slash
+        r = r.replace(/\\\\/g, "\\"); // Backslash
         return r;
     };
     TeamSpeakClient.DefaultHost = "localhost";
@@ -221,3 +285,9 @@ var TeamSpeakClient = (function (_super) {
     return TeamSpeakClient;
 })(events.EventEmitter);
 exports.TeamSpeakClient = TeamSpeakClient;
+
+
+
+
+
+
