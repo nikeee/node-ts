@@ -1,5 +1,5 @@
 /**
- * @autor Niklas Mollenhauer <nikeee@outlook.com>
+ * @autor Niklas Mollenhauer <holzig@outlook.com>
  * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
  * @license Beerware/Pizzaware
  */
