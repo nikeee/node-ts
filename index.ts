@@ -43,23 +43,27 @@ export class TeamSpeakClient extends events.EventEmitter
 
     /**
      * Creates a new instance of TeamSpeakClient using the default values.
+     * @constructor
      */
     constructor();
     /**
      * Creates a new instance of TeamSpeakClient for a specific remote host.
      * @param {string} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     * @constructor
      */
     constructor(host: string);
     /**
      * Creates a new instance of TeamSpeakClient for a specific remote host:port.
      * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
      * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
+     * @constructor
      */
     constructor(host: string, port: number);
     /**
      * Creates a new instance of TeamSpeakClient for a specific remote host:port.
      * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
      * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
+     * @constructor
      */
     constructor(host: string = TeamSpeakClient.DefaultHost, port: number = TeamSpeakClient.DefaultPort)
     {
@@ -81,6 +85,9 @@ export class TeamSpeakClient extends events.EventEmitter
         this._socket.on("connect", () => this.onConnect());
     }
 
+    /**
+     * Gets called on an opened connection
+     */
     private onConnect(): void
     {
         this._reader = new LineInputStream(this._socket);
@@ -197,6 +204,9 @@ export class TeamSpeakClient extends events.EventEmitter
         return d.promise;
     }
 
+    /**
+     * Parses a query API response.
+     */
     private parseResponse(s: string): QueryResponseItem[]
     {
         var records = s.split("|");
@@ -253,6 +263,9 @@ export class TeamSpeakClient extends events.EventEmitter
         return q;
     }
 
+    /**
+     * Checks the current command queue and sends them if needed.
+     */
     private checkQueue(): void
     {
         if (!this._executing && this._queue.length >= 1)
@@ -346,7 +359,13 @@ export interface QueryResponseItem extends IAssoc<any>
  */
 export interface QueryError
 {
+    /**
+     * The error id.
+     */
     id: number;
+    /**
+     * Error message.
+     */
     msg: string;
 }
 
