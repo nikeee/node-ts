@@ -21,8 +21,15 @@ import LineInputStream = require("./LineInputStream");
 import events = require("events");
 import util = require("util");
 
+/**
+ * Client that can be used to connect to a TeamSpeak server query API.
+ */
 export class TeamSpeakClient extends events.EventEmitter
 {
+    /**
+     * Gets the remote host passed to the constructor. Can be an IP address or a host name.
+     * @return {string} Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     */
     public get host(): string
     {
         return this._host;
@@ -41,8 +48,21 @@ export class TeamSpeakClient extends events.EventEmitter
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
 
+    /**
+     * Creates a new instance of TeamSpeakClient using the default values.
+     * @constructor
+     */
     constructor();
+    /**
+     * Creates a new instance of TeamSpeakClient for a specific remote host.
+     * @param {string} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     */
     constructor(host: string);
+    /**
+     * Creates a new instance of TeamSpeakClient for a specific remote host:port.
+     * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
+     */
     constructor(host: string = TeamSpeakClient.DefaultHost, port: number = TeamSpeakClient.DefaultPort)
     {
         super();
@@ -215,17 +235,19 @@ export class TeamSpeakClient extends events.EventEmitter
         return response;
     }
 
-    /* Return pending commands that are going to be sent to the server.
-    * Note that they have been parsed - Access getPending()[0].text to get
-    * the full text representation of the command.
+   /**
+    * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access getPending()[0].text to get the full text representation of the command.
+    * @return {QueueItem[]} Pending commands that are going to be sent to the server.
+    * @todo Maybe refactor to ES5 getter
     */
     public getPending(): QueueItem[]
     {
         return this._queue.slice(0);
     }
 
-    /* Clear the queue of pending commands so that any command that is currently queued won't be executed.
-    * The old queue is returned.
+   /**
+    * Clears the queue of pending commands so that any command that is currently queued won't be executed.
+    * @return {QueueItem[]} Array of commands that have been removed from the queue.
     */
     public clearPending(): QueueItem[]
     {
@@ -243,6 +265,11 @@ export class TeamSpeakClient extends events.EventEmitter
         }
     }
 
+    /**
+     * Escapes a string so it can be safely used for querying the api.
+     * @param  {string} s The string to escape.
+     * @return {string}   An escaped string.
+     */
     private static tsescape(s: string): string
     {
         var r = String(s);
@@ -261,6 +288,11 @@ export class TeamSpeakClient extends events.EventEmitter
         return r;
     }
 
+    /**
+     * Unescapes a string so it can be used for processing the response of the api.
+     * @param  {string} s The string to unescape.
+     * @return {string}   An unescaped string.
+     */
     private static tsunescape(s: string): string
     {
         var r = String(s);
@@ -281,11 +313,17 @@ export class TeamSpeakClient extends events.EventEmitter
 
 }
 
+/**
+ * Represents a Key-Value object.
+ */
 export interface IAssoc<T>
 {
     [key: string]: T;
 }
 
+/**
+ * Represents common data returned by the api.
+ */
 export interface CallbackData
 {
     item: QueueItem;
@@ -294,18 +332,30 @@ export interface CallbackData
     rawResponse: string;
 }
 
+/**
+ * Specialized callback data for a failed request.
+ */
 export interface ErrorCallbackData extends CallbackData
 { }
 
+/**
+ * Represents common data returned by the api during a successful response.
+ */
 export interface QueryResponseItem extends IAssoc<any>
 { }
 
+/**
+ * Item that represents a query error.
+ */
 export interface QueryError
 {
     id: number;
     msg: string;
 }
 
+/**
+ * Represents an item in the processing queue for the api.
+ */
 export interface QueueItem
 {
     cmd: string;
