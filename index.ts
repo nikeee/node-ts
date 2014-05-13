@@ -297,9 +297,6 @@ class StringExtensions
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
-
-        //@todo Note: The semicolon is not listed in the documentation. Better check this some day. Might cause unexpected behaviour.
-        r = r.replace(/\;/g, "\\;");    // Semicolon
         r = r.replace(/\n/g, "\\n");    // Newline
         //r = r.replace(/\b/g, "\\b");    // Info: Backspace fails
         //r = r.replace(/\a/g, "\\a");    // Info: Bell fails
@@ -321,9 +318,6 @@ class StringExtensions
         var r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
-
-        //@todo Note: The semicolon is not listed in the documentation. Better check this some day. Might cause unexpected behaviour.
-        r = r.replace(/\\;/g, ";");    // Semicolon
         r = r.replace(/\\n/g, "\n");   // Newline
         //r = r.replace(/\\b/g,  "\b");   // Info: Backspace fails
         //r = r.replace(/\\a/g,  "\a");   // Info: Bell fails
