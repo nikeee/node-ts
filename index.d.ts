@@ -44,6 +44,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     */
     private onConnect();
     public send(cmd: "login", params: LoginParams): Q.Promise<LoginCallbackData>;
+    public send(cmd: "logout"): Q.Promise<LogoutCallbackData>;
     public send(cmd: "use", params: UseParams): Q.Promise<UseCallbackData>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<ClientListCallbackData>;
     public send(cmd: string): Q.Promise<CallbackData>;
@@ -99,6 +100,8 @@ export interface LoginCallbackData extends CallbackData {
 export interface LoginParams extends IAssoc<any> {
     client_login_name: string;
     client_login_password: string;
+}
+export interface LogoutCallbackData extends CallbackData {
 }
 export interface UseCallbackData extends CallbackData {
 }
