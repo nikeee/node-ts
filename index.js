@@ -60,12 +60,23 @@ var TeamSpeakClient = (function (_super) {
                 return;
             }
 
-            if (s.indexOf("error") === 0) {
-                var response = _this.parseResponse(s.substr("error ".length).trim());
-                _this._executing.error = response.shift();
+            var response;
 
-                if (_this._executing.error.id === 0)
-                    delete _this._executing.error;
+            if (s.indexOf("error") === 0) {
+                response = _this.parseResponse(s.substr("error ".length).trim());
+                var res = response.shift();
+
+                var currentError = {
+                    id: res["id"] || 0,
+                    msg: res["msg"] || ""
+                };
+
+                if (currentError.id !== 0) {
+                    _this._executing.error = currentError;
+                    _this._executing.error = null;
+                } else {
+                    currentError = null;
+                }
 
                 if (_this._executing.defer) {
                     var data = {
@@ -84,10 +95,10 @@ var TeamSpeakClient = (function (_super) {
                 _this.checkQueue();
             } else if (s.indexOf("notify") === 0) {
                 s = s.substr("notify".length);
-                var response = _this.parseResponse(s);
+                response = _this.parseResponse(s);
                 _this.emit(s.substr(0, s.indexOf(" ")), response);
             } else if (_this._executing) {
-                var response = _this.parseResponse(s);
+                response = _this.parseResponse(s);
                 _this._executing.rawResponse = s;
                 _this._executing.response = response;
             }

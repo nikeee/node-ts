@@ -138,10 +138,14 @@ export class TeamSpeakClient extends events.EventEmitter
     /*
     * Send a command to the server
     */
+    // TODO: Only include constant overloads to force corrent parameterization
+    public send(cmd: "login", params: LoginParams): Q.Promise<LoginCallbackData>;
+    public send(cmd: "use", params: UseParams): Q.Promise<UseCallbackData>;
+    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<ClientListCallbackData>;
     public send(cmd: string): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
+    //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData>
+    public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Q.Promise<CallbackData>
     {
         var tosend = TeamSpeakClient.tsescape(cmd);
         options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
@@ -286,6 +290,7 @@ export interface IAssoc<T>
     [key: string]: T;
 }
 
+
 export interface CallbackData
 {
     item: QueueItem;
@@ -293,6 +298,26 @@ export interface CallbackData
     response: QueryResponseItem[];
     rawResponse: string;
 }
+
+export interface LoginCallbackData extends CallbackData
+{ }
+export interface LoginParams extends IAssoc<any>
+{
+    client_login_name: string;
+    client_login_password: string;
+}
+
+export interface UseCallbackData extends CallbackData
+{ }
+export interface UseParams extends IAssoc<any>
+{
+    sid: number;
+}
+
+export interface ClientListCallbackData extends CallbackData
+{ }
+export interface ClientListParams extends IAssoc<any>
+{ }
 
 export interface ErrorCallbackData extends CallbackData
 { }
