@@ -1,14 +1,7 @@
-/*
- * ----------------------------------------------------------------------------
- * "THE BEER-WARE LICENSE" (Revision 42):
- * <timklge@wh2.tu-dresden.de> wrote this file. As long as you retain this notice you
- * can do whatever you want with this stuff. If we meet some day, and you think
- * this stuff is worth it, you can buy me a beer in return - Tim Kluge
- * ----------------------------------------------------------------------------
- */
-
-/*
- * Niklas Mollenhauer <nikeee@outlook.com> ported this class to TypeScript.
+/**
+ * @autor Niklas Mollenhauer <nikeee@outlook.com>
+ * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
+ * @license Beerware/Pizzaware
  */
 
 ///<reference path="typings/node/node.d.ts"/>
@@ -160,9 +153,9 @@ export class TeamSpeakClient extends events.EventEmitter
         this.emit("connect");
     }
 
-    /*
-    * Send a command to the server
-    */
+    /**
+     * Sends a command to the server
+     */
     public send(cmd: string): Q.Promise<CallbackData>;
     public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData>;
@@ -373,5 +366,3 @@ export interface QueueItem
     rawResponse?: string;
     error?: QueryError;
 }
-
-//module.exports = TeamSpeakClient;
