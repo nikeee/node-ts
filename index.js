@@ -20,6 +20,7 @@ var util = require("util");
 
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
+* @todo unit tests
 */
 var TeamSpeakClient = (function (_super) {
     __extends(TeamSpeakClient, _super);

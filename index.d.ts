@@ -4,6 +4,7 @@
 import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
+* @todo unit tests
 */
 export declare class TeamSpeakClient extends events.EventEmitter {
     /**
