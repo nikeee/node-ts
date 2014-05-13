@@ -401,12 +401,20 @@ export interface QueryError
 {
     /**
      * The error id.
+     * @type {number}
      */
     id: number;
     /**
      * Error message.
+     * @type {string}
      */
     msg: string;
+
+    /**
+     * Permission that the client does not have.
+     * @type {number}
+     */
+    failed_permid?: number;
 }
 
 /**
