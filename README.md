@@ -25,29 +25,45 @@ server). The following code prints out a JSON-array containing all
 
 ```JavaScript
 var ts3 = require("node-ts");
-var util = require("util");
+var util = require("util"); // Include node utils
 
-var cl = new ts3.TeamSpeakClient("##SERVERIP###");
-cl.send("login", { client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##" })
-	.then(function(_) { return cl.send("use", {sid: 1}) })
-	.then(function(_) { return cl.send("clientlist")})
-	.then(function(response) { console.log(util.inspect(response)); })
-	.fail(function(err) {console.log("An error occurred.")})
+var cl = new ts3.TeamSpeakClient("##SERVER##"); // create a new client
+
+cl.send("login", {
+		client_login_name: "##USERNAME##",
+		client_login_password: "##PASSWORD##"
+	})
+	.then(function(_) {
+		return cl.send("use", {sid: 1})
+	})
+	.then(function(_) {
+		return cl.send("clientlist")
+	})
+	.then(function(response) {
+		console.log(util.inspect(response));
+	})
+	.fail(function(err) {
+		console.log("An error occurred." + util.inspect(err))
+	});
 ```
 
 TypeScript sample:
 
 ```TypeScript
-// If you know a better war to include the .ts file that coms with the npm package, let me know.
+// If you know a better war to include the .ts file that comes with the npm package, let me know.
 import ts3 = require("./node_modules/node-ts/index");
-import util = require("util");
+import util = require("util"); // Include node utils
 
-var cl = new ts3.TeamSpeakClient("##SERVERIP###");
-cl.send("login", { client_login_name: "##USERNAME##", client_login_password: "##PASSWORD##" })
+var cl = new ts3.TeamSpeakClient("##SERVER##"); // create a new client
+
+cl.send("login", {
+		client_login_name: "##USERNAME##",
+		client_login_password: "##PASSWORD##"
+	})
 	.then(_ => cl.send("use", { sid: 1 }))
 	.then(_ => cl.send("clientlist"))
 	.then(response => console.log(util.inspect(response)))
-	.fail(err => console.log("An error occurred."));
+	.fail(err => console.log("An error occurred: " + util.inspect(err)));
 ```
 
 Usage information
