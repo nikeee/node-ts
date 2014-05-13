@@ -1,4 +1,5 @@
-﻿var __extends = this.__extends || function (d, b) {
+﻿///<reference path="typings/node/node.d.ts"/>
+var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
@@ -17,6 +18,9 @@ var _events = {
 
 var LineInputStream = (function (_super) {
     __extends(LineInputStream, _super);
+    /**
+    * @constructor
+    */
     function LineInputStream(underlyingStream, delimiter) {
         if (typeof delimiter === "undefined") { delimiter = "\n"; }
         _super.call(this);
@@ -62,6 +66,9 @@ var LineInputStream = (function (_super) {
         });
     };
 
+    /**
+    * Start overriding EventEmitter methods so we can pass through to underlyingStream If we get a request for an event we don't know about, pass it to the underlyingStream
+    */
     LineInputStream.prototype.on = function (type, listener) {
         if (!(type in _events))
             this._underlyingStream.on(type, listener);
@@ -92,6 +99,14 @@ var LineInputStream = (function (_super) {
             this._underlyingStream.pause();
     };
 
+    /*
+    // Does not seem to be available on Stream.Readable
+    public destroy(): void
+    {
+    if (this._underlyingStream.destroy)
+    this._underlyingStream.destroy();
+    }
+    */
     LineInputStream.prototype.setEncoding = function (encoding) {
         if (this._underlyingStream.setEncoding)
             this._underlyingStream.setEncoding(encoding);

@@ -31,9 +31,9 @@ export class TeamSpeakClient extends events.EventEmitter
     private _host: string;
     private _port: number;
 
-    private _queue: QueueItem[] = null;
+    private _queue: QueryCommand[] = null;
     private _status: number;
-    private _executing: QueueItem;
+    private _executing: QueryCommand;
 
     private _socket: net.Socket;
     private _reader: LineInputStream;
@@ -118,27 +118,27 @@ export class TeamSpeakClient extends events.EventEmitter
                 };
 
                 if (currentError.id !== 0)
-                {
                     this._executing.error = currentError;
-                    this._executing.error = null;
-                }
                 else
-                {
                     currentError = null;
-                }
 
                 if (this._executing.defer)
                 {
-                    var data: CallbackData = {
-                        item: this._executing,
-                        error: this._executing.error,
-                        response: this._executing.response,
-                        rawResponse: this._executing.rawResponse
+                    //item: this._executing || null,
+                    var e = this._executing;
+                    var data: CallbackData<QueryResponseItem> = {
+                        cmd: e.cmd,
+                        options: e.options || [],
+                        text: e.text || null,
+                        parameters: e.parameters || {},
+                        error: e.error || null,
+                        response: e.response || null,
+                        rawResponse: e.rawResponse || null
                     };
                     if (data.error && data.error.id !== 0)
-                        this._executing.defer.reject(<ErrorCallbackData>data);
+                        this._executing.defer.reject(<CallbackData<ErrorResponseData>>data);
                     else
-                        this._executing.defer.resolve(<CallbackData>data);
+                        this._executing.defer.resolve(<CallbackData<QueryResponseItem>>data);
                 }
 
                 this._executing = null;
@@ -163,32 +163,40 @@ export class TeamSpeakClient extends events.EventEmitter
     /**
      * Sends a command to the server
      */
-    public send(cmd: string): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData>
+    // TODO: Only include constant overloads to force corrent parameterization
+    public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<LoginResponseData>>;
+    public send(cmd: "logout"): Q.Promise<CallbackData<LogoutResponseData>>;
+    public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
+    public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
+    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
+
+    public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
+    //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
+    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
+    public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData<QueryResponseItem>>
     {
-        var tosend = TeamSpeakClient.tsescape(cmd);
-        options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
-        for (var k in params)
+        if (!cmd)
+            return Q.reject("Empty command");
+
+        var tosend = StringExtensions.tsEscape(cmd);
+        options.forEach(v => tosend += " -" + StringExtensions.tsEscape(v));
+        for (var key in params)
         {
-            var v = params[k];
-            if (util.isArray(v))
+            var value = params[key];
+            if (util.isArray(value))
             {
+                var vArray = <Array<string>>value;
                 // Multiple values for the same key - concatenate all
-                var doptions = (<Array<string>>v).map<string>(val =>
-                {
-                    return TeamSpeakClient.tsescape(k) + "=" + TeamSpeakClient.tsescape(val);
-                });
+                var doptions = vArray.map<string>(val => StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(val));
                 tosend += " " + doptions.join("|");
             }
             else
             {
-                tosend += " " + TeamSpeakClient.tsescape(k.toString()) + "=" + TeamSpeakClient.tsescape(v.toString());
+                tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
             }
         }
 
-        var d = Q.defer<CallbackData>();
+        var d = Q.defer<CallbackData<QueryResponseItem>>();
 
         this._queue.push({
             cmd: cmd,
@@ -221,8 +229,8 @@ export class TeamSpeakClient extends events.EventEmitter
             {
                 if (v.indexOf("=") > -1)
                 {
-                    var key = TeamSpeakClient.tsunescape(v.substr(0, v.indexOf("=")));
-                    var value = TeamSpeakClient.tsunescape(v.substr(v.indexOf("=") + 1));
+                    var key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
+                    var value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
 
                     if (parseInt(value, 10).toString() == value)
                         thisrec[key] = parseInt(value, 10);
@@ -243,20 +251,20 @@ export class TeamSpeakClient extends events.EventEmitter
         return response;
     }
 
-   /**
-    * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
-    * @return {QueueItem[]} Pending commands that are going to be sent to the server.
-    */
-    public get pending(): QueueItem[]
+    /**
+     * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
+     * @return {QueryCommand[]} Pending commands that are going to be sent to the server.
+     */
+    public get pending(): QueryCommand[]
     {
         return this._queue.slice(0);
     }
 
-   /**
-    * Clears the queue of pending commands so that any command that is currently queued won't be executed.
-    * @return {QueueItem[]} Array of commands that have been removed from the queue.
-    */
-    public clearPending(): QueueItem[]
+    /**
+     * Clears the queue of pending commands so that any command that is currently queued won't be executed.
+     * @return {QueryCommand[]} Array of commands that have been removed from the queue.
+     */
+    public clearPending(): QueryCommand[]
     {
         var q = this._queue;
         this._queue = [];
@@ -274,19 +282,21 @@ export class TeamSpeakClient extends events.EventEmitter
             this._socket.write(this._executing.text + "\n");
         }
     }
+}
 
+class StringExtensions
+{
     /**
      * Escapes a string so it can be safely used for querying the api.
      * @param  {string} s The string to escape.
      * @return {string}   An escaped string.
      */
-    private static tsescape(s: string): string
+    public static tsEscape(s: string): string
     {
         var r = String(s);
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
-        r = r.replace(/\;/g, "\\;");    // Semicolon
         r = r.replace(/\n/g, "\\n");    // Newline
         //r = r.replace(/\b/g, "\\b");    // Info: Backspace fails
         //r = r.replace(/\a/g, "\\a");    // Info: Bell fails
@@ -303,12 +313,11 @@ export class TeamSpeakClient extends events.EventEmitter
      * @param  {string} s The string to unescape.
      * @return {string}   An unescaped string.
      */
-    private static tsunescape(s: string): string
+    public static tsUnescape(s: string): string
     {
         var r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
-        r = r.replace(/\\;/g, ";");    // Semicolon
         r = r.replace(/\\n/g, "\n");   // Newline
         //r = r.replace(/\\b/g,  "\b");   // Info: Backspace fails
         //r = r.replace(/\\a/g,  "\a");   // Info: Bell fails
@@ -320,7 +329,6 @@ export class TeamSpeakClient extends events.EventEmitter
         r = r.replace(/\\\\/g, "\\");   // Backslash
         return r;
     }
-
 }
 
 /**
@@ -334,18 +342,49 @@ export interface IAssoc<T>
 /**
  * Represents common data returned by the api.
  */
-export interface CallbackData
+export interface CallbackData<T extends QueryResponseItem>
 {
-    item: QueueItem;
+    //item: QueryCommand;
     error: QueryError;
-    response: QueryResponseItem[];
+    response: T[];
     rawResponse: string;
 }
+
+export interface LoginResponseData extends QueryResponseItem
+{ }
+export interface LoginParams extends IAssoc<any>
+{
+    client_login_name: string;
+    client_login_password: string;
+}
+
+export interface VersionResponseData extends QueryResponseItem
+{
+    version: string;
+    build: number;
+    platform: string;
+}
+
+export interface LogoutResponseData extends QueryResponseItem
+{ }
+
+export interface UseResponseData extends QueryResponseItem
+{ }
+export interface UseParams extends IAssoc<any>
+{
+    sid: number;
+}
+
+export interface ClientListResponseData extends QueryResponseItem
+{ }
+export interface ClientListParams extends IAssoc<any>
+{ }
+
 
 /**
  * Specialized callback data for a failed request.
  */
-export interface ErrorCallbackData extends CallbackData
+export interface ErrorResponseData extends QueryResponseItem
 { }
 
 /**
@@ -372,13 +411,13 @@ export interface QueryError
 /**
  * Represents an item in the processing queue for the api.
  */
-export interface QueueItem
+export interface QueryCommand
 {
     cmd: string;
     options: string[];
     parameters: IAssoc<Object>;
     text: string;
-    defer: Q.Deferred<CallbackData>;
+    defer: Q.Deferred<CallbackData<QueryResponseItem>>;
 
     response?: QueryResponseItem[];
     rawResponse?: string;
