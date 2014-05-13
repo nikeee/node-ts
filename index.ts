@@ -118,22 +118,17 @@ export class TeamSpeakClient extends events.EventEmitter
                 };
 
                 if (currentError.id !== 0)
-                {
                     this._executing.error = currentError;
-                    this._executing.error = null;
-                }
                 else
-                {
                     currentError = null;
-                }
 
                 if (this._executing.defer)
                 {
                     var data: CallbackData<QueryResponseItem> = {
-                        item: this._executing,
-                        error: this._executing.error,
-                        response: this._executing.response,
-                        rawResponse: this._executing.rawResponse
+                        item: this._executing || null,
+                        error: this._executing.error || null,
+                        response: this._executing.response || null,
+                        rawResponse: this._executing.rawResponse || null
                     };
                     if (data.error && data.error.id !== 0)
                         this._executing.defer.reject(<CallbackData<ErrorResponseData>>data);
@@ -166,6 +161,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: Only include constant overloads to force corrent parameterization
     public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<LoginResponseData>>;
     public send(cmd: "logout"): Q.Promise<CallbackData<LogoutResponseData>>;
+    public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
     public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
 
@@ -357,7 +353,11 @@ export interface LoginParams extends IAssoc<any>
 }
 
 export interface VersionResponseData extends QueryResponseItem
-{ }
+{
+    version: string;
+    build: number;
+    platform: string;
+}
 
 export interface LogoutResponseData extends QueryResponseItem
 { }

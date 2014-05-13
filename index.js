@@ -99,19 +99,17 @@ var TeamSpeakClient = (function (_super) {
                     msg: res["msg"] || ""
                 };
 
-                if (currentError.id !== 0) {
+                if (currentError.id !== 0)
                     _this._executing.error = currentError;
-                    _this._executing.error = null;
-                } else {
+                else
                     currentError = null;
-                }
 
                 if (_this._executing.defer) {
                     var data = {
-                        item: _this._executing,
-                        error: _this._executing.error,
-                        response: _this._executing.response,
-                        rawResponse: _this._executing.rawResponse
+                        item: _this._executing || null,
+                        error: _this._executing.error || null,
+                        response: _this._executing.response || null,
+                        rawResponse: _this._executing.rawResponse || null
                     };
                     if (data.error && data.error.id !== 0)
                         _this._executing.defer.reject(data);
