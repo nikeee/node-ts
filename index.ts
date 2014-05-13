@@ -234,11 +234,10 @@ export class TeamSpeakClient extends events.EventEmitter
     }
 
    /**
-    * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access getPending()[0].text to get the full text representation of the command.
+    * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
     * @return {QueueItem[]} Pending commands that are going to be sent to the server.
-    * @todo Maybe refactor to ES5 getter
     */
-    public getPending(): QueueItem[]
+    public get pending(): QueueItem[]
     {
         return this._queue.slice(0);
     }
