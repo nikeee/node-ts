@@ -50,7 +50,6 @@ export class TeamSpeakClient extends events.EventEmitter
 
     /**
      * Creates a new instance of TeamSpeakClient using the default values.
-     * @constructor
      */
     constructor();
     /**
@@ -58,6 +57,12 @@ export class TeamSpeakClient extends events.EventEmitter
      * @param {string} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
      */
     constructor(host: string);
+    /**
+     * Creates a new instance of TeamSpeakClient for a specific remote host:port.
+     * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
+     * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
+     */
+    constructor(host: string, port: number);
     /**
      * Creates a new instance of TeamSpeakClient for a specific remote host:port.
      * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
