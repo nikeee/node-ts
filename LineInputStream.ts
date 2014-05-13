@@ -5,7 +5,7 @@
 
 /**
  * @autor Niklas Mollenhauer <holzig@outlook.com>
- * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
+ * @autor Philip Tellis <philip@bluesmoon.info>
  * @todo May publish this as a new package on npmjs.
  * @example
  * // creates a new instance
