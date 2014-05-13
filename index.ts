@@ -175,8 +175,8 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
     public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData<QueryResponseItem>>
     {
-        var tosend = TeamSpeakClient.tsescape(cmd);
-        options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
+        var tosend = StringExtensions.tsEscape(cmd);
+        options.forEach(v => tosend += " -" + StringExtensions.tsEscape(v));
         for (var k in params)
         {
             var v = params[k];
@@ -185,13 +185,13 @@ export class TeamSpeakClient extends events.EventEmitter
                 // Multiple values for the same key - concatenate all
                 var doptions = (<Array<string>>v).map<string>(val =>
                 {
-                    return TeamSpeakClient.tsescape(k) + "=" + TeamSpeakClient.tsescape(val);
+                    return StringExtensions.tsEscape(k) + "=" + StringExtensions.tsEscape(val);
                 });
                 tosend += " " + doptions.join("|");
             }
             else
             {
-                tosend += " " + TeamSpeakClient.tsescape(k.toString()) + "=" + TeamSpeakClient.tsescape(v.toString());
+                tosend += " " + StringExtensions.tsEscape(k.toString()) + "=" + StringExtensions.tsEscape(v.toString());
             }
         }
 
@@ -228,8 +228,8 @@ export class TeamSpeakClient extends events.EventEmitter
             {
                 if (v.indexOf("=") > -1)
                 {
-                    var key = TeamSpeakClient.tsunescape(v.substr(0, v.indexOf("=")));
-                    var value = TeamSpeakClient.tsunescape(v.substr(v.indexOf("=") + 1));
+                    var key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
+                    var value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
 
                     if (parseInt(value, 10).toString() == value)
                         thisrec[key] = parseInt(value, 10);
@@ -282,12 +282,17 @@ export class TeamSpeakClient extends events.EventEmitter
         }
     }
 
+
+}
+
+class StringExtensions
+{
     /**
      * Escapes a string so it can be safely used for querying the api.
      * @param  {string} s The string to escape.
      * @return {string}   An escaped string.
      */
-    private static tsescape(s: string): string
+    public static tsEscape(s: string): string
     {
         var r = String(s);
         r = r.replace(/\\/g, "\\\\");   // Backslash
@@ -310,7 +315,7 @@ export class TeamSpeakClient extends events.EventEmitter
      * @param  {string} s The string to unescape.
      * @return {string}   An unescaped string.
      */
-    private static tsunescape(s: string): string
+    public static tsUnescape(s: string): string
     {
         var r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
@@ -327,7 +332,6 @@ export class TeamSpeakClient extends events.EventEmitter
         r = r.replace(/\\\\/g, "\\");   // Backslash
         return r;
     }
-
 }
 
 /**

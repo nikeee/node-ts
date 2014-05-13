@@ -68,18 +68,6 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     * Checks the current command queue and sends them if needed.
     */
     private checkQueue();
-    /**
-    * Escapes a string so it can be safely used for querying the api.
-    * @param  {string} s The string to escape.
-    * @return {string}   An escaped string.
-    */
-    private static tsescape(s);
-    /**
-    * Unescapes a string so it can be used for processing the response of the api.
-    * @param  {string} s The string to unescape.
-    * @return {string}   An unescaped string.
-    */
-    private static tsunescape(s);
 }
 /**
 * Represents a Key-Value object.

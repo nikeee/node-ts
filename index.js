@@ -140,20 +140,20 @@ var TeamSpeakClient = (function (_super) {
     TeamSpeakClient.prototype.send = function (cmd, params, options) {
         if (typeof params === "undefined") { params = {}; }
         if (typeof options === "undefined") { options = []; }
-        var tosend = TeamSpeakClient.tsescape(cmd);
+        var tosend = StringExtensions.tsEscape(cmd);
         options.forEach(function (v) {
-            return tosend += " -" + TeamSpeakClient.tsescape(v);
+            return tosend += " -" + StringExtensions.tsEscape(v);
         });
         for (var k in params) {
             var v = params[k];
             if (util.isArray(v)) {
                 // Multiple values for the same key - concatenate all
                 var doptions = v.map(function (val) {
-                    return TeamSpeakClient.tsescape(k) + "=" + TeamSpeakClient.tsescape(val);
+                    return StringExtensions.tsEscape(k) + "=" + StringExtensions.tsEscape(val);
                 });
                 tosend += " " + doptions.join("|");
             } else {
-                tosend += " " + TeamSpeakClient.tsescape(k.toString()) + "=" + TeamSpeakClient.tsescape(v.toString());
+                tosend += " " + StringExtensions.tsEscape(k.toString()) + "=" + StringExtensions.tsEscape(v.toString());
             }
         }
 
@@ -185,8 +185,8 @@ var TeamSpeakClient = (function (_super) {
             var thisrec = {};
             args.forEach(function (v) {
                 if (v.indexOf("=") > -1) {
-                    var key = TeamSpeakClient.tsunescape(v.substr(0, v.indexOf("=")));
-                    var value = TeamSpeakClient.tsunescape(v.substr(v.indexOf("=") + 1));
+                    var key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
+                    var value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
 
                     if (parseInt(value, 10).toString() == value)
                         thisrec[key] = parseInt(value, 10);
@@ -237,13 +237,21 @@ var TeamSpeakClient = (function (_super) {
             this._socket.write(this._executing.text + "\n");
         }
     };
+    TeamSpeakClient.DefaultHost = "localhost";
+    TeamSpeakClient.DefaultPort = 10011;
+    return TeamSpeakClient;
+})(events.EventEmitter);
+exports.TeamSpeakClient = TeamSpeakClient;
 
+var StringExtensions = (function () {
+    function StringExtensions() {
+    }
     /**
     * Escapes a string so it can be safely used for querying the api.
     * @param  {string} s The string to escape.
     * @return {string}   An escaped string.
     */
-    TeamSpeakClient.tsescape = function (s) {
+    StringExtensions.tsEscape = function (s) {
         var r = String(s);
         r = r.replace(/\\/g, "\\\\"); // Backslash
         r = r.replace(/\//g, "\\/"); // Slash
@@ -266,7 +274,7 @@ var TeamSpeakClient = (function (_super) {
     * @param  {string} s The string to unescape.
     * @return {string}   An unescaped string.
     */
-    TeamSpeakClient.tsunescape = function (s) {
+    StringExtensions.tsUnescape = function (s) {
         var r = String(s);
         r = r.replace(/\\s/g, " "); // Whitespace
         r = r.replace(/\\p/g, "|"); // Pipe
@@ -283,11 +291,8 @@ var TeamSpeakClient = (function (_super) {
         r = r.replace(/\\\\/g, "\\"); // Backslash
         return r;
     };
-    TeamSpeakClient.DefaultHost = "localhost";
-    TeamSpeakClient.DefaultPort = 10011;
-    return TeamSpeakClient;
-})(events.EventEmitter);
-exports.TeamSpeakClient = TeamSpeakClient;
+    return StringExtensions;
+})();
 
 
 
