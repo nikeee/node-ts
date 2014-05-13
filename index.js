@@ -105,11 +105,16 @@ var TeamSpeakClient = (function (_super) {
                     currentError = null;
 
                 if (_this._executing.defer) {
+                    //item: this._executing || null,
+                    var e = _this._executing;
                     var data = {
-                        item: _this._executing || null,
-                        error: _this._executing.error || null,
-                        response: _this._executing.response || null,
-                        rawResponse: _this._executing.rawResponse || null
+                        cmd: e.cmd,
+                        options: e.options || [],
+                        text: e.text || null,
+                        parameters: e.parameters || {},
+                        error: e.error || null,
+                        response: e.response || null,
+                        rawResponse: e.rawResponse || null
                     };
                     if (data.error && data.error.id !== 0)
                         _this._executing.defer.reject(data);

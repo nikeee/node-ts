@@ -124,11 +124,16 @@ export class TeamSpeakClient extends events.EventEmitter
 
                 if (this._executing.defer)
                 {
+                    //item: this._executing || null,
+                    var e = this._executing;
                     var data: CallbackData<QueryResponseItem> = {
-                        item: this._executing || null,
-                        error: this._executing.error || null,
-                        response: this._executing.response || null,
-                        rawResponse: this._executing.rawResponse || null
+                        cmd: e.cmd,
+                        options: e.options || [],
+                        text: e.text || null,
+                        parameters: e.parameters || {},
+                        error: e.error || null,
+                        response: e.response || null,
+                        rawResponse: e.rawResponse || null
                     };
                     if (data.error && data.error.id !== 0)
                         this._executing.defer.reject(<CallbackData<ErrorResponseData>>data);
@@ -338,7 +343,7 @@ export interface IAssoc<T>
  */
 export interface CallbackData<T extends QueryResponseItem>
 {
-    item: QueueItem;
+    //item: QueueItem;
     error: QueryError;
     response: T[];
     rawResponse: string;
@@ -405,7 +410,7 @@ export interface QueryError
 /**
  * Represents an item in the processing queue for the api.
  */
-export interface QueueItem
+interface QueueItem
 {
     cmd: string;
     options: string[];
