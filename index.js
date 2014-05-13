@@ -140,20 +140,25 @@ var TeamSpeakClient = (function (_super) {
     TeamSpeakClient.prototype.send = function (cmd, params, options) {
         if (typeof params === "undefined") { params = {}; }
         if (typeof options === "undefined") { options = []; }
+        if (!cmd)
+            return Q.reject("Empty command");
+
         var tosend = StringExtensions.tsEscape(cmd);
         options.forEach(function (v) {
             return tosend += " -" + StringExtensions.tsEscape(v);
         });
-        for (var k in params) {
-            var v = params[k];
-            if (util.isArray(v)) {
+        for (var key in params) {
+            var value = params[key];
+            if (util.isArray(value)) {
+                var vArray = value;
+
                 // Multiple values for the same key - concatenate all
-                var doptions = v.map(function (val) {
-                    return StringExtensions.tsEscape(k) + "=" + StringExtensions.tsEscape(val);
+                var doptions = vArray.map(function (val) {
+                    return StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(val);
                 });
                 tosend += " " + doptions.join("|");
             } else {
-                tosend += " " + StringExtensions.tsEscape(k.toString()) + "=" + StringExtensions.tsEscape(v.toString());
+                tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
             }
         }
 
@@ -256,6 +261,8 @@ var StringExtensions = (function () {
         r = r.replace(/\\/g, "\\\\"); // Backslash
         r = r.replace(/\//g, "\\/"); // Slash
         r = r.replace(/\|/g, "\\p"); // Pipe
+
+        //@todo Note: The semicolon is not listed in the documentation. Better check this some day. Might cause unexpected behaviour.
         r = r.replace(/\;/g, "\\;"); // Semicolon
         r = r.replace(/\n/g, "\\n"); // Newline
 
@@ -278,6 +285,8 @@ var StringExtensions = (function () {
         var r = String(s);
         r = r.replace(/\\s/g, " "); // Whitespace
         r = r.replace(/\\p/g, "|"); // Pipe
+
+        //@todo Note: The semicolon is not listed in the documentation. Better check this some day. Might cause unexpected behaviour.
         r = r.replace(/\\;/g, ";"); // Semicolon
         r = r.replace(/\\n/g, "\n"); // Newline
 

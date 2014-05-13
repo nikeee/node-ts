@@ -175,23 +175,24 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
     public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData<QueryResponseItem>>
     {
+        if (!cmd)
+            return Q.reject("Empty command");
+
         var tosend = StringExtensions.tsEscape(cmd);
         options.forEach(v => tosend += " -" + StringExtensions.tsEscape(v));
-        for (var k in params)
+        for (var key in params)
         {
-            var v = params[k];
-            if (util.isArray(v))
+            var value = params[key];
+            if (util.isArray(value))
             {
+                var vArray = <Array<string>>value;
                 // Multiple values for the same key - concatenate all
-                var doptions = (<Array<string>>v).map<string>(val =>
-                {
-                    return StringExtensions.tsEscape(k) + "=" + StringExtensions.tsEscape(val);
-                });
+                var doptions = vArray.map<string>(val => StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(val));
                 tosend += " " + doptions.join("|");
             }
             else
             {
-                tosend += " " + StringExtensions.tsEscape(k.toString()) + "=" + StringExtensions.tsEscape(v.toString());
+                tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
             }
         }
 
@@ -281,8 +282,6 @@ export class TeamSpeakClient extends events.EventEmitter
             this._socket.write(this._executing.text + "\n");
         }
     }
-
-
 }
 
 class StringExtensions
@@ -298,6 +297,8 @@ class StringExtensions
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
+
+        //@todo Note: The semicolon is not listed in the documentation. Better check this some day. Might cause unexpected behaviour.
         r = r.replace(/\;/g, "\\;");    // Semicolon
         r = r.replace(/\n/g, "\\n");    // Newline
         //r = r.replace(/\b/g, "\\b");    // Info: Backspace fails
@@ -320,6 +321,8 @@ class StringExtensions
         var r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
+
+        //@todo Note: The semicolon is not listed in the documentation. Better check this some day. Might cause unexpected behaviour.
         r = r.replace(/\\;/g, ";");    // Semicolon
         r = r.replace(/\\n/g, "\n");   // Newline
         //r = r.replace(/\\b/g,  "\b");   // Info: Backspace fails
