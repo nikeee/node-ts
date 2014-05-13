@@ -31,9 +31,9 @@ export class TeamSpeakClient extends events.EventEmitter
     private _host: string;
     private _port: number;
 
-    private _queue: QueueItem[] = null;
+    private _queue: QueryCommand[] = null;
     private _status: number;
-    private _executing: QueueItem;
+    private _executing: QueryCommand;
 
     private _socket: net.Socket;
     private _reader: LineInputStream;
@@ -252,18 +252,18 @@ export class TeamSpeakClient extends events.EventEmitter
 
     /**
      * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
-     * @return {QueueItem[]} Pending commands that are going to be sent to the server.
+     * @return {QueryCommand[]} Pending commands that are going to be sent to the server.
      */
-    public get pending(): QueueItem[]
+    public get pending(): QueryCommand[]
     {
         return this._queue.slice(0);
     }
 
     /**
      * Clears the queue of pending commands so that any command that is currently queued won't be executed.
-     * @return {QueueItem[]} Array of commands that have been removed from the queue.
+     * @return {QueryCommand[]} Array of commands that have been removed from the queue.
      */
-    public clearPending(): QueueItem[]
+    public clearPending(): QueryCommand[]
     {
         var q = this._queue;
         this._queue = [];
@@ -343,7 +343,7 @@ export interface IAssoc<T>
  */
 export interface CallbackData<T extends QueryResponseItem>
 {
-    //item: QueueItem;
+    //item: QueryCommand;
     error: QueryError;
     response: T[];
     rawResponse: string;
@@ -410,7 +410,7 @@ export interface QueryError
 /**
  * Represents an item in the processing queue for the api.
  */
-interface QueueItem
+export interface QueryCommand
 {
     cmd: string;
     options: string[];

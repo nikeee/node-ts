@@ -1,6 +1,3 @@
-/// <reference path="typings/node/node.d.ts" />
-/// <reference path="typings/q/Q.d.ts" />
-/// <reference path="LineInputStream.d.ts" />
 import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
@@ -56,14 +53,14 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     private parseResponse(s);
     /**
     * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
-    * @return {QueueItem[]} Pending commands that are going to be sent to the server.
+    * @return {QueryCommand[]} Pending commands that are going to be sent to the server.
     */
-    public pending : QueueItem[];
+    public pending : QueryCommand[];
     /**
     * Clears the queue of pending commands so that any command that is currently queued won't be executed.
-    * @return {QueueItem[]} Array of commands that have been removed from the queue.
+    * @return {QueryCommand[]} Array of commands that have been removed from the queue.
     */
-    public clearPending(): QueueItem[];
+    public clearPending(): QueryCommand[];
     /**
     * Checks the current command queue and sends them if needed.
     */
@@ -91,7 +88,6 @@ export interface IAssoc<T> {
 * Represents common data returned by the api.
 */
 export interface CallbackData<T extends QueryResponseItem> {
-    item: QueueItem;
     error: QueryError;
     response: T[];
     rawResponse: string;
@@ -144,7 +140,7 @@ export interface QueryError {
 /**
 * Represents an item in the processing queue for the api.
 */
-export interface QueueItem {
+export interface QueryCommand {
     cmd: string;
     options: string[];
     parameters: IAssoc<Object>;

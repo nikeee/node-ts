@@ -209,7 +209,7 @@ var TeamSpeakClient = (function (_super) {
     Object.defineProperty(TeamSpeakClient.prototype, "pending", {
         /**
         * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
-        * @return {QueueItem[]} Pending commands that are going to be sent to the server.
+        * @return {QueryCommand[]} Pending commands that are going to be sent to the server.
         */
         get: function () {
             return this._queue.slice(0);
@@ -220,7 +220,7 @@ var TeamSpeakClient = (function (_super) {
 
     /**
     * Clears the queue of pending commands so that any command that is currently queued won't be executed.
-    * @return {QueueItem[]} Array of commands that have been removed from the queue.
+    * @return {QueryCommand[]} Array of commands that have been removed from the queue.
     */
     TeamSpeakClient.prototype.clearPending = function () {
         var q = this._queue;
