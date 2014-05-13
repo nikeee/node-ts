@@ -129,16 +129,16 @@ export class TeamSpeakClient extends events.EventEmitter
 
                 if (this._executing.defer)
                 {
-                    var data: CallbackData = {
+                    var data: CallbackData<QueryResponseItem> = {
                         item: this._executing,
                         error: this._executing.error,
                         response: this._executing.response,
                         rawResponse: this._executing.rawResponse
                     };
                     if (data.error && data.error.id !== 0)
-                        this._executing.defer.reject(<ErrorCallbackData>data);
+                        this._executing.defer.reject(<CallbackData<ErrorResponseData>>data);
                     else
-                        this._executing.defer.resolve(<CallbackData>data);
+                        this._executing.defer.resolve(<CallbackData<QueryResponseItem>>data);
                 }
 
                 this._executing = null;
@@ -164,14 +164,15 @@ export class TeamSpeakClient extends events.EventEmitter
      * Sends a command to the server
      */
     // TODO: Only include constant overloads to force corrent parameterization
-    public send(cmd: "login", params: LoginParams): Q.Promise<LoginCallbackData>;
-    public send(cmd: "logout"): Q.Promise<LogoutCallbackData>;
-    public send(cmd: "use", params: UseParams): Q.Promise<UseCallbackData>;
-    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<ClientListCallbackData>;
-    public send(cmd: string): Q.Promise<CallbackData>;
+    public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<LoginResponseData>>;
+    public send(cmd: "logout"): Q.Promise<CallbackData<LogoutResponseData>>;
+    public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
+    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
+
+    public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Q.Promise<CallbackData>
+    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
+    public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData<QueryResponseItem>>
     {
         var tosend = TeamSpeakClient.tsescape(cmd);
         options.forEach(v => tosend += " -" + TeamSpeakClient.tsescape(v));
@@ -193,7 +194,7 @@ export class TeamSpeakClient extends events.EventEmitter
             }
         }
 
-        var d = Q.defer<CallbackData>();
+        var d = Q.defer<CallbackData<QueryResponseItem>>();
 
         this._queue.push({
             cmd: cmd,
@@ -248,19 +249,19 @@ export class TeamSpeakClient extends events.EventEmitter
         return response;
     }
 
-   /**
-    * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
-    * @return {QueueItem[]} Pending commands that are going to be sent to the server.
-    */
+    /**
+     * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
+     * @return {QueueItem[]} Pending commands that are going to be sent to the server.
+     */
     public get pending(): QueueItem[]
     {
         return this._queue.slice(0);
     }
 
-   /**
-    * Clears the queue of pending commands so that any command that is currently queued won't be executed.
-    * @return {QueueItem[]} Array of commands that have been removed from the queue.
-    */
+    /**
+     * Clears the queue of pending commands so that any command that is currently queued won't be executed.
+     * @return {QueueItem[]} Array of commands that have been removed from the queue.
+     */
     public clearPending(): QueueItem[]
     {
         var q = this._queue;
@@ -339,16 +340,15 @@ export interface IAssoc<T>
 /**
  * Represents common data returned by the api.
  */
-export interface CallbackData
+export interface CallbackData<T extends QueryResponseItem>
 {
     item: QueueItem;
     error: QueryError;
-    response: QueryResponseItem[];
+    response: T[];
     rawResponse: string;
 }
 
-
-export interface LoginCallbackData extends CallbackData
+export interface LoginResponseData extends QueryResponseItem
 { }
 export interface LoginParams extends IAssoc<any>
 {
@@ -356,17 +356,20 @@ export interface LoginParams extends IAssoc<any>
     client_login_password: string;
 }
 
-export interface LogoutCallbackData extends CallbackData
+export interface VersionResponseData extends QueryResponseItem
 { }
 
-export interface UseCallbackData extends CallbackData
+export interface LogoutResponseData extends QueryResponseItem
+{ }
+
+export interface UseResponseData extends QueryResponseItem
 { }
 export interface UseParams extends IAssoc<any>
 {
     sid: number;
 }
 
-export interface ClientListCallbackData extends CallbackData
+export interface ClientListResponseData extends QueryResponseItem
 { }
 export interface ClientListParams extends IAssoc<any>
 { }
@@ -375,7 +378,7 @@ export interface ClientListParams extends IAssoc<any>
 /**
  * Specialized callback data for a failed request.
  */
-export interface ErrorCallbackData extends CallbackData
+export interface ErrorResponseData extends QueryResponseItem
 { }
 
 /**
@@ -408,7 +411,7 @@ export interface QueueItem
     options: string[];
     parameters: IAssoc<Object>;
     text: string;
-    defer: Q.Deferred<CallbackData>;
+    defer: Q.Deferred<CallbackData<QueryResponseItem>>;
 
     response?: QueryResponseItem[];
     rawResponse?: string;

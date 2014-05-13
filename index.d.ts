@@ -43,12 +43,12 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     * Gets called on an opened connection
     */
     private onConnect();
-    public send(cmd: "login", params: LoginParams): Q.Promise<LoginCallbackData>;
-    public send(cmd: "logout"): Q.Promise<LogoutCallbackData>;
-    public send(cmd: "use", params: UseParams): Q.Promise<UseCallbackData>;
-    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<ClientListCallbackData>;
-    public send(cmd: string): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData>;
+    public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<LoginResponseData>>;
+    public send(cmd: "logout"): Q.Promise<CallbackData<LogoutResponseData>>;
+    public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
+    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
+    public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
+    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
     /**
     * Parses a query API response.
     */
@@ -89,33 +89,35 @@ export interface IAssoc<T> {
 /**
 * Represents common data returned by the api.
 */
-export interface CallbackData {
+export interface CallbackData<T extends QueryResponseItem> {
     item: QueueItem;
     error: QueryError;
-    response: QueryResponseItem[];
+    response: T[];
     rawResponse: string;
 }
-export interface LoginCallbackData extends CallbackData {
+export interface LoginResponseData extends QueryResponseItem {
 }
 export interface LoginParams extends IAssoc<any> {
     client_login_name: string;
     client_login_password: string;
 }
-export interface LogoutCallbackData extends CallbackData {
+export interface VersionResponseData extends QueryResponseItem {
 }
-export interface UseCallbackData extends CallbackData {
+export interface LogoutResponseData extends QueryResponseItem {
+}
+export interface UseResponseData extends QueryResponseItem {
 }
 export interface UseParams extends IAssoc<any> {
     sid: number;
 }
-export interface ClientListCallbackData extends CallbackData {
+export interface ClientListResponseData extends QueryResponseItem {
 }
 export interface ClientListParams extends IAssoc<any> {
 }
 /**
 * Specialized callback data for a failed request.
 */
-export interface ErrorCallbackData extends CallbackData {
+export interface ErrorResponseData extends QueryResponseItem {
 }
 /**
 * Represents common data returned by the api during a successful response.
@@ -143,7 +145,7 @@ export interface QueueItem {
     options: string[];
     parameters: IAssoc<Object>;
     text: string;
-    defer: Q.Deferred<CallbackData>;
+    defer: Q.Deferred<CallbackData<QueryResponseItem>>;
     response?: QueryResponseItem[];
     rawResponse?: string;
     error?: QueryError;
