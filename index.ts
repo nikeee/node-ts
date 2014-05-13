@@ -83,10 +83,17 @@ export class TeamSpeakClient extends events.EventEmitter
             if (s.indexOf("error") === 0)
             {
                 var response = this.parseResponse(s.substr("error ".length).trim());
-                this._executing.error = <QueryError>response.shift();
+                var res = response.shift();
 
-                if (this._executing.error.id === 0)
-                    delete this._executing.error;
+                var currentError: QueryError = {
+                    id: res["id"] || 0,
+                    msg: res["msg"] || ""
+                };
+
+                if (currentError.id === 0)
+                    currentError = null;
+                else
+                    this._executing.error = currentError;
 
                 if (this._executing.defer)
                 {
@@ -286,7 +293,7 @@ export interface ErrorCallbackData extends CallbackData
 export interface QueryResponseItem extends IAssoc<any>
 { }
 
-export interface QueryError extends QueryResponseItem
+export interface QueryError
 {
     id: number;
     msg: string;
