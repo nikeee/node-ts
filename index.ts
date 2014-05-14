@@ -278,7 +278,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: ftinitdownload
     // TODO: ftlist
     // TODO: ftgetfileinfo
-    // TODO: ftstop
+    public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: ftdeletefile
     // TODO: ftrenamefile
     // TODO: customsearch
@@ -641,6 +641,12 @@ export interface ClientPokeParams extends IAssoc<any>
 export interface MessageDeleteParams extends IAssoc<any>
 {
     msgid: number;
+}
+
+export interface FtStopParams extends IAssoc<any>
+{
+    serverftfid: number;
+    delete: YesNo;
 }
 
 export interface LogAddParams extends IAssoc<any>
