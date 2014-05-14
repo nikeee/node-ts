@@ -1,4 +1,4 @@
-/**
+﻿/**
 * @autor Niklas Mollenhauer <holzig@outlook.com>
 * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
 * @license Beerware/Pizzaware
@@ -303,3 +303,196 @@ var StringExtensions = (function () {
 
 
 
+
+/*
+Enums imported from documentation.
+*/
+(function (HostMessageMode) {
+    /**
+    * 1: display message in chatlog
+    */
+    HostMessageMode[HostMessageMode["HostMessageMode_LOG"] = 1] = "HostMessageMode_LOG";
+
+    /**
+    * 2: display message in modal dialog
+    */
+    HostMessageMode[HostMessageMode["HostMessageMode_MODAL"] = 2] = "HostMessageMode_MODAL";
+
+    /**
+    * 3: display message in modal dialog and close connection
+    */
+    HostMessageMode[HostMessageMode["HostMessageMode_MODALQUIT"] = 3] = "HostMessageMode_MODALQUIT";
+})(exports.HostMessageMode || (exports.HostMessageMode = {}));
+var HostMessageMode = exports.HostMessageMode;
+
+(function (HostBannerMode) {
+    /**
+    * 0: do not adjust
+    */
+    HostBannerMode[HostBannerMode["HostMessageMode_NOADJUST"] = 0] = "HostMessageMode_NOADJUST";
+
+    /**
+    * 1: adjust but ignore aspect ratio (like TeamSpeak 2)
+    */
+    HostBannerMode[HostBannerMode["HostMessageMode_IGNOREASPECT"] = 1] = "HostMessageMode_IGNOREASPECT";
+
+    /**
+    * 2: adjust and keep aspect ratio
+    */
+    HostBannerMode[HostBannerMode["HostMessageMode_KEEPASPECT"] = 2] = "HostMessageMode_KEEPASPECT";
+})(exports.HostBannerMode || (exports.HostBannerMode = {}));
+var HostBannerMode = exports.HostBannerMode;
+
+(function (Codec) {
+    /**
+    * 0: speex narrowband (mono, 16bit, 8kHz)
+    */
+    Codec[Codec["CODEC_SPEEX_NARROWBAND"] = 0] = "CODEC_SPEEX_NARROWBAND";
+
+    /**
+    * 1: speex wideband (mono, 16bit, 16kHz)
+    */
+    Codec[Codec["CODEC_SPEEX_WIDEBAND"] = 1] = "CODEC_SPEEX_WIDEBAND";
+
+    /**
+    * 2: speex ultra-wideband (mono, 16bit, 32kHz)
+    */
+    Codec[Codec["CODEC_SPEEX_ULTRAWIDEBAND"] = 2] = "CODEC_SPEEX_ULTRAWIDEBAND";
+
+    /**
+    * 3: celt mono (mono, 16bit, 48kHz)
+    */
+    Codec[Codec["CODEC_CELT_MONO"] = 3] = "CODEC_CELT_MONO";
+})(exports.Codec || (exports.Codec = {}));
+var Codec = exports.Codec;
+
+(function (CodecEncryptionMode) {
+    /**
+    * 0: configure per channel
+    */
+    CodecEncryptionMode[CodecEncryptionMode["CODEC_CRYPT_INDIVIDUAL"] = 0] = "CODEC_CRYPT_INDIVIDUAL";
+
+    /**
+    * 1: globally disabled
+    */
+    CodecEncryptionMode[CodecEncryptionMode["CODEC_CRYPT_DISABLED"] = 1] = "CODEC_CRYPT_DISABLED";
+
+    /**
+    * 2: globally enabled
+    */
+    CodecEncryptionMode[CodecEncryptionMode["CODEC_CRYPT_ENABLED"] = 2] = "CODEC_CRYPT_ENABLED";
+})(exports.CodecEncryptionMode || (exports.CodecEncryptionMode = {}));
+var CodecEncryptionMode = exports.CodecEncryptionMode;
+
+(function (TextMessageTargetMode) {
+    /**
+    * 1: target is a client
+    */
+    TextMessageTargetMode[TextMessageTargetMode["TextMessageTarget_CLIENT"] = 1] = "TextMessageTarget_CLIENT";
+
+    /**
+    * 2: target is a channel
+    */
+    TextMessageTargetMode[TextMessageTargetMode["TextMessageTarget_CHANNEL"] = 2] = "TextMessageTarget_CHANNEL";
+
+    /**
+    * 3: target is a virtual server
+    */
+    TextMessageTargetMode[TextMessageTargetMode["TextMessageTarget_SERVER"] = 3] = "TextMessageTarget_SERVER";
+})(exports.TextMessageTargetMode || (exports.TextMessageTargetMode = {}));
+var TextMessageTargetMode = exports.TextMessageTargetMode;
+
+(function (LogLevel) {
+    /**
+    * 1: everything that is really bad
+    */
+    LogLevel[LogLevel["LogLevel_ERROR"] = 1] = "LogLevel_ERROR";
+
+    /**
+    * 2: everything that might be bad
+    */
+    LogLevel[LogLevel["LogLevel_WARNING"] = 2] = "LogLevel_WARNING";
+
+    /**
+    * 3: output that might help find a problem
+    */
+    LogLevel[LogLevel["LogLevel_DEBUG"] = 3] = "LogLevel_DEBUG";
+
+    /**
+    * 4: informational output
+    */
+    LogLevel[LogLevel["LogLevel_INFO"] = 4] = "LogLevel_INFO";
+})(exports.LogLevel || (exports.LogLevel = {}));
+var LogLevel = exports.LogLevel;
+
+(function (ReasonIdentifier) {
+    /**
+    * 4: kick client from channel
+    */
+    ReasonIdentifier[ReasonIdentifier["REASON_KICK_CHANNEL"] = 4] = "REASON_KICK_CHANNEL";
+
+    /**
+    * 5: kick client from server
+    */
+    ReasonIdentifier[ReasonIdentifier["REASON_KICK_SERVER"] = 5] = "REASON_KICK_SERVER";
+})(exports.ReasonIdentifier || (exports.ReasonIdentifier = {}));
+var ReasonIdentifier = exports.ReasonIdentifier;
+
+(function (PermissionGroupDatabaseTypes) {
+    /**
+    * 0: template group (used for new virtual servers)
+    */
+    PermissionGroupDatabaseTypes[PermissionGroupDatabaseTypes["PermGroupDBTypeTemplate"] = 0] = "PermGroupDBTypeTemplate";
+
+    /**
+    * 1: regular group (used for regular clients)
+    */
+    PermissionGroupDatabaseTypes[PermissionGroupDatabaseTypes["PermGroupDBTypeRegular"] = 1] = "PermGroupDBTypeRegular";
+
+    /**
+    * 2: global query group (used for ServerQuery clients)
+    */
+    PermissionGroupDatabaseTypes[PermissionGroupDatabaseTypes["PermGroupDBTypeQuery"] = 2] = "PermGroupDBTypeQuery";
+})(exports.PermissionGroupDatabaseTypes || (exports.PermissionGroupDatabaseTypes = {}));
+var PermissionGroupDatabaseTypes = exports.PermissionGroupDatabaseTypes;
+
+(function (PermissionGroupTypes) {
+    /**
+    * 0: server group permission
+    */
+    PermissionGroupTypes[PermissionGroupTypes["PermGroupTypeServerGroup"] = 0] = "PermGroupTypeServerGroup";
+
+    /**
+    * 1: client specific permission
+    */
+    PermissionGroupTypes[PermissionGroupTypes["PermGroupTypeGlobalClient"] = 1] = "PermGroupTypeGlobalClient";
+
+    /**
+    * 2: channel specific permission
+    */
+    PermissionGroupTypes[PermissionGroupTypes["PermGroupTypeChannel"] = 2] = "PermGroupTypeChannel";
+
+    /**
+    * 3: channel group permission
+    */
+    PermissionGroupTypes[PermissionGroupTypes["PermGroupTypeChannelGroup"] = 3] = "PermGroupTypeChannelGroup";
+
+    /**
+    * 4: channel-client specific permission
+    */
+    PermissionGroupTypes[PermissionGroupTypes["PermGroupTypeChannelClient"] = 4] = "PermGroupTypeChannelClient";
+})(exports.PermissionGroupTypes || (exports.PermissionGroupTypes = {}));
+var PermissionGroupTypes = exports.PermissionGroupTypes;
+
+(function (TokenType) {
+    /**
+    * 0: server group token (id1={groupID} id2=0)
+    */
+    TokenType[TokenType["TokenServerGroup"] = 0] = "TokenServerGroup";
+
+    /**
+    * 1: channel group token (id1={groupID} id2={channelID})
+    */
+    TokenType[TokenType["TokenChannelGroup"] = 1] = "TokenChannelGroup";
+})(exports.TokenType || (exports.TokenType = {}));
+var TokenType = exports.TokenType;

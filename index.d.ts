@@ -1,6 +1,4 @@
-/// <reference path="typings/q/Q.d.ts" />
-/// <reference path="node_modules/line-readable-stream/LineReadableStream.d.ts" />
-import events = require("events");
+﻿import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
 * @todo unit tests
@@ -57,6 +55,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "serverinfo"): Q.Promise<CallbackData<ServerInfoResponseData>>;
     public send(cmd: "serverrequestconnectioninfo"): Q.Promise<CallbackData<ServerRequstConnectionInfoResponseData>>;
     public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<ServerEditResponseData>>;
+    public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<SendTextMessageResponseData>>;
     public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GmResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
@@ -186,6 +185,13 @@ export interface ServerEditResponseData extends QueryResponseItem {
 export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesChangable {
 }
 export interface ServerInfoResponseData extends QueryResponseItem, VirtualServerProperties {
+}
+export interface SendTextMessageParams extends QueryResponseItem {
+    targetmode: number;
+    target: TextMessageTargetMode;
+    msg: string;
+}
+export interface SendTextMessageResponseData extends IAssoc<any> {
 }
 export interface InstanceEditResponseData extends QueryResponseItem {
 }
@@ -766,4 +772,152 @@ export interface ClientPropertiesReadOnly {
     CLIENT_COUNTRY: any;
 }
 export interface ClientProperties extends ClientPropertiesReadOnly, ClientPropertiesChangable {
+}
+export declare enum HostMessageMode {
+    /**
+    * 1: display message in chatlog
+    */
+    HostMessageMode_LOG = 1,
+    /**
+    * 2: display message in modal dialog
+    */
+    HostMessageMode_MODAL = 2,
+    /**
+    * 3: display message in modal dialog and close connection
+    */
+    HostMessageMode_MODALQUIT = 3,
+}
+export declare enum HostBannerMode {
+    /**
+    * 0: do not adjust
+    */
+    HostMessageMode_NOADJUST = 0,
+    /**
+    * 1: adjust but ignore aspect ratio (like TeamSpeak 2)
+    */
+    HostMessageMode_IGNOREASPECT = 1,
+    /**
+    * 2: adjust and keep aspect ratio
+    */
+    HostMessageMode_KEEPASPECT = 2,
+}
+export declare enum Codec {
+    /**
+    * 0: speex narrowband (mono, 16bit, 8kHz)
+    */
+    CODEC_SPEEX_NARROWBAND = 0,
+    /**
+    * 1: speex wideband (mono, 16bit, 16kHz)
+    */
+    CODEC_SPEEX_WIDEBAND = 1,
+    /**
+    * 2: speex ultra-wideband (mono, 16bit, 32kHz)
+    */
+    CODEC_SPEEX_ULTRAWIDEBAND = 2,
+    /**
+    * 3: celt mono (mono, 16bit, 48kHz)
+    */
+    CODEC_CELT_MONO = 3,
+}
+export declare enum CodecEncryptionMode {
+    /**
+    * 0: configure per channel
+    */
+    CODEC_CRYPT_INDIVIDUAL = 0,
+    /**
+    * 1: globally disabled
+    */
+    CODEC_CRYPT_DISABLED = 1,
+    /**
+    * 2: globally enabled
+    */
+    CODEC_CRYPT_ENABLED = 2,
+}
+export declare enum TextMessageTargetMode {
+    /**
+    * 1: target is a client
+    */
+    TextMessageTarget_CLIENT = 1,
+    /**
+    * 2: target is a channel
+    */
+    TextMessageTarget_CHANNEL = 2,
+    /**
+    * 3: target is a virtual server
+    */
+    TextMessageTarget_SERVER = 3,
+}
+export declare enum LogLevel {
+    /**
+    * 1: everything that is really bad
+    */
+    LogLevel_ERROR = 1,
+    /**
+    * 2: everything that might be bad
+    */
+    LogLevel_WARNING = 2,
+    /**
+    * 3: output that might help find a problem
+    */
+    LogLevel_DEBUG = 3,
+    /**
+    * 4: informational output
+    */
+    LogLevel_INFO = 4,
+}
+export declare enum ReasonIdentifier {
+    /**
+    * 4: kick client from channel
+    */
+    REASON_KICK_CHANNEL = 4,
+    /**
+    * 5: kick client from server
+    */
+    REASON_KICK_SERVER = 5,
+}
+export declare enum PermissionGroupDatabaseTypes {
+    /**
+    * 0: template group (used for new virtual servers)
+    */
+    PermGroupDBTypeTemplate = 0,
+    /**
+    * 1: regular group (used for regular clients)
+    */
+    PermGroupDBTypeRegular = 1,
+    /**
+    * 2: global query group (used for ServerQuery clients)
+    */
+    PermGroupDBTypeQuery = 2,
+}
+export declare enum PermissionGroupTypes {
+    /**
+    * 0: server group permission
+    */
+    PermGroupTypeServerGroup = 0,
+    /**
+    * 1: client specific permission
+    */
+    PermGroupTypeGlobalClient = 1,
+    /**
+    * 2: channel specific permission
+    */
+    PermGroupTypeChannel = 2,
+    /**
+    * 3: channel group permission
+    */
+    PermGroupTypeChannelGroup = 3,
+    /**
+    * 4: channel-client specific permission
+    */
+    PermGroupTypeChannelClient = 4,
+}
+export declare enum TokenType {
+    /**
+    * 0: server group token (id1={groupID} id2=0)
+    */
+    TokenServerGroup = 0,
+    /**
+    * 1: channel group token (id1={groupID} id2={channelID})
+    */
+    TokenChannelGroup = 1,
 }
