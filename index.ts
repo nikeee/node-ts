@@ -6,11 +6,11 @@
 
 ///<reference path="typings/node/node.d.ts"/>
 ///<reference path="typings/q/Q.d.ts"/>
-///<reference path="LineInputStream.ts"/>
+//<reference path="node_modules/node-ts/LineReadableStream.ts"/>
 
 import Q = require("q");
 import net = require("net");
-import LineInputStream = require("./LineInputStream");
+import LineReadableStream = require("./node_modules/node-ts/LineReadableStream");
 import events = require("events");
 import util = require("util");
 
@@ -37,7 +37,7 @@ export class TeamSpeakClient extends events.EventEmitter
     private _executing: QueryCommand;
 
     private _socket: net.Socket;
-    private _reader: LineInputStream;
+    private _reader: LineReadableStream;
 
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
@@ -91,7 +91,7 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     private onConnect(): void
     {
-        this._reader = new LineInputStream(this._socket);
+        this._reader = new LineReadableStream(this._socket);
         this._reader.on("line", line =>
         {
             var s = line.trim();
