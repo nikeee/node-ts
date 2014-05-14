@@ -207,7 +207,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: logview
     public send(cmd: "logadd", params: LogAddParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
-    // TODO: channellist
+    public send(cmd: "channellist", params: IAssoc<any>, options: string[]): Q.Promise<CallbackData<ChannelListResponseData>>; //@todo find anything to make signature better typed
     public send(cmd: "channelinfo", params: ChannelInfoParams): Q.Promise<CallbackData<ChannelInfoResponseData>>
     // TODO: channelfind
     // TODO: channelmove
@@ -612,7 +612,15 @@ export interface GmParams extends IAssoc<any>
 {
     msg: string;
 }
-
+export interface ChannelListResponseData extends QueryResponseItem
+{
+    cid: number;
+    pid: number;
+    channel_order: number;
+    channel_name: string;
+    channel_topic: string;
+    total_clients: number;
+}
 export interface ChannelInfoParams extends IAssoc<any>
 {
     cid: number;

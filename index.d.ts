@@ -61,6 +61,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "logadd", params: LogAddParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "channellist", params: IAssoc<any>, options: string[]): Q.Promise<CallbackData<ChannelListResponseData>>;
     public send(cmd: "channelinfo", params: ChannelInfoParams): Q.Promise<CallbackData<ChannelInfoResponseData>>;
     public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
@@ -217,6 +218,14 @@ export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChang
 }
 export interface GmParams extends IAssoc<any> {
     msg: string;
+}
+export interface ChannelListResponseData extends QueryResponseItem {
+    cid: number;
+    pid: number;
+    channel_order: number;
+    channel_name: string;
+    channel_topic: string;
+    total_clients: number;
 }
 export interface ChannelInfoParams extends IAssoc<any> {
     cid: number;
