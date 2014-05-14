@@ -245,7 +245,7 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: "clientmove", params: ClientMoveParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientkick", params: ClientKickParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
-    // TODO: clientpermlist
+    public send(cmd: "clientpermlist", params: ClientPermListParams, options: string[]): Q.Promise<CallbackData<ClientPermListResponseData>>;
     // TODO: clientaddperm
     public send(cmd: "clientdelperm", param: ClientDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: channelclientpermlist
@@ -289,7 +289,7 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
-    public send(cmd: string, params: IAssoc<Object> = {}, options: string[]= []): Q.Promise<CallbackData<QueryResponseItem>>
+    public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Q.Promise<CallbackData<QueryResponseItem>>
     {
         if (!cmd)
             return Q.reject("Empty command");
@@ -662,7 +662,18 @@ export interface ClientPokeParams extends IAssoc<any>
     clid: number;
     msg: string;
 }
-
+export interface ClientPermListParams extends IAssoc<any>
+{
+    cldbid: number;
+}
+export interface ClientPermListResponseData extends QueryResponseItem
+{
+    cldbid?: number;
+    permid: number;
+    permvalue: number;
+    permnegated: YesNo;
+    permskip: number;
+}
 export interface ClientDeleteParams extends IAssoc<any>
 {
     cldbid: number;
