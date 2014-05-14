@@ -7,6 +7,7 @@
  * @autor Niklas Mollenhauer <holzig@outlook.com>
  * @autor Philip Tellis <philip@bluesmoon.info>
  * @todo May publish this as a new package on npmjs.
+ * @todo Get ridd of _events.
  * @example
  * // creates a new instance
  * var lis = new LineInputStream(underlyingStream);
