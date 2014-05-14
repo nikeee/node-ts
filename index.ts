@@ -183,7 +183,7 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
     public send(cmd: "serverprocessstop"): Q.Promise<CallbackData<ServerProcessStopResponseData>>;
     public send(cmd: "serverinfo"): Q.Promise<CallbackData<ServerInfoResponseData>>;
-    // TODO: serverrequestconnectioninfo
+    public send(cmd: "serverrequestconnectioninfo"): Q.Promise<CallbackData<ServerRequstConnectionInfoResponseData>>;
     public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<ServerEditResponseData>>;
     // TODO: servergrouplist
     // TODO: servergroupadd
@@ -583,6 +583,9 @@ export interface InstanceInfoResponseData extends QueryResponseItem
     // TODO
 }
 
+export interface ServerRequstConnectionInfoResponseData extends QueryResponseItem, ServerConnectionProperties
+{ }
+
 export interface ServerEditResponseData extends QueryResponseItem
 { }
 export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesChangable
@@ -658,7 +661,7 @@ export interface InstancePropertiesChangable
     SERVERINSTANCE_SERVERQUERY_FLOOD_BAN_TIME: number;
 }
 
-interface InstancePropertiesReadOnly
+interface InstancePropertiesReadOnly extends ServerConnectionProperties
 {
     /**
      * Uptime in seconds
@@ -672,46 +675,6 @@ interface InstancePropertiesReadOnly
      * Number of virtual servers running
      */
     VIRTUALSERVERS_RUNNING_TOTAL: number;
-    /**
-     * Current bandwidth used for outgoing file transfers (Bytes/s)
-     */
-    CONNECTION_FILETRANSFER_BANDWIDTH_SENT: number;
-    /**
-     * Current bandwidth used for incoming file transfers (Bytes/s)
-     */
-    CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED: number;
-    /**
-     * Total amount of packets sent
-     */
-    CONNECTION_PACKETS_SENT_TOTAL: number;
-    /**
-     * Total amount of packets received
-     */
-    CONNECTION_PACKETS_RECEIVED_TOTAL: number;
-    /**
-     * Total amount of bytes sent
-     */
-    CONNECTION_BYTES_SENT_TOTAL: number;
-    /**
-     * Total amount of bytes received
-     */
-    CONNECTION_BYTES_RECEIVED_TOTAL: number;
-    /**
-     * Average bandwidth used for outgoing data in the last second (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL: number;
-    /**
-     * Average bandwidth used for incoming data in the last second (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL: number;
-    /**
-     * Average bandwidth used for outgoing data in the last minute (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL: number;
-    /**
-     * Average bandwidth used for incoming data in the last minute (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL: number;
     /**
      * Database revision number
      */
@@ -922,7 +885,51 @@ export interface VirtualServerPropertiesChangable
     VIRTUALSERVER_CODEC_ENCRYPTION_MODE: any;
 }
 
-export interface VirtualServerPropertiesReadOnly
+export interface ServerConnectionProperties
+{
+    /**
+     * Current bandwidth used for outgoing file transfers (Bytes/s)
+     */
+    CONNECTION_FILETRANSFER_BANDWIDTH_SENT: number;
+    /**
+     * Current bandwidth used for incoming file transfers (Bytes/s)
+     */
+    CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED: number;
+    /**
+     * Total amount of packets sent
+     */
+    CONNECTION_PACKETS_SENT_TOTAL: number;
+    /**
+     * Total amount of packets received
+     */
+    CONNECTION_PACKETS_RECEIVED_TOTAL: number;
+    /**
+     * Total amount of bytes sent
+     */
+    CONNECTION_BYTES_SENT_TOTAL: number;
+    /**
+     * Total amount of bytes received
+     */
+    CONNECTION_BYTES_RECEIVED_TOTAL: number;
+    /**
+     * Average bandwidth used for outgoing data in the last second (Bytes/s)
+     */
+    CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL: number;
+    /**
+     * Average bandwidth used for incoming data in the last second (Bytes/s)
+     */
+    CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL: number;
+    /**
+     * Average bandwidth used for outgoing data in the last minute (Bytes/s)
+     */
+    CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL: number;
+    /**
+     * Average bandwidth used for incoming data in the last minute (Bytes/s)
+     */
+    CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL: number;
+}
+
+export interface VirtualServerPropertiesReadOnly extends ServerConnectionProperties
 {
     /**
      * Indicates whether the server has a password set or not
@@ -992,46 +999,6 @@ export interface VirtualServerPropertiesReadOnly
      * Database ID of the virtual server
      */
     VIRTUALSERVER_ID: any;
-    /**
-     * Current bandwidth used for outgoing file transfers (Bytes/s)
-     */
-    CONNECTION_FILETRANSFER_BANDWIDTH_SENT: number;
-    /**
-     * Current bandwidth used for incoming file transfers (Bytes/s)
-     */
-    CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED: number;
-    /**
-     * Total amount of packets sent
-     */
-    CONNECTION_PACKETS_SENT_TOTAL: number;
-    /**
-     * Total amount of packets received
-     */
-    CONNECTION_PACKETS_RECEIVED_TOTAL: number;
-    /**
-     * Total amount of bytes sent
-     */
-    CONNECTION_BYTES_SENT_TOTAL: number;
-    /**
-     * Total amount of bytes received
-     */
-    CONNECTION_BYTES_RECEIVED_TOTAL: number;
-    /**
-     * Average bandwidth used for outgoing data in the last second (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL: number;
-    /**
-     * Average bandwidth used for incoming data in the last second (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL: number;
-    /**
-     * Average bandwidth used for outgoing data in the last minute (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL: number;
-    /**
-     * Average bandwidth used for incoming data in the last minute (Bytes/s)
-     */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL: number;
     /**
      * The average packet loss for speech data on the virtual server
      */
