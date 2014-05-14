@@ -227,7 +227,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: channelpermlist
     // TODO: channeladdperm
     // TODO: channeldelperm
-    // TODO: clientlist
+    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
     // TODO: clientfind
     // TODO: clientedit
@@ -284,7 +284,6 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: customsearch
     // TODO: custominfo
     // TODO: whoami
-    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
 
     //public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
@@ -567,6 +566,7 @@ export interface QueryCommand
  * @todo move to seperate file
  * @todo check for encoding mess up/invisible chars caused by copy/pasting from the documentation PDF
  * @todo more discrete typings using enums/interfaces/etc
+ * @todo lower case imported interfaces
  */
 
 export interface HostInfoResponseData extends QueryResponseItem

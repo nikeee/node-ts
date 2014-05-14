@@ -65,6 +65,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "channellist", params: IAssoc<any>, options: string[]): Q.Promise<CallbackData<ChannelListResponseData>>;
     public send(cmd: "channelinfo", params: ChannelInfoParams): Q.Promise<CallbackData<ChannelInfoResponseData>>;
     public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
     public send(cmd: "clientdbdelete", params: ClientDBDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientmove", params: ClientMoveParams): Q.Promise<CallbackData<GenericResponseData>>;
@@ -82,7 +83,6 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "bandel", params: BanDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bandelall"): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
     /**
     * Parses a query API response.
@@ -190,6 +190,7 @@ export interface QueryCommand {
 * @todo move to seperate file
 * @todo check for encoding mess up/invisible chars caused by copy/pasting from the documentation PDF
 * @todo more discrete typings using enums/interfaces/etc
+* @todo lower case imported interfaces
 */
 export interface HostInfoResponseData extends QueryResponseItem {
     instance_uptime: number;
