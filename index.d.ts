@@ -46,7 +46,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
     public send(cmd: "hostinfo"): Q.Promise<CallbackData<HostInfoResponseData>>;
     public send(cmd: "instanceinfo"): Q.Promise<CallbackData<InstanceInfoResponseData>>;
-    public send(cmd: "instanceedit", params: InstanceEditParams): Q.Promise<CallbackData<InstanceEditResponseData>>;
+    public send(cmd: "instanceedit", params: InstanceEditParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bindinglist"): Q.Promise<CallbackData<BindingListResponseData>>;
     public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
     public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
@@ -54,9 +54,10 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "serverprocessstop"): Q.Promise<CallbackData<ServerProcessStopResponseData>>;
     public send(cmd: "serverinfo"): Q.Promise<CallbackData<ServerInfoResponseData>>;
     public send(cmd: "serverrequestconnectioninfo"): Q.Promise<CallbackData<ServerRequstConnectionInfoResponseData>>;
-    public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<ServerEditResponseData>>;
-    public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<SendTextMessageResponseData>>;
-    public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GmResponseData>>;
+    public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "logadd", params: LogAddParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -178,9 +179,9 @@ export interface HostInfoResponseData extends QueryResponseItem {
 }
 export interface InstanceInfoResponseData extends QueryResponseItem {
 }
-export interface ServerRequstConnectionInfoResponseData extends QueryResponseItem, ServerConnectionProperties {
+export interface GenericResponseData extends QueryResponseItem {
 }
-export interface ServerEditResponseData extends QueryResponseItem {
+export interface ServerRequstConnectionInfoResponseData extends QueryResponseItem, ServerConnectionProperties {
 }
 export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesChangable {
 }
@@ -191,13 +192,7 @@ export interface SendTextMessageParams extends QueryResponseItem {
     target: TextMessageTargetMode;
     msg: string;
 }
-export interface SendTextMessageResponseData extends IAssoc<any> {
-}
-export interface InstanceEditResponseData extends QueryResponseItem {
-}
 export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChangable {
-}
-export interface GmResponseData extends QueryResponseItem {
 }
 export interface GmParams extends IAssoc<any> {
     msg: string;
@@ -206,6 +201,10 @@ export interface ClientInfoResponseData extends QueryResponseItem, ClientPropert
 }
 export interface ClientInfoParams extends IAssoc<any> {
     clid: number;
+}
+export interface LogAddParams extends IAssoc<any> {
+    loglevel: LogLevel;
+    logmsg: string;
 }
 export interface InstancePropertiesChangable {
     /**
