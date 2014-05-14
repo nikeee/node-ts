@@ -61,6 +61,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "logadd", params: LogAddParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "channelinfo", params: ChannelInfoParams): Q.Promise<CallbackData<ChannelInfoResponseData>>;
     public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
     public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
@@ -205,8 +206,12 @@ export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChang
 export interface GmParams extends IAssoc<any> {
     msg: string;
 }
-export interface ChannelDeleteParams extends IAssoc<any> {
+export interface ChannelInfoParams extends IAssoc<any> {
     cid: number;
+}
+export interface ChannelInfoResponseData extends QueryResponseItem, ChannelProperties {
+}
+export interface ChannelDeleteParams extends IAssoc<any>, ChannelInfoParams {
     force: YesNo;
 }
 export interface ClientInfoResponseData extends QueryResponseItem, ClientProperties {
@@ -596,6 +601,112 @@ export interface VirtualServerPropertiesReadOnly extends ServerConnectionPropert
     VIRTUALSERVER_FILEBASE: string;
 }
 export interface VirtualServerProperties extends VirtualServerPropertiesReadOnly, VirtualServerPropertiesChangable {
+}
+export interface ChannelPropertiesChangable {
+    /**
+    * Name of the channel
+    */
+    CHANNEL_NAME: string;
+    /**
+    * Topic of the channel
+    */
+    CHANNEL_TOPIC: string;
+    /**
+    * Description of the channel
+    */
+    CHANNEL_DESCRIPTION: string;
+    /**
+    * Password of the channel
+    */
+    CHANNEL_PASSWORD: string;
+    /**
+    * Codec used by the channel (see Definitions)
+    */
+    CHANNEL_CODEC: Codec;
+    /**
+    * Codec quality used by the channel
+    */
+    CHANNEL_CODEC_QUALITY: any;
+    /**
+    * Individual max number of clients for the channel
+    */
+    CHANNEL_MAXCLIENTS: number;
+    /**
+    * Individual max number of clients for the channel family
+    */
+    CHANNEL_MAXFAMILYCLIENTS: number;
+    /**
+    * ID of the channel below which the channel is positioned
+    */
+    CHANNEL_ORDER: number;
+    /**
+    * Indicates whether the channel is permanent or not
+    */
+    CHANNEL_FLAG_PERMANENT: any;
+    /**
+    * Indicates whether the channel is semi-permanent or not
+    */
+    CHANNEL_FLAG_SEMI_PERMANENT: any;
+    /**
+    * Indicates whether the channel is temporary or not
+    */
+    CHANNEL_FLAG_TEMPORARY: any;
+    /**
+    * Indicates whether the channel is the virtual servers default channel or not
+    */
+    CHANNEL_FLAG_DEFAULT: any;
+    /**
+    * Indicates whether the channel has a max clients limit or not
+    */
+    CHANNEL_FLAG_MAXCLIENTS_UNLIMITED: any;
+    /**
+    * Indicates whether the channel has a max family clients limit or not
+    */
+    CHANNEL_FLAG_MAXFAMILYCLIENTS_UNLIMITED: any;
+    /**
+    * Indicates whether the channel inherits the max family clients from his parent channel or not
+    */
+    CHANNEL_FLAG_MAXFAMILYCLIENTS_INHERITED: any;
+    /**
+    * Needed talk power for this channel
+    */
+    CHANNEL_NEEDED_TALK_POWER: any;
+    /**
+    * Phonetic name of the channel
+    */
+    CHANNEL_NAME_PHONETIC: string;
+    /**
+    * CRC32 checksum of the channel icon
+    */
+    CHANNEL_ICON_ID: any;
+    /**
+    * Indicates whether speech data transmitted in this channel is encrypted or not
+    */
+    CHANNEL_CODEC_IS_UNENCRYPTED: any;
+    /**
+    * The channels parent ID
+    */
+    CPID: number;
+}
+export interface ChannelPropertiesReadOnly {
+    /**
+    * Indicates whether the channel has a password set or not
+    */
+    CHANNEL_FLAG_PASSWORD: any;
+    /**
+    * Path of the channels file repository
+    */
+    CHANNEL_FILEPATH: string;
+    /**
+    * Indicates whether the channel is silenced or not
+    */
+    CHANNEL_FORCED_SILENCE: any;
+    /**
+    * The channels ID
+    */
+    CID: number;
+}
+export interface ChannelProperties extends ChannelPropertiesReadOnly, ChannelPropertiesChangable {
 }
 export interface ClientPropertiesChangable {
     /**
