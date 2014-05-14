@@ -267,8 +267,8 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: messageupdateflag
     // TODO: complainlist
     // TODO: complainadd
-    // TODO: complaindelall
-    // TODO: complaindel
+    public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "complaindel", params: ComplainDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: banclient
     // TODO: banlist
     // TODO: banadd
@@ -658,6 +658,16 @@ export interface ClientPokeParams extends IAssoc<any>
 export interface MessageDeleteParams extends IAssoc<any>
 {
     msgid: number;
+}
+
+export interface ComplainDeleteAllParams extends IAssoc<any>
+{
+    tcldbid: number;
+}
+export interface ComplainDeleteParams extends IAssoc<any>
+{
+    tcldbid: number;
+    fcldbid: number;
 }
 
 export interface FtStopParams extends IAssoc<any>

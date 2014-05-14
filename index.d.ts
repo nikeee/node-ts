@@ -1,4 +1,6 @@
-﻿import events = require("events");
+/// <reference path="typings/q/Q.d.ts" />
+/// <reference path="node_modules/line-readable-stream/LineReadableStream.d.ts" />
+import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
 * @todo unit tests
@@ -67,6 +69,8 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "clientkick", params: ClientKickParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "messagedel", params: MessageDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "complaindel", params: ComplainDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -240,6 +244,13 @@ export interface ClientPokeParams extends IAssoc<any> {
 }
 export interface MessageDeleteParams extends IAssoc<any> {
     msgid: number;
+}
+export interface ComplainDeleteAllParams extends IAssoc<any> {
+    tcldbid: number;
+}
+export interface ComplainDeleteParams extends IAssoc<any> {
+    tcldbid: number;
+    fcldbid: number;
 }
 export interface FtStopParams extends IAssoc<any> {
     serverftfid: number;
