@@ -167,21 +167,21 @@ export class TeamSpeakClient extends events.EventEmitter
 
     // TODO: help
     // TODO: quit
-    public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<LoginResponseData>>;
-    public send(cmd: "logout"): Q.Promise<CallbackData<LogoutResponseData>>;
+    public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "logout"): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
     public send(cmd: "hostinfo"): Q.Promise<CallbackData<HostInfoResponseData>>;
     public send(cmd: "instanceinfo"): Q.Promise<CallbackData<InstanceInfoResponseData>>;
     public send(cmd: "instanceedit", params: InstanceEditParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bindinglist"): Q.Promise<CallbackData<BindingListResponseData>>;
-    public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
-    // TODO: serverlist
+    public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverlist", params: IAssoc<any>, options: string[]): Q.Promise<CallbackData<ServerListResponseData>>;
     // TODO: serveridgetbyport
     public send(cmd: "serverdelete", params: ServerDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: servercreate
-    public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
-    public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
-    public send(cmd: "serverprocessstop"): Q.Promise<CallbackData<ServerProcessStopResponseData>>;
+    public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverprocessstop"): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "serverinfo"): Q.Promise<CallbackData<ServerInfoResponseData>>;
     public send(cmd: "serverrequestconnectioninfo"): Q.Promise<CallbackData<ServerRequstConnectionInfoResponseData>>;
     public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<GenericResponseData>>;
@@ -466,8 +466,6 @@ export interface CallbackData<T extends QueryResponseItem>
     rawResponse: string;
 }
 
-export interface LoginResponseData extends QueryResponseItem
-{ }
 export interface LoginParams extends IAssoc<any>
 {
     client_login_name: string;
@@ -481,29 +479,28 @@ export interface VersionResponseData extends QueryResponseItem
     platform: string;
 }
 
-export interface LogoutResponseData extends QueryResponseItem
-{ }
-
-export interface UseResponseData extends QueryResponseItem
-{ }
 export interface UseParams extends IAssoc<any>
 {
     sid: number;
 }
-
+export interface ServerListResponseData extends QueryResponseItem
+{
+    //@todo
+    virtualserver_id: number;
+    virtualserver_port: number;
+    virtualserver_status: string;
+    virtualserver_clientsonline: number;
+}
 export interface ServerDeleteParams extends UseParams
 { }
 
 export interface ServerStartStopParams extends UseParams
 { }
-export interface ServerStartStopResponseData extends QueryResponseItem
-{ }
-
-export interface ServerProcessStopResponseData extends QueryResponseItem
-{ }
 
 export interface ClientListResponseData extends QueryResponseItem
-{ }
+{
+    //TODO
+}
 export interface ClientListParams extends IAssoc<any>
 { }
 
@@ -964,7 +961,7 @@ export interface VirtualServerPropertiesChangable
     /**
      * Status of the virtual server (online | virtual online | offline | booting up | shutting down | …)
      */
-    VIRTUALSERVER_STATUS: any;
+    VIRTUALSERVER_STATUS: string;
     /**
      * Indicates whether the server logs events related to clients or not
      */
