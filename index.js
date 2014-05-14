@@ -11,10 +11,10 @@ var __extends = this.__extends || function (d, b) {
 };
 ///<reference path="typings/node/node.d.ts"/>
 ///<reference path="typings/q/Q.d.ts"/>
-///<reference path="LineInputStream.ts"/>
+///<require path="node_modules/line-readable-stream/LineReadableStream.d.ts"/>
 var Q = require("q");
 var net = require("net");
-var LineInputStream = require("./LineInputStream");
+var LineReadableStream = require("./node_modules/line-readable-stream/LineReadableStream");
 var events = require("events");
 var util = require("util");
 
@@ -74,7 +74,7 @@ var TeamSpeakClient = (function (_super) {
     */
     TeamSpeakClient.prototype.onConnect = function () {
         var _this = this;
-        this._reader = new LineInputStream(this._socket);
+        this._reader = new LineReadableStream(this._socket);
         this._reader.on("line", function (line) {
             var s = line.trim();
 

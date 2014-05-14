@@ -6,11 +6,11 @@
 
 ///<reference path="typings/node/node.d.ts"/>
 ///<reference path="typings/q/Q.d.ts"/>
-//<reference path="node_modules/node-ts/LineReadableStream.ts"/>
+///<require path="node_modules/line-readable-stream/LineReadableStream.d.ts"/>
 
 import Q = require("q");
 import net = require("net");
-import LineReadableStream = require("./node_modules/node-ts/LineReadableStream");
+import LineReadableStream = require("./node_modules/line-readable-stream/LineReadableStream");
 import events = require("events");
 import util = require("util");
 
