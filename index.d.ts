@@ -63,6 +63,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
+    public send(cmd: "messagedel", params: MessageDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -211,6 +212,9 @@ export interface ClientInfoResponseData extends QueryResponseItem, ClientPropert
 }
 export interface ClientInfoParams extends IAssoc<any> {
     clid: number;
+}
+export interface MessageDeleteParams extends IAssoc<any> {
+    msgid: number;
 }
 export interface LogAddParams extends IAssoc<any> {
     loglevel: LogLevel;

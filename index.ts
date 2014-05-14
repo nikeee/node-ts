@@ -262,7 +262,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: privilegekeydelete
     // TODO: privilegekeyuse
     // TODO: messageadd
-    // TODO: messagedel
+    public send(cmd: "messagedel", params: MessageDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: messageget
     // TODO: messageupdateflag
     // TODO: complainlist
@@ -624,6 +624,11 @@ export interface ClientInfoResponseData extends QueryResponseItem, ClientPropert
 export interface ClientInfoParams extends IAssoc<any>
 {
     clid: number;
+}
+
+export interface MessageDeleteParams extends IAssoc<any>
+{
+    msgid: number;
 }
 
 export interface LogAddParams extends IAssoc<any>
