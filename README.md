@@ -37,7 +37,7 @@ cl.send("login", {
 		return cl.send("use", {sid: 1})
 	})
 	.then(function(_) {
-		return cl.send("clientlist")
+		return cl.send("clientlist", {}, [])
 	})
 	.then(function(response) {
 		console.log(util.inspect(response));
@@ -61,7 +61,7 @@ cl.send("login", {
 		client_login_password: "##PASSWORD##"
 	})
 	.then(_ => cl.send("use", { sid: 1 }))
-	.then(_ => cl.send("clientlist"))
+	.then(_ => cl.send("clientlist", {}, []))
 	.then(response => console.log(util.inspect(response)))
 	.fail(err => console.log("An error occurred: " + util.inspect(err)));
 ```
