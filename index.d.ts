@@ -209,8 +209,8 @@ export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesCh
 export interface ServerInfoResponseData extends QueryResponseItem, VirtualServerProperties {
 }
 export interface SendTextMessageParams extends QueryResponseItem {
-    targetmode: number;
-    target: TextMessageTargetMode;
+    targetmode: TextMessageTargetMode;
+    target: number;
     msg: string;
 }
 export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChangable {

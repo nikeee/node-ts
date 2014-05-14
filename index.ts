@@ -409,7 +409,7 @@ class StringExtensions
      */
     public static tsEscape(s: string): string
     {
-        var r = s;
+        var r = String(s);
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
@@ -431,7 +431,7 @@ class StringExtensions
      */
     public static tsUnescape(s: string): string
     {
-        var r = s;
+        var r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
         r = r.replace(/\\n/g, "\n");   // Newline
@@ -600,8 +600,8 @@ export interface ServerInfoResponseData extends QueryResponseItem, VirtualServer
 
 export interface SendTextMessageParams extends QueryResponseItem
 {
-    targetmode: number;
-    target: TextMessageTargetMode;
+    targetmode: TextMessageTargetMode;
+    target: number;
     msg: string;
 }
 
