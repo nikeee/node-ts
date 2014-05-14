@@ -1,4 +1,4 @@
-/**
+﻿/**
 * @autor Niklas Mollenhauer <holzig@outlook.com>
 * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
 * @license Beerware/Pizzaware
@@ -14,7 +14,7 @@ var __extends = this.__extends || function (d, b) {
 ///<require path="node_modules/line-readable-stream/LineReadableStream.d.ts"/>
 var Q = require("q");
 var net = require("net");
-var LineReadableStream = require("./node_modules/line-readable-stream/LineReadableStream");
+var LineReadableStream = require("node_modules/line-readable-stream/LineReadableStream");
 var events = require("events");
 var util = require("util");
 
