@@ -4,9 +4,8 @@
  * @license Beerware/Pizzaware
  */
 
-///<reference path="typings/node/node.d.ts"/>
 ///<reference path="typings/q/Q.d.ts"/>
-///<require path="node_modules/line-readable-stream/LineReadableStream.d.ts"/>
+///<reference path="node_modules/line-readable-stream/LineReadableStream.d.ts"/>
 
 import Q = require("q");
 import net = require("net");
