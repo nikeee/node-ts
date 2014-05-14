@@ -247,7 +247,7 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: clientpermlist
     // TODO: clientaddperm
-    // TODO: clientdelperm
+    public send(cmd: "clientdelperm", param: ClientDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: channelclientpermlist
     // TODO: channelclientaddperm
     // TODO: channelclientdelperm
@@ -653,6 +653,13 @@ export interface ClientPokeParams extends IAssoc<any>
 {
     clid: number;
     msg: string;
+}
+
+export interface ClientDeleteParams extends IAssoc<any>
+{
+    cldbid: number;
+    permid: number[];
+    permsid: string[];
 }
 
 export interface MessageDeleteParams extends IAssoc<any>
