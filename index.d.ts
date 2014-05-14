@@ -83,7 +83,6 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "bandelall"): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
-    public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
     /**
     * Parses a query API response.

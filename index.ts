@@ -286,7 +286,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: whoami
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
 
-    public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
+    //public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
     public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Q.Promise<CallbackData<QueryResponseItem>>
