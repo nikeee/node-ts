@@ -235,7 +235,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: clientdbinfo
     // TODO: clientdbfind
     // TODO: clientdbedit
-    // TODO: clientdbdelete
+    public send(cmd: "clientdbdelete", params: ClientDBDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: clientgetids
     // TODO: clientgetdbidfromuid
     // TODO: clientgetnamefromuid
@@ -630,6 +630,11 @@ export interface ClientInfoResponseData extends QueryResponseItem, ClientPropert
 export interface ClientInfoParams extends IAssoc<any>
 {
     clid: number;
+}
+
+export interface ClientDBDeleteParams extends IAssoc<any>
+{
+    cldbid: number;
 }
 
 export interface ClientMoveParams extends IAssoc<any>
