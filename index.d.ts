@@ -71,6 +71,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "messagedel", params: MessageDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "complaindel", params: ComplainDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "banclient", params: BanClientParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -251,6 +252,11 @@ export interface ComplainDeleteAllParams extends IAssoc<any> {
 export interface ComplainDeleteParams extends IAssoc<any> {
     tcldbid: number;
     fcldbid: number;
+}
+export interface BanClientParams extends IAssoc<any> {
+    clid: number;
+    time?: number;
+    banreason?: string;
 }
 export interface FtStopParams extends IAssoc<any> {
     serverftfid: number;
