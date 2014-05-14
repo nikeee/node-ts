@@ -64,6 +64,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "channelinfo", params: ChannelInfoParams): Q.Promise<CallbackData<ChannelInfoResponseData>>;
     public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
+    public send(cmd: "clientmove", params: ClientMoveParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientkick", params: ClientKickParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "messagedel", params: MessageDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
@@ -220,6 +221,11 @@ export interface ClientInfoResponseData extends QueryResponseItem, ClientPropert
 }
 export interface ClientInfoParams extends IAssoc<any> {
     clid: number;
+}
+export interface ClientMoveParams extends IAssoc<any> {
+    clid: number[];
+    cid: number;
+    cpw?: string;
 }
 export interface ClientKickParams extends IAssoc<any> {
     clid: number[];
