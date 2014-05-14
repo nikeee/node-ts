@@ -272,8 +272,8 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: "banclient", params: BanClientParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: banlist
     // TODO: banadd
-    // TODO: bandel
-    // TODO: bandelall
+    public send(cmd: "bandel", params: BanDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "bandelall"): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: ftinitupload
     // TODO: ftinitdownload
     // TODO: ftlist
@@ -674,6 +674,11 @@ export interface BanClientParams extends IAssoc<any>
     clid: number;
     time?: number;
     banreason?: string;
+}
+
+export interface BanDeleteParams extends IAssoc<any>
+{
+    banid: number;
 }
 
 export interface FtStopParams extends IAssoc<any>

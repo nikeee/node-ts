@@ -1,6 +1,4 @@
-/// <reference path="typings/q/Q.d.ts" />
-/// <reference path="node_modules/line-readable-stream/LineReadableStream.d.ts" />
-import events = require("events");
+﻿import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
 * @todo unit tests
@@ -72,6 +70,8 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "complaindel", params: ComplainDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "banclient", params: BanClientParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "bandel", params: BanDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "bandelall"): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -257,6 +257,9 @@ export interface BanClientParams extends IAssoc<any> {
     clid: number;
     time?: number;
     banreason?: string;
+}
+export interface BanDeleteParams extends IAssoc<any> {
+    banid: number;
 }
 export interface FtStopParams extends IAssoc<any> {
     serverftfid: number;
