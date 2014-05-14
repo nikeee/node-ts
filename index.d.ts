@@ -47,7 +47,13 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<LoginResponseData>>;
     public send(cmd: "logout"): Q.Promise<CallbackData<LogoutResponseData>>;
     public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
+    public send(cmd: "hostinfo"): Q.Promise<CallbackData<HostInfoResponseData>>;
+    public send(cmd: "instanceinfo"): Q.Promise<CallbackData<InstanceInfoResponseData>>;
+    public send(cmd: "instanceedit"): Q.Promise<CallbackData<InstanceEditResponseData>>;
+    public send(cmd: "bindinglist"): Q.Promise<CallbackData<BindingListResponseData>>;
     public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
+    public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
+    public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -101,6 +107,10 @@ export interface UseResponseData extends QueryResponseItem {
 }
 export interface UseParams extends IAssoc<any> {
     sid: number;
+}
+export interface ServerStartStopParams extends UseParams {
+}
+export interface ServerStartStopResponseData extends QueryResponseItem {
 }
 export interface ClientListResponseData extends QueryResponseItem {
 }
@@ -160,6 +170,8 @@ export interface HostInfoResponseData extends QueryResponseItem {
     virtualservers_running_total: number;
     connection_filetransfer_bandwidth_sent: number;
 }
+export interface InstanceInfoResponseData extends QueryResponseItem {
+}
 export interface InstanceEditResponseData extends QueryResponseItem {
 }
 export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChangable {
@@ -210,7 +222,7 @@ export interface InstancePropertiesChangable {
     */
     SERVERINSTANCE_SERVERQUERY_FLOOD_BAN_TIME: number;
 }
-export interface BindingListParams extends IAssoc<any> {
+export interface BindingListResponseData extends QueryResponseItem {
 }
 export interface VirtualServerPropertiesChangable {
     /**

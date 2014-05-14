@@ -165,11 +165,128 @@ export class TeamSpeakClient extends events.EventEmitter
      * Sends a command to the server
      */
     // TODO: Only include constant overloads to force corrent parameterization
+
+    // TODO: help
+    // TODO: quit
     public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<LoginResponseData>>;
     public send(cmd: "logout"): Q.Promise<CallbackData<LogoutResponseData>>;
     public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
+    public send(cmd: "hostinfo"): Q.Promise<CallbackData<HostInfoResponseData>>;
+    public send(cmd: "instanceinfo"): Q.Promise<CallbackData<InstanceInfoResponseData>>;
+    public send(cmd: "instanceedit"): Q.Promise<CallbackData<InstanceEditResponseData>>;
+    public send(cmd: "bindinglist"): Q.Promise<CallbackData<BindingListResponseData>>;
     public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
+    // TODO: serverlist
+    // TODO: serveridgetbyport
+    // TODO: serverdelete
+    // TODO: servercreate
+    public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
+    public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
+    // TODO: serverprocessstop
+    // TODO: serverinfo
+    // TODO: serverrequestconnectioninfo
+    // TODO: serveredit
+    // TODO: servergrouplist
+    // TODO: servergroupadd
+    // TODO: servergroupdel
+    // TODO: servergroupcopy
+    // TODO: servergrouprename
+    // TODO: servergrouppermlist
+    // TODO: servergroupaddperm
+    // TODO: servergroupdelperm
+    // TODO: servergroupaddclient
+    // TODO: servergroupdelclient
+    // TODO: servergroupclientlist
+    // TODO: servergroupsbyclientid
+    // TODO: servergroupautoaddperm
+    // TODO: servergroupautodelperm
+    // TODO: serversnapshotcreate
+    // TODO: serversnapshotdeploy
+    // TODO: servernotifyregister
+    // TODO: servernotifyunregister
+    // TODO: sendtextmessage
+    // TODO: logview
+    // TODO: logadd
+    // TODO: gm
+    // TODO: channellist
+    // TODO: channelinfo
+    // TODO: channelfind
+    // TODO: channelmove
+    // TODO: channelcreate
+    // TODO: channeldelete
+    // TODO: channeledit
+    // TODO: channelgrouplist
+    // TODO: channelgroupadd
+    // TODO: channelgroupdel
+    // TODO: channelgroupcopy
+    // TODO: channelgrouprename
+    // TODO: channelgroupaddperm
+    // TODO: channelgrouppermlist
+    // TODO: channelgroupdelperm
+    // TODO: channelgroupclientlist
+    // TODO: setclientchannelgroup
+    // TODO: channelpermlist
+    // TODO: channeladdperm
+    // TODO: channeldelperm
+    // TODO: clientlist
+    // TODO: clientinfo
+    // TODO: clientfind
+    // TODO: clientedit
+    // TODO: clientdblist
+    // TODO: clientdbinfo
+    // TODO: clientdbfind
+    // TODO: clientdbedit
+    // TODO: clientdbdelete
+    // TODO: clientgetids
+    // TODO: clientgetdbidfromuid
+    // TODO: clientgetnamefromuid
+    // TODO: clientgetnamefromdbid
+    // TODO: clientsetserverquerylogin
+    // TODO: clientupdate
+    // TODO: clientmove
+    // TODO: clientkick
+    // TODO: clientpoke
+    // TODO: clientpermlist
+    // TODO: clientaddperm
+    // TODO: clientdelperm
+    // TODO: channelclientpermlist
+    // TODO: channelclientaddperm
+    // TODO: channelclientdelperm
+    // TODO: permissionlist
+    // TODO: permidgetbyname
+    // TODO: permoverview
+    // TODO: permget
+    // TODO: permfind
+    // TODO: permrest
+    // TODO: privilegekeylist
+    // TODO: privilegekeyadd
+    // TODO: privilegekeydelete
+    // TODO: privilegekeyuse
+    // TODO: messageadd
+    // TODO: messagedel
+    // TODO: messageget
+    // TODO: messageupdateflag
+    // TODO: complainlist
+    // TODO: complainadd
+    // TODO: complaindelall
+    // TODO: complaindel
+    // TODO: banclient
+    // TODO: banlist
+    // TODO: banadd
+    // TODO: bandel
+    // TODO: bandelall
+    // TODO: ftinitupload
+    // TODO: ftinitdownload
+    // TODO: ftlist
+    // TODO: ftgetfileinfo
+    // TODO: ftstop
+    // TODO: ftdeletefile
+    // TODO: ftrenamefile
+    // TODO: customsearch
+    // TODO: custominfo
+    // TODO: whoami
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
+
 
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
@@ -376,11 +493,15 @@ export interface UseParams extends IAssoc<any>
     sid: number;
 }
 
+export interface ServerStartStopParams extends UseParams
+{ }
+export interface  ServerStartStopResponseData extends QueryResponseItem
+{ }
+
 export interface ClientListResponseData extends QueryResponseItem
 { }
 export interface ClientListParams extends IAssoc<any>
 { }
-
 
 /**
  * Specialized callback data for a failed request.
@@ -453,6 +574,12 @@ export interface HostInfoResponseData extends QueryResponseItem
     host_timestamp_utc: number;
     virtualservers_running_total: number;
     connection_filetransfer_bandwidth_sent: number;
+    // TODO
+}
+
+export interface InstanceInfoResponseData extends QueryResponseItem
+{
+    // TODO
 }
 
 export interface InstanceEditResponseData extends QueryResponseItem
@@ -583,8 +710,10 @@ interface InstancePropertiesReadOnly
 interface InstanceProperties extends InstancePropertiesReadOnly, InstancePropertiesChangable
 { }
 
-export interface BindingListParams extends IAssoc<any>
-{ }
+export interface BindingListResponseData extends QueryResponseItem
+{
+    //TODO
+}
 
 export interface VirtualServerPropertiesChangable
 {
