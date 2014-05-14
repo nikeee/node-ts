@@ -269,9 +269,9 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: complainadd
     public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "complaindel", params: ComplainDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "banclient", params: BanClientParams): Q.Promise<CallbackData<GenericResponseData>>;
-    // TODO: banlist
-    // TODO: banadd
+    public send(cmd: "banclient", params: BanClientParams): Q.Promise<CallbackData<GenericResponseData>>; //@todo test
+    public send(cmd: "banlist"): Q.Promise<CallbackData<BanListResponseData>>;
+    public send(cmd: "banadd", params: BanAddParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bandel", params: BanDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bandelall"): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: ftinitupload
@@ -676,6 +676,26 @@ export interface BanClientParams extends IAssoc<any>
     banreason?: string;
 }
 
+export interface BanListResponseData extends QueryResponseItem
+{
+    banid: number;
+    ip: string;
+    created: number;
+    invokername: string;
+    invokercldbid: number;
+    invokeruid: string;
+    reason: string;
+    enforcements: number;
+}
+
+export interface BanAddParams extends IAssoc<any>
+{
+    ip?: string;
+    name?: string;
+    uid?: string;
+    time?: number;
+    banreason?: string;
+}
 export interface BanDeleteParams extends IAssoc<any>
 {
     banid: number;

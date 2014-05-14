@@ -1,4 +1,6 @@
-﻿import events = require("events");
+/// <reference path="typings/q/Q.d.ts" />
+/// <reference path="node_modules/line-readable-stream/LineReadableStream.d.ts" />
+import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
 * @todo unit tests
@@ -70,6 +72,8 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "complaindel", params: ComplainDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "banclient", params: BanClientParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "banlist"): Q.Promise<CallbackData<BanListResponseData>>;
+    public send(cmd: "banadd", params: BanAddParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bandel", params: BanDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bandelall"): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
@@ -255,6 +259,23 @@ export interface ComplainDeleteParams extends IAssoc<any> {
 }
 export interface BanClientParams extends IAssoc<any> {
     clid: number;
+    time?: number;
+    banreason?: string;
+}
+export interface BanListResponseData extends QueryResponseItem {
+    banid: number;
+    ip: string;
+    created: number;
+    invokername: string;
+    invokercldbid: number;
+    invokeruid: string;
+    reason: string;
+    enforcements: number;
+}
+export interface BanAddParams extends IAssoc<any> {
+    ip?: string;
+    name?: string;
+    uid?: string;
     time?: number;
     banreason?: string;
 }
