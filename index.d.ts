@@ -48,11 +48,15 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
     public send(cmd: "hostinfo"): Q.Promise<CallbackData<HostInfoResponseData>>;
     public send(cmd: "instanceinfo"): Q.Promise<CallbackData<InstanceInfoResponseData>>;
-    public send(cmd: "instanceedit"): Q.Promise<CallbackData<InstanceEditResponseData>>;
+    public send(cmd: "instanceedit", params: InstanceEditParams): Q.Promise<CallbackData<InstanceEditResponseData>>;
     public send(cmd: "bindinglist"): Q.Promise<CallbackData<BindingListResponseData>>;
     public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
     public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
     public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
+    public send(cmd: "serverinfo"): Q.Promise<CallbackData<ServerInfoResponseData>>;
+    public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<ServerEditResponseData>>;
+    public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GmResponseData>>;
+    public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
     public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -171,9 +175,25 @@ export interface HostInfoResponseData extends QueryResponseItem {
 }
 export interface InstanceInfoResponseData extends QueryResponseItem {
 }
+export interface ServerEditResponseData extends QueryResponseItem {
+}
+export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesChangable {
+}
+export interface ServerInfoResponseData extends QueryResponseItem, VirtualServerProperties {
+}
 export interface InstanceEditResponseData extends QueryResponseItem {
 }
 export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChangable {
+}
+export interface GmResponseData extends QueryResponseItem {
+}
+export interface GmParams extends IAssoc<any> {
+    msg: string;
+}
+export interface ClientInfoResponseData extends QueryResponseItem, ClientProperties {
+}
+export interface ClientInfoParams extends IAssoc<any> {
+    clid: number;
 }
 export interface InstancePropertiesChangable {
     /**
@@ -544,4 +564,198 @@ export interface VirtualServerPropertiesReadOnly {
     VIRTUALSERVER_FILEBASE: string;
 }
 export interface VirtualServerProperties extends VirtualServerPropertiesReadOnly, VirtualServerPropertiesChangable {
+}
+export interface ClientPropertiesChangable {
+    /**
+    * Nickname of the client
+    */
+    CLIENT_NICKNAME: string;
+    /**
+    * Indicates whether the client is able to talk or not
+    */
+    CLIENT_IS_TALKER: any;
+    /**
+    * Brief description of the client
+    */
+    CLIENT_DESCRIPTION: string;
+    /**
+    * Indicates whether the client is a channel commander or not
+    */
+    CLIENT_IS_CHANNEL_COMMANDER: any;
+    /**
+    * CRC32 checksum of the client icon
+    */
+    CLIENT_ICON_ID: any;
+}
+export interface ClientPropertiesReadOnly {
+    /**
+    * Unique ID of the client
+    */
+    CLIENT_UNIQUE_IDENTIFIER: any;
+    /**
+    * Client version information including build number
+    */
+    CLIENT_VERSION: any;
+    /**
+    * Operating system the client is running on
+    */
+    CLIENT_PLATFORM: any;
+    /**
+    * Indicates whether the client has their microphone muted or not
+    */
+    CLIENT_INPUT_MUTED: any;
+    /**
+    * Indicates whether the client has their speakers muted or not
+    */
+    CLIENT_OUTPUT_MUTED: any;
+    /**
+    * Indicates whether the client has enabled their capture device or not
+    */
+    CLIENT_INPUT_HARDWARE: any;
+    /**
+    * Indicates whether the client has enabled their playback device or not
+    */
+    CLIENT_OUTPUT_HARDWARE: any;
+    /**
+    * Default channel of the client
+    */
+    CLIENT_DEFAULT_CHANNEL: any;
+    /**
+    * Username of a ServerQuery client
+    */
+    CLIENT_LOGIN_NAME: any;
+    /**
+    * Database ID of the client
+    */
+    CLIENT_DATABASE_ID: any;
+    /**
+    * Current channel group ID of the client
+    */
+    CLIENT_CHANNEL_GROUP_ID: any;
+    /**
+    * Current server group IDs of the client separated by a comma
+    */
+    CLIENT_SERVER_GROUPS: any;
+    /**
+    * Creation date and time of the clients first connection to the server as UTC timestamp
+    */
+    CLIENT_CREATED: any;
+    /**
+    * Creation date and time of the clients last connection to the server as UTC timestamp
+    */
+    CLIENT_LASTCONNECTED: any;
+    /**
+    * Total number of connections from this client since the server was started
+    */
+    CLIENT_TOTALCONNECTIONS: any;
+    /**
+    * Indicates whether the client is away or not
+    */
+    CLIENT_AWAY: any;
+    /**
+    * Away message of the client
+    */
+    CLIENT_AWAY_MESSAGE: any;
+    /**
+    * Indicates whether the client is a ServerQuery client or not
+    */
+    CLIENT_TYPE: any;
+    /**
+    * Indicates whether the client has set an avatar or not
+    */
+    CLIENT_FLAG_AVATAR: any;
+    /**
+    * The clients current talk power
+    */
+    CLIENT_TALK_POWER: any;
+    /**
+    * Indicates whether the client is requesting talk power or not
+    */
+    CLIENT_TALK_REQUEST: any;
+    /**
+    * The clients current talk power request message
+    */
+    CLIENT_TALK_REQUEST_MSG: any;
+    /**
+    * Number of bytes downloaded by the client on the current month
+    */
+    CLIENT_MONTH_BYTES_DOWNLOADED: any;
+    /**
+    * Number of bytes uploaded by the client on the current month
+    */
+    CLIENT_MONTH_BYTES_UPLOADED: any;
+    /**
+    * Number of bytes downloaded by the client since the server was started
+    */
+    CLIENT_TOTAL_BYTES_DOWNLOADED: any;
+    /**
+    * Number of bytes uploaded by the client since the server was started
+    */
+    CLIENT_TOTAL_BYTES_UPLOADED: any;
+    /**
+    * Indicates whether the client is a priority speaker or not
+    */
+    CLIENT_IS_PRIORITY_SPEAKER: any;
+    /**
+    * Number of unread offline messages in this clients inbox
+    */
+    CLIENT_UNREAD_MESSAGES: any;
+    /**
+    * Phonetic name of the client
+    */
+    CLIENT_NICKNAME_PHONETIC: any;
+    /**
+    * The clients current ServerQuery view power
+    */
+    CLIENT_NEEDED_SERVERQUERY_VIEW_POWER: any;
+    /**
+    * Current bandwidth used for outgoing file transfers (Bytes/s)
+    */
+    CONNECTION_FILETRANSFER_BANDWIDTH_SENT: any;
+    /**
+    * Current bandwidth used for incoming file transfers (Bytes/s)
+    */
+    CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED: any;
+    /**
+    * Total amount of packets sent
+    */
+    CONNECTION_PACKETS_SENT_TOTAL: any;
+    /**
+    * Total amount of packets received
+    */
+    CONNECTION_PACKETS_RECEIVED_TOTAL: any;
+    /**
+    * Total amount of bytes sent
+    */
+    CONNECTION_BYTES_SENT_TOTAL: any;
+    /**
+    * Total amount of bytes received
+    */
+    CONNECTION_BYTES_RECEIVED_TOTAL: any;
+    /**
+    * Average bandwidth used for outgoing data in the last second (Bytes/s)
+    */
+    CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL: any;
+    /**
+    * Average bandwidth used for incoming data in the last second (Bytes/s)
+    */
+    CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL: any;
+    /**
+    * Average bandwidth used for outgoing data in the last minute (Bytes/s)
+    */
+    CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL: any;
+    /**
+    * Average bandwidth used for incoming data in the last minute (Bytes/s)
+    */
+    CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL: any;
+    /**
+    * The IPv4 address of the client
+    */
+    CONNECTION_CLIENT_IP: any;
+    /**
+    * The country identifier of the client (i.e. DE)
+    */
+    CLIENT_COUNTRY: any;
+}
+export interface ClientProperties extends ClientPropertiesReadOnly, ClientPropertiesChangable {
 }
