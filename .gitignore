@@ -5,6 +5,7 @@ obj/
 *.js.map
 *.suo
 
-# Include compiled index.js and LineInputStream.js for vanilla JS compabilty
+node_modules/
+
+# Include compiled index.js for vanilla JS compabilty
 !index.js
-!LineInputStream.js
