@@ -177,7 +177,7 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
     // TODO: serverlist
     // TODO: serveridgetbyport
-    // TODO: serverdelete
+    public send(cmd: "serverdelete", params: ServerDeleteParams): Q.Promise<CallbackData<GenericResponseData>>; 
     // TODO: servercreate
     public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
     public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
@@ -205,7 +205,6 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: servernotifyunregister
     public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: logview
-    // TODO:
     public send(cmd: "logadd", params: LogAddParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: channellist
@@ -213,7 +212,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: channelfind
     // TODO: channelmove
     // TODO: channelcreate
-    // TODO: channeldelete
+    public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: channeledit
     // TODO: channelgrouplist
     // TODO: channelgroupadd
@@ -492,6 +491,9 @@ export interface UseParams extends IAssoc<any>
     sid: number;
 }
 
+export interface ServerDeleteParams extends UseParams
+{ }
+
 export interface ServerStartStopParams extends UseParams
 { }
 export interface ServerStartStopResponseData extends QueryResponseItem
@@ -609,6 +611,12 @@ export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChang
 export interface GmParams extends IAssoc<any>
 {
     msg: string;
+}
+
+export interface ChannelDeleteParams extends IAssoc<any>
+{
+    cid: number;
+    force: YesNo;
 }
 
 export interface ClientInfoResponseData extends QueryResponseItem, ClientProperties
@@ -1247,6 +1255,11 @@ export interface ClientProperties extends ClientPropertiesReadOnly, ClientProper
 
 */
 
+export enum YesNo
+{
+    No = 0,
+    Yes = 1
+}
 
 export enum HostMessageMode
 {

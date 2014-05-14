@@ -1,4 +1,4 @@
-﻿/**
+/**
 * @autor Niklas Mollenhauer <holzig@outlook.com>
 * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
 * @license Beerware/Pizzaware
@@ -307,6 +307,12 @@ var StringExtensions = (function () {
 /*
 Enums imported from documentation.
 */
+(function (YesNo) {
+    YesNo[YesNo["No"] = 0] = "No";
+    YesNo[YesNo["Yes"] = 1] = "Yes";
+})(exports.YesNo || (exports.YesNo = {}));
+var YesNo = exports.YesNo;
+
 (function (HostMessageMode) {
     /**
     * 1: display message in chatlog

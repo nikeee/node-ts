@@ -1,4 +1,6 @@
-﻿import events = require("events");
+/// <reference path="typings/q/Q.d.ts" />
+/// <reference path="node_modules/line-readable-stream/LineReadableStream.d.ts" />
+import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
 * @todo unit tests
@@ -49,6 +51,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "instanceedit", params: InstanceEditParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bindinglist"): Q.Promise<CallbackData<BindingListResponseData>>;
     public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<UseResponseData>>;
+    public send(cmd: "serverdelete", params: ServerDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
     public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
     public send(cmd: "serverprocessstop"): Q.Promise<CallbackData<ServerProcessStopResponseData>>;
@@ -58,6 +61,7 @@ export declare class TeamSpeakClient extends events.EventEmitter {
     public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "logadd", params: LogAddParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
     public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
     public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
@@ -112,6 +116,8 @@ export interface UseResponseData extends QueryResponseItem {
 }
 export interface UseParams extends IAssoc<any> {
     sid: number;
+}
+export interface ServerDeleteParams extends UseParams {
 }
 export interface ServerStartStopParams extends UseParams {
 }
@@ -196,6 +202,10 @@ export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChang
 }
 export interface GmParams extends IAssoc<any> {
     msg: string;
+}
+export interface ChannelDeleteParams extends IAssoc<any> {
+    cid: number;
+    force: YesNo;
 }
 export interface ClientInfoResponseData extends QueryResponseItem, ClientProperties {
 }
@@ -771,6 +781,10 @@ export interface ClientPropertiesReadOnly {
     CLIENT_COUNTRY: any;
 }
 export interface ClientProperties extends ClientPropertiesReadOnly, ClientPropertiesChangable {
+}
+export declare enum YesNo {
+    No = 0,
+    Yes = 1,
 }
 export declare enum HostMessageMode {
     /**
