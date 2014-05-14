@@ -1,5 +1,4 @@
-﻿/// <reference path="typings/node/node.d.ts" />
-/**
+﻿/**
 * @autor Niklas Mollenhauer <holzig@outlook.com>
 * @autor Philip Tellis <philip@bluesmoon.info>
 * @todo May publish this as a new package on npmjs.

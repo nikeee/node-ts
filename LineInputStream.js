@@ -7,15 +7,6 @@ var __extends = this.__extends || function (d, b) {
 };
 var Stream = require("stream");
 
-var _events = {
-    "line": function (line) {
-        this.emit("line", line);
-    },
-    "end": function () {
-        this.emit("end");
-    }
-};
-
 var LineInputStream = (function (_super) {
     __extends(LineInputStream, _super);
     /**
@@ -55,14 +46,18 @@ var LineInputStream = (function (_super) {
             _this._data += chunk;
             var lines = _this._data.split(_this.delimiter);
             _this._data = lines.pop();
-            lines.forEach(_events.line, _this);
+            lines.forEach(function (line) {
+                return _this.emit("line", line);
+            });
         });
         this.underlyingStream.on("end", function () {
             if (_this._data.length > 0) {
                 var lines = _this._data.split(_this.delimiter);
-                lines.forEach(_events.line, _this);
+                lines.forEach(function (line) {
+                    return _this.emit("line", line);
+                });
             }
-            _events.end.call(_this);
+            _this.emit("end");
         });
     };
 
@@ -70,7 +65,7 @@ var LineInputStream = (function (_super) {
     * Start overriding EventEmitter methods so we can pass through to underlyingStream If we get a request for an event we don't know about, pass it to the underlyingStream
     */
     LineInputStream.prototype.on = function (type, listener) {
-        if (!(type in _events))
+        if (type != "end" && type != "line")
             this._underlyingStream.on(type, listener);
         return _super.prototype.on.call(this, type, listener);
     };
@@ -79,12 +74,12 @@ var LineInputStream = (function (_super) {
     };
 
     LineInputStream.prototype.removeListener = function (type, listener) {
-        if (!(type in _events))
+        if (type != "end" && type != "line")
             this._underlyingStream.removeListener(type, listener);
         return _super.prototype.removeListener.call(this, type, listener);
     };
     LineInputStream.prototype.removeAllListeners = function (type) {
-        if (!(type in _events))
+        if (type != "end" && type != "line")
             this._underlyingStream.removeAllListeners(type);
         return _super.prototype.removeAllListeners.call(this, type);
     };

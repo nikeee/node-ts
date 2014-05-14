@@ -7,7 +7,6 @@
  * @autor Niklas Mollenhauer <holzig@outlook.com>
  * @autor Philip Tellis <philip@bluesmoon.info>
  * @todo May publish this as a new package on npmjs.
- * @todo Get ridd of _events.
  * @example
  * // creates a new instance
  * var lis = new LineInputStream(underlyingStream);
@@ -16,17 +15,6 @@
 import events = require("events");
 import Stream = require("stream");
 import util = require("util");
-
-var _events = {
-    "line": function (line)
-    {
-        this.emit("line", line);
-    },
-    "end": function ()
-    {
-        this.emit("end");
-    }
-};
 
 class LineInputStream extends Stream.Readable
 {
@@ -81,16 +69,16 @@ class LineInputStream extends Stream.Readable
             this._data += chunk;
             var lines = this._data.split(this.delimiter);
             this._data = lines.pop();
-            lines.forEach(_events.line, this);
+            lines.forEach(line => this.emit("line", line));
         });
         this.underlyingStream.on("end", () =>
         {
             if (this._data.length > 0)
             {
                 var lines = this._data.split(this.delimiter);
-                lines.forEach(_events.line, this);
+                lines.forEach(line => this.emit("line", line));
             }
-            _events.end.call(this);
+            this.emit("end");
         });
     }
 
@@ -99,7 +87,7 @@ class LineInputStream extends Stream.Readable
      */
     public on(type: string, listener: Function): events.EventEmitter
     {
-        if (!(type in _events))
+        if (type != "end" && type != "line")
             this._underlyingStream.on(type, listener);
         return super.on(type, listener);
     }
@@ -110,13 +98,13 @@ class LineInputStream extends Stream.Readable
 
     public removeListener(type: string, listener: Function): events.EventEmitter
     {
-        if (!(type in _events))
+        if (type != "end" && type != "line")
             this._underlyingStream.removeListener(type, listener);
         return super.removeListener(type, listener);
     }
     public removeAllListeners(type: string): events.EventEmitter
     {
-        if (!(type in _events))
+        if (type != "end" && type != "line")
             this._underlyingStream.removeAllListeners(type);
         return super.removeAllListeners(type);
     }
