@@ -181,7 +181,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: servercreate
     public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
     public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<ServerStartStopResponseData>>;
-    // TODO: serverprocessstop
+    public send(cmd: "serverprocessstop"): Q.Promise<CallbackData<ServerProcessStopResponseData>>;
     public send(cmd: "serverinfo"): Q.Promise<CallbackData<ServerInfoResponseData>>;
     // TODO: serverrequestconnectioninfo
     public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<ServerEditResponseData>>;
@@ -494,6 +494,9 @@ export interface UseParams extends IAssoc<any>
 export interface ServerStartStopParams extends UseParams
 { }
 export interface ServerStartStopResponseData extends QueryResponseItem
+{ }
+
+export interface ServerProcessStopResponseData extends QueryResponseItem
 { }
 
 export interface ClientListResponseData extends QueryResponseItem
