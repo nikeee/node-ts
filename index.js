@@ -257,7 +257,7 @@ var StringExtensions = (function () {
     * @return {string}   An escaped string.
     */
     StringExtensions.tsEscape = function (s) {
-        var r = String(s);
+        var r = s;
         r = r.replace(/\\/g, "\\\\"); // Backslash
         r = r.replace(/\//g, "\\/"); // Slash
         r = r.replace(/\|/g, "\\p"); // Pipe
@@ -279,7 +279,7 @@ var StringExtensions = (function () {
     * @return {string}   An unescaped string.
     */
     StringExtensions.tsUnescape = function (s) {
-        var r = String(s);
+        var r = s;
         r = r.replace(/\\s/g, " "); // Whitespace
         r = r.replace(/\\p/g, "|"); // Pipe
         r = r.replace(/\\n/g, "\n"); // Newline

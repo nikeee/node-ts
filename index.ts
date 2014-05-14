@@ -244,7 +244,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: clientupdate
     // TODO: clientmove
     // TODO: clientkick
-    // TODO: clientpoke
+    public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: clientpermlist
     // TODO: clientaddperm
     // TODO: clientdelperm
@@ -409,7 +409,7 @@ class StringExtensions
      */
     public static tsEscape(s: string): string
     {
-        var r = String(s);
+        var r = s;
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
@@ -431,7 +431,7 @@ class StringExtensions
      */
     public static tsUnescape(s: string): string
     {
-        var r = String(s);
+        var r = s;
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
         r = r.replace(/\\n/g, "\n");   // Newline
@@ -624,6 +624,12 @@ export interface ClientInfoResponseData extends QueryResponseItem, ClientPropert
 export interface ClientInfoParams extends IAssoc<any>
 {
     clid: number;
+}
+
+export interface ClientPokeParams extends IAssoc<any>
+{
+    clid: number;
+    msg: string;
 }
 
 export interface MessageDeleteParams extends IAssoc<any>
