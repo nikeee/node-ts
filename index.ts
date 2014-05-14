@@ -243,7 +243,7 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: clientsetserverquerylogin
     // TODO: clientupdate
     // TODO: clientmove
-    // TODO: clientkick
+    public send(cmd: "clientkick", params: ClientKickParams): Q.Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
     // TODO: clientpermlist
     // TODO: clientaddperm
@@ -632,6 +632,12 @@ export interface ClientInfoParams extends IAssoc<any>
     clid: number;
 }
 
+export interface ClientKickParams extends IAssoc<any>
+{
+    clid: number[];
+    reasonid: ReasonIdentifier;
+    reasonmsg: string;
+}
 export interface ClientPokeParams extends IAssoc<any>
 {
     clid: number;
