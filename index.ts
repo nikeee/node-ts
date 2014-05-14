@@ -9,7 +9,7 @@
 
 import Q = require("q");
 import net = require("net");
-import LineReadableStream = require("node_modules/line-readable-stream/LineReadableStream");
+import LineReadableStream = require("./node_modules/line-readable-stream/LineReadableStream");
 import events = require("events");
 import util = require("util");
 

@@ -13,7 +13,7 @@ var __extends = this.__extends || function (d, b) {
 ///<reference path="node_modules/line-readable-stream/LineReadableStream.d.ts"/>
 var Q = require("q");
 var net = require("net");
-var LineReadableStream = require("node_modules/line-readable-stream/LineReadableStream");
+var LineReadableStream = require("./node_modules/line-readable-stream/LineReadableStream");
 var events = require("events");
 var util = require("util");
 
