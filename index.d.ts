@@ -1,6 +1,5 @@
-/// <reference path="typings/node/node.d.ts" />
 /// <reference path="typings/q/Q.d.ts" />
-/// <reference path="LineInputStream.d.ts" />
+/// <reference path="node_modules/line-readable-stream/LineReadableStream.d.ts" />
 import events = require("events");
 /**
 * Client that can be used to connect to a TeamSpeak server query API.
