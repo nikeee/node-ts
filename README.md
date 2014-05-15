@@ -3,7 +3,7 @@ node-ts
 
 This is a CommonJS-module implemented using [TypeScript](http://typescriptlang.org) which allows you to connect to any TeamSpeak® 3 server which has the Server Query API enabled. Using the Server Query API, you can do everything a normal TeamSpeak-user can do (except sending and receiving voice data) automatically via JavaScript/TypeScript (e. g. listing clients logged in on the server).
 
-The Server Query specification is available [here](http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf).
+The Server Query specification is available [here](http://media.teamspeak.com/ts3_literature/TeamSpeak%203%20Server%20Query%20Manual.pdf). I also created a script to import the complete query API from a TeamSpeak 3 server using the help command. This (json) dump will later be used to auto-genrate some stuff. It is available as Gist [here](https://gist.github.com/nikeee/71e71439dd91999a3692).
 
 This is a fork of [gwTumm's node-teamspeak](https://github.com/gwTumm/node-teamspeak) which has been ported from JS to TS.
 
