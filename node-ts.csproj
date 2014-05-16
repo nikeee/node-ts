@@ -57,6 +57,7 @@
   </PropertyGroup>
   <ItemGroup>
     <TypeScriptCompile Include="index.ts" />
+    <TypeScriptCompile Include="TS3RichClient.ts" />
     <TypeScriptCompile Include="typings\q\Q.d.ts" />
   </ItemGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
