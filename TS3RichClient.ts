@@ -44,7 +44,9 @@ class TS3RichClient
      */
     public use(serverId: number): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        return this._client.send("use", { sid: serverId });
+        return this._client.send("use", {
+            sid: serverId
+        });
     }
 
     /**
@@ -52,7 +54,11 @@ class TS3RichClient
      */
     public banaddByIp(ip: string, time: number = 0, banreason: string = ""): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        return this._client.send("banadd", { ip: ip, time: time, banreason: banreason });
+        return this._client.send("banadd", {
+            ip: ip,
+            time: time,
+            banreason: banreason
+        });
     }
 
     /**
@@ -60,7 +66,11 @@ class TS3RichClient
      */
     public banaddByName(name: string, time: number = 0, banreason: string = ""): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        return this._client.send("banadd", { name: name, time: time, banreason: banreason });
+        return this._client.send("banadd", {
+            name: name,
+            time: time,
+            banreason: banreason
+        });
     }
 
     /**
@@ -68,7 +78,11 @@ class TS3RichClient
      */
     public banaddByUserId(userId: string, time: number = 0, banreason: string = ""): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        return this._client.send("banadd", { uid: userId, time: time, banreason: banreason });
+        return this._client.send("banadd", {
+            uid: userId,
+            time: time,
+            banreason: banreason
+        });
     }
 
     /**
@@ -76,7 +90,13 @@ class TS3RichClient
      */
     public banadd(userId: string = "", name: string = "", ip: string = "", time: number = 0, banreason: string = ""): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        return this._client.send("banadd", { ip: ip, uid: userId, name: name, time: time, banreason: banreason });
+        return this._client.send("banadd", {
+            ip: ip,
+            uid: userId,
+            name: name,
+            time: time,
+            banreason: banreason
+        });
     }
 
     /**
@@ -89,7 +109,11 @@ class TS3RichClient
             time?: number;
             banreason?: string;
         */
-        return this._client.send("banclient", { clid: clid, time: time, banreason: banreason });
+        return this._client.send("banclient", {
+            clid: clid,
+            time: time,
+            banreason: banreason
+        });
     }
 
     /**
@@ -105,7 +129,9 @@ class TS3RichClient
      */
     public bandel(banid: number): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        return this._client.send("bandel", { banid: banid });
+        return this._client.send("bandel", {
+            banid: banid
+        });
     }
 
     /**
@@ -428,25 +454,43 @@ class TS3RichClient
      *  4: Kick the client from his current channel into the default channel
      *  5: Kick the client from the server
      */
-    public clientkick(): Q.Promise<ts3.CallbackData<ts3.QueryResponseItem>>
+    public clientkick(clients: number[], reasonId: ts3.ReasonIdentifier, reasonMessage: string = ""): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        throw new Error("Not implemented");
+        /*
+            clid: number[];
+            reasonid: ReasonIdentifier;
+            reasonmsg: string;
+        */
+        return this._client.send("clientkick", <ts3.ClientKickParams>{
+            clid: clients,
+            reasonid: reasonId,
+            reasonmsg: reasonMessage
+        });
     }
 
     /**
      * Displays a list of clients online on a virtual server including their ID, nickname, status flags, etc. The output can be modified using several command options. Please note that the output will only contain clients which are currently in channels you're able to subscribe to.
      */
-    public clientlist(): Q.Promise<ts3.CallbackData<ts3.QueryResponseItem>>
+    public clientlist(): Q.Promise<ts3.CallbackData<ts3.ClientListResponseData>>
     {
-        throw new Error("Not implemented");
+        return this._client.send("clientlist", <ts3.ClientListParams>{});
     }
 
     /**
      * Moves one or more clients specified with clid to the channel with ID cid. If the target channel has a password, it needs to be specified with cpw. If the channel has no password, the parameter can be omitted.
      */
-    public clientmove(): Q.Promise<ts3.CallbackData<ts3.QueryResponseItem>>
+    public clientmove(clients: number[], channelId: number, channelPassword: string = null): Q.Promise<ts3.CallbackData<ts3.GenericResponseData>>
     {
-        throw new Error("Not implemented");
+        /*
+            clid: number[];
+            cid: number;
+            cpw?: string;
+        */
+        return this._client.send("clientmove", <ts3.ClientMoveParams>{
+            clid: clients,
+            cid: channelId,
+            cpw: channelPassword
+        });
     }
 
     /**
@@ -460,9 +504,16 @@ class TS3RichClient
     /**
      * Sends a poke message to the client specified with clid.
      */
-    public clientpoke(): Q.Promise<ts3.CallbackData<ts3.QueryResponseItem>>
+    public clientpoke(client: number, message: string= ""): Q.Promise<ts3.CallbackData<ts3.QueryResponseItem>>
     {
-        throw new Error("Not implemented");
+        /*
+            clid: number;
+            msg: string;
+        */
+        return this._client.send("clientpoke", {
+            clid: client,
+            msg: message
+        });
     }
 
     /**
