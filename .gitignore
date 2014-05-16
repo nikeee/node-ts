@@ -6,6 +6,3 @@ obj/
 *.suo
 
 node_modules/
-
-# Include compiled index.js for vanilla JS compabilty
-!index.js
