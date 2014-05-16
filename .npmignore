@@ -1,2 +1,5 @@
 *.ts
 !*.d.ts
+
+# Make sure index.js always gets included
+!index.js
