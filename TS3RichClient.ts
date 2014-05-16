@@ -504,7 +504,7 @@ class TS3RichClient
     /**
      * Sends a poke message to the client specified with clid.
      */
-    public clientpoke(client: number, message: string= ""): Q.Promise<ts3.CallbackData<ts3.QueryResponseItem>>
+    public clientpoke(client: number, message: string = ""): Q.Promise<ts3.CallbackData<ts3.QueryResponseItem>>
     {
         /*
             clid: number;
