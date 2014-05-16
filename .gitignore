@@ -1,8 +1,15 @@
+# js files will only be relevant for the released npm package, so don't inclode them
 *.js
+
+# d.ts files can be generated, so don't include them
+*.d.ts
+
+# exclude VS-generated files/folders
 bin/
 obj/
 *.user
 *.js.map
 *.suo
 
+# exclude node modules, they will be installed using npm
 node_modules/
