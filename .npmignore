@@ -1,5 +1,5 @@
 *.ts
 !*.d.ts
 
-# Make sure index.js always gets included
-!index.js
+# Make sure js files always get included
+!*.js
