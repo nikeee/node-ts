@@ -2,7 +2,7 @@
 
 import ts3 = require("./index");
 
-class TS3RichClient
+export class TS3RichClient
 {
     private _client: ts3.TeamSpeakClient;
 
