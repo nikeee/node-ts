@@ -82,8 +82,8 @@ export class TeamSpeakClient extends events.EventEmitter
     {
         this._socket = net.connect(this._port, this._host);
         this._socket.on("error", err => this.emit("error", err));
-        this._socket.on("close", () => this.emit("close", this._queue));
-        this._socket.on("connect", () => this.onConnect());
+        this._socket.on("close",() => this.emit("close", this._queue));
+        this._socket.on("connect",() => this.onConnect());
     }
 
     /**
@@ -91,11 +91,12 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     private onConnect(): void
     {
-        this._reader = byline.createStream(this._socket);
+        this._reader = byline.createStream(this._socket, { encoding: "utf-8", keepEmptyLines: true });
         this._reader.on("data", line =>
         {
+            console.dir(line.toString());
             var s = line.trim();
-            // Ignore two first lines sent by server ("TS3" and information message) 
+            // Ignore two first lines sent by server ("TS3" and information message)
             if (this._status < 0)
             {
                 this._status++;
