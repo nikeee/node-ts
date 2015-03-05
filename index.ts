@@ -91,7 +91,7 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     private onConnect(): void
     {
-        this._reader = byline.createStream(this._socket, { encoding: "utf-8", keepEmptyLines: true });
+        this._reader = byline.createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
         this._reader.on("data", line =>
         {
             var s = line.trim();
