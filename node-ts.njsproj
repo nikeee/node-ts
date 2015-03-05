@@ -43,14 +43,14 @@
     <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
     <TypeScriptGeneratesDeclarations>True</TypeScriptGeneratesDeclarations>
     <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
-    <TypeScriptOutDir>build</TypeScriptOutDir>
-    <TypeScriptMapRoot>build</TypeScriptMapRoot>
-    <TypeScriptSourceRoot>build</TypeScriptSourceRoot>
+    <TypeScriptOutDir>dist</TypeScriptOutDir>
+    <TypeScriptMapRoot>dist</TypeScriptMapRoot>
+    <TypeScriptSourceRoot>dist</TypeScriptSourceRoot>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <TypeScriptOutDir>build</TypeScriptOutDir>
-    <TypeScriptMapRoot>build</TypeScriptMapRoot>
-    <TypeScriptSourceRoot>build</TypeScriptSourceRoot>
+    <TypeScriptOutDir>dist</TypeScriptOutDir>
+    <TypeScriptMapRoot>dist</TypeScriptMapRoot>
+    <TypeScriptSourceRoot>dist</TypeScriptSourceRoot>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />

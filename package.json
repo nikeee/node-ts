@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git://github.com/nikeee/node-ts.git"
   },
-  "main": "build/index.js",
+  "main": "dist/index.js",
   "dependencies": {
     "byline": "~4.2.1",
     "q": ">=1.0.1"
@@ -16,7 +16,7 @@
     "dts-bundle": "~0.2.0"
   },
   "typescript": {
-    "definition": "build/node-ts.d.ts"
+    "definition": "dist/node-ts.d.ts"
   },
   "scripts": {
     "prepublish": "node prepublish.js"
