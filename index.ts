@@ -292,7 +292,7 @@ export class TeamSpeakClient extends events.EventEmitter
     public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Q.Promise<CallbackData<QueryResponseItem>>
     {
         if (!cmd)
-            return Q.reject("Empty command");
+            return <Q.Promise<CallbackData<QueryResponseItem>>>Q.reject("Empty command");
 
         var tosend = StringExtensions.tsEscape(cmd);
         options.forEach(v => tosend += " -" + StringExtensions.tsEscape(v));
