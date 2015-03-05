@@ -4,12 +4,13 @@
  * @license Beerware/Pizzaware
  */
 
+///<reference path="typings/node/node.d.ts"/>
 ///<reference path="typings/q/Q.d.ts"/>
-///<reference path="node_modules/line-readable-stream/LineReadableStream.d.ts"/>
+///<reference path="typings/byline/byline.d.ts"/>
 
 import Q = require("q");
 import net = require("net");
-import LineReadableStream = require("./node_modules/line-readable-stream/LineReadableStream");
+import byline = require("byline");
 import events = require("events");
 import util = require("util");
 
@@ -36,7 +37,7 @@ export class TeamSpeakClient extends events.EventEmitter
     private _executing: QueryCommand;
 
     private _socket: net.Socket;
-    private _reader: LineReadableStream;
+    private _reader: byline.LineStream;
 
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
@@ -90,8 +91,8 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     private onConnect(): void
     {
-        this._reader = new LineReadableStream(this._socket);
-        this._reader.on("line", line =>
+        this._reader = byline.createStream(this._socket);
+        this._reader.on("data", line =>
         {
             var s = line.trim();
             // Ignore two first lines sent by server ("TS3" and information message) 

@@ -9,7 +9,7 @@
   },
   "main": "index.js",
   "dependencies": {
-    "line-readable-stream": ">=1.0.1",
+    "byline": "~4.2.1",
     "q": ">=1.0.1"
   },
   "keywords": [
