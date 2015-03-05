@@ -404,7 +404,11 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     public setTimeout(timeout: number): void
     {
-        return this._socket.setTimeout(timeout, () => this._socket.destroy());
+        return this._socket.setTimeout(timeout, () =>
+        {
+            this._socket.destroy();
+            this.emit("timeout");
+        });
     }
     public unsetTimeout(): void
     {
