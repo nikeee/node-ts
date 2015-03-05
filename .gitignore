@@ -1,6 +1,9 @@
 # js files will only be relevant for the released npm package, so don't inclode them
 *.js
 
+# except the prepublish script
+!prepublish.js
+
 # d.ts files can be generated, so don't include them
 *.d.ts
 
