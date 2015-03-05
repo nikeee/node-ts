@@ -398,6 +398,22 @@ export class TeamSpeakClient extends events.EventEmitter
             this._socket.write(this._executing.text + "\n");
         }
     }
+
+    /**
+     * Sets the socket to timeout after timeout milliseconds of inactivity on the socket. By default net.Socket do not have a timeout. 
+     */
+    public setTimeout(timeout: number): void
+    {
+        return this._socket.setTimeout(timeout, () => this._socket.destroy());
+    }
+    public unsetTimeout(): void
+    {
+        /*
+         * If timeout is 0, then the existing idle timeout is disabled.
+         * See: https://nodejs.org/api/net.html#net_socket_settimeout_timeout_callback
+         */
+        return this.setTimeout(0);
+    }
 }
 
 class StringExtensions
