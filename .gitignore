@@ -11,6 +11,8 @@ obj/
 *.js.map
 *.suo
 
+npm-debug.log
+
 # nodejs tools dat files
 *.dat
 
