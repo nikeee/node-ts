@@ -414,8 +414,6 @@ class StringExtensions
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
         r = r.replace(/\n/g, "\\n");    // Newline
-        //r = r.replace(/\b/g, "\\b");    // Info: Backspace fails
-        //r = r.replace(/\a/g, "\\a");    // Info: Bell fails
         r = r.replace(/\r/g, "\\r");    // Carriage Return
         r = r.replace(/\t/g, "\\t");    // Tab
         r = r.replace(/\v/g, "\\v");    // Vertical Tab
@@ -435,8 +433,6 @@ class StringExtensions
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
         r = r.replace(/\\n/g, "\n");   // Newline
-        //r = r.replace(/\\b/g,  "\b");   // Info: Backspace fails
-        //r = r.replace(/\\a/g,  "\a");   // Info: Bell fails
         r = r.replace(/\\f/g, "\f");   // Formfeed
         r = r.replace(/\\r/g, "\r");   // Carriage Return
         r = r.replace(/\\t/g, "\t");   // Tab
