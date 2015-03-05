@@ -11,5 +11,8 @@ obj/
 *.js.map
 *.suo
 
+# nodejs tools dat files
+*.dat
+
 # exclude node modules, they will be installed using npm
 node_modules/
