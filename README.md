@@ -9,10 +9,16 @@ This is a fork of [gwTumm's node-teamspeak](https://github.com/gwTumm/node-teams
 
 How to install
 ---------------
-
-Node:
-
-	npm install node-ts
+```bash
+# install package
+npm install node-ts
+```
+If you are using TypeScript, you also have to install the definitions for `node` and `Q`.
+```bash
+tsd query node --action install
+tsd query q --action install
+```
+(you need [tsd](http://definitelytyped.org/tsd))
 	
 Example Usage
 ----------------
@@ -50,8 +56,12 @@ cl.send("login", {
 TypeScript sample:
 
 ```TypeScript
-// If you know a better war to include the .ts file that comes with the npm package, let me know.
-import ts3 = require("./node_modules/node-ts/index");
+///<reference path="typings/node/node.d.ts"/>
+///<reference path="typings/q/Q.d.ts"/>
+///<reference path="./node_modules/node-ts/dist/node-ts.d.ts"/>
+// you can also copy the node-ts.d.ts to a subdirectory of your typings folder
+
+import ts3 = require("node-ts");
 import util = require("util"); // Include node utils
 
 var cl = new ts3.TeamSpeakClient("##SERVER##"); // create a new client
