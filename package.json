@@ -12,6 +12,15 @@
     "byline": "~4.2.1",
     "q": ">=1.0.1"
   },
+  "devDependencies": {
+    "dts-bundle": "~0.2.0"
+  },
+  "typescript": {
+    "definition": "node-ts.d.ts"
+  },
+  "scripts": {
+    "prepublish": "node prepublish.js"
+  },
   "keywords": [
     "teamspeak",
     "serverquery",
