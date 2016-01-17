@@ -18,13 +18,13 @@ tsd query node --action install
 tsd query q --action install
 ```
 (you need [tsd](http://definitelytyped.org/tsd))
-	
+
 Example Usage
 ----------------
 
-After registering a Server Query account using your TeamSpeak-Client, you
+After registering a Server Query account using your TeamSpeak Client, you
 can login using node-ts (Alternatively, you can login as the root
-account "ServerAdmin" which is created during the installation of the 
+account "ServerAdmin" which is created during the installation of the
 server). The following code prints out a JSON-array containing all
  clients that are currently connected to the first virtual server:
 
@@ -89,4 +89,4 @@ you can send a normal command "servernotifyregister" (consider specification).
 Any event sent by the server that starts with "notify" is then fired as
 an event (e. g. as soon as a "notifyclientmove"-notification is sent by the server,
 the TeamSpeakClient-instance fires the "clientmove"-event with only
-one parameter which is an object containing the given parameters). 
+one parameter which is an object containing the given parameters).

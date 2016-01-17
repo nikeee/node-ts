@@ -301,7 +301,8 @@ export class TeamSpeakClient extends EventEmitter
             {
                 const vArray = <Array<string>>value;
                 // Multiple values for the same key - concatenate all
-                const doptions = vArray.map<string>(val => StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(val));
+                const keyEscaped = StringExtensions.tsEscape(key);
+                const doptions = vArray.map<string>(val => keyEscaped + "=" + StringExtensions.tsEscape(val));
                 tosend += " " + doptions.join("|");
             }
             else
