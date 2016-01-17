@@ -105,22 +105,18 @@ export class TeamSpeakClient extends EventEmitter
             // Server answers with:
             // [- One line containing the answer ]
             // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-            let response: QueryResponseItem[];
-
             if (s.indexOf("error") === 0)
             {
-                response = this.parseResponse(s.substr("error ".length).trim());
+                const response = this.parseResponse(s.substr("error ".length).trim());
                 const res = response.shift();
 
-                let currentError: QueryError = {
+                const currentError: QueryError = {
                     id: res["id"] || 0,
                     msg: res["msg"] || ""
                 };
 
                 if (currentError.id !== 0)
                     this._executing.error = currentError;
-                else
-                    currentError = null;
 
                 if (this._executing.rejectFunction && this._executing.resolveFunction)
                 {
@@ -147,14 +143,13 @@ export class TeamSpeakClient extends EventEmitter
             else if (s.indexOf("notify") === 0)
             {
                 s = s.substr("notify".length);
-                response = this.parseResponse(s);
+                const response = this.parseResponse(s);
                 this.emit(s.substr(0, s.indexOf(" ")), response);
             }
             else if (this._executing)
             {
-                response = this.parseResponse(s);
                 this._executing.rawResponse = s;
-                this._executing.response = response;
+                this._executing.response = this.parseResponse(s);
             }
         });
         this.emit("connect");
@@ -294,9 +289,13 @@ export class TeamSpeakClient extends EventEmitter
             return Promise.reject<CallbackData<QueryResponseItem>>("Empty command")
 
         let tosend = StringExtensions.tsEscape(cmd);
-        options.forEach(v => tosend += " -" + StringExtensions.tsEscape(v));
+        for (let v in options)
+            tosend += " -" + StringExtensions.tsEscape(v);
+
         for (let key in params)
         {
+            if (!params.hasOwnProperty(key))
+                continue;
             const value = params[key];
             if (isArray(value))
             {
@@ -337,29 +336,24 @@ export class TeamSpeakClient extends EventEmitter
         {
             const args = currentItem.split(" ");
             const thisrec: QueryResponseItem = {};
-            args.forEach(v =>
-            {
-                if (v.indexOf("=") > -1)
-                {
-                    const key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
-                    const value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
 
-                    if (parseInt(value, 10).toString() == value)
-                        thisrec[key] = parseInt(value, 10);
-                    else
-                        thisrec[key] = value;
-                }
-                else
+            for (let v in args)
+            {
+                if (v.indexOf("=") <= -1)
+                {
                     thisrec[v] = "";
-            });
+                    continue;
+                }
+                const key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
+                const value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
+                thisrec[key] = (parseInt(value, 10).toString() == value) ? parseInt(value, 10) : value;
+            }
             return thisrec;
         });
 
         if (response.length === 0)
             return null;
 
-        //if (response.length === 1)
-        //    response = response.shift();
         return response;
     }
 
