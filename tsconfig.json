@@ -6,6 +6,7 @@
 		"declaration": true
 	},
 	"files": [
+		"typings/tsd.d.ts",
 		"lib/node-ts.ts"
 	]
 }
