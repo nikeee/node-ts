@@ -9,8 +9,7 @@
   },
   "main": "build/node-ts.js",
   "dependencies": {
-    "byline": "~4.2.1",
-    "q": ">=1.0.1"
+    "byline": "~4.2.1"
   },
   "devDependencies": {
     "dts-bundle": "~0.2.0"
@@ -31,7 +30,7 @@
   ],
   "optionalDependencies": {},
   "engines": {
-    "node": "*"
+    "node": ">=5.0.0"
   },
   "bugs": {
     "url": "https://github.com/nikeee/node-ts/issues",
