@@ -4,21 +4,18 @@
  * @license Beerware/Pizzaware
  */
 
-///<reference path="typings/node/node.d.ts"/>
-///<reference path="typings/q/Q.d.ts"/>
-///<reference path="typings/byline/byline.d.ts"/>
+/// <reference path="../typings/tsd.d.ts" />
 
-import Q = require("q");
-import net = require("net");
-import byline = require("byline");
-import events = require("events");
-import util = require("util");
+import * as net from "net";
+import {EventEmitter} from "events";
+import {inspect} from "util";
+import {LineStream, createStream} from "byline";
 
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
  * @todo unit tests
  */
-export class TeamSpeakClient extends events.EventEmitter
+export class TeamSpeakClient extends EventEmitter
 {
     /**
      * Gets the remote host passed to the constructor. Can be an IP address or a host name.
@@ -37,7 +34,7 @@ export class TeamSpeakClient extends events.EventEmitter
     private _executing: QueryCommand;
 
     private _socket: net.Socket;
-    private _reader: byline.LineStream;
+    private _reader: LineStream;
 
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
@@ -91,7 +88,7 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     private onConnect(): void
     {
-        this._reader = byline.createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
+        this._reader = createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
         this._reader.on("data", line =>
         {
             var s = line.trim();
@@ -400,7 +397,7 @@ export class TeamSpeakClient extends events.EventEmitter
     }
 
     /**
-     * Sets the socket to timeout after timeout milliseconds of inactivity on the socket. By default net.Socket do not have a timeout. 
+     * Sets the socket to timeout after timeout milliseconds of inactivity on the socket. By default net.Socket do not have a timeout.
      */
     public setTimeout(timeout: number): void
     {
