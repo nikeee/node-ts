@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es6",
+		"outDir": "build",
+		"declaration": true
+	},
+	"files": [
+		"lib/node-flipdot.ts"
+	]
+}
