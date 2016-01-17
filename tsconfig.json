@@ -6,6 +6,6 @@
 		"declaration": true
 	},
 	"files": [
-		"lib/node-flipdot.ts"
+		"lib/node-ts.ts"
 	]
 }
