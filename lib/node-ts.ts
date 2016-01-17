@@ -6,6 +6,8 @@
 
 /// <reference path="../typings/tsd.d.ts" />
 
+"use strict";
+
 import * as net from "net";
 import {EventEmitter} from "events";
 import {inspect, isArray} from "util";
@@ -91,7 +93,7 @@ export class TeamSpeakClient extends EventEmitter
         this._reader = createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
         this._reader.on("data", line =>
         {
-            var s = line.trim();
+            let s = line.trim();
             // Ignore two first lines sent by server ("TS3" and information message)
             if (this._status < 0)
             {
@@ -103,14 +105,14 @@ export class TeamSpeakClient extends EventEmitter
             // Server answers with:
             // [- One line containing the answer ]
             // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-            var response: QueryResponseItem[];
+            let response: QueryResponseItem[];
 
             if (s.indexOf("error") === 0)
             {
                 response = this.parseResponse(s.substr("error ".length).trim());
-                var res = response.shift();
+                const res = response.shift();
 
-                var currentError: QueryError = {
+                let currentError: QueryError = {
                     id: res["id"] || 0,
                     msg: res["msg"] || ""
                 };
@@ -123,8 +125,8 @@ export class TeamSpeakClient extends EventEmitter
                 if (this._executing.rejectFunction && this._executing.resolveFunction)
                 {
                     //item: this._executing || null,
-                    var e = this._executing;
-                    var data: CallbackData<QueryResponseItem> = {
+                    const e = this._executing;
+                    const data: CallbackData<QueryResponseItem> = {
                         cmd: e.cmd,
                         options: e.options || [],
                         text: e.text || null,
@@ -291,16 +293,16 @@ export class TeamSpeakClient extends EventEmitter
         if (!cmd)
             return Promise.reject<CallbackData<QueryResponseItem>>("Empty command")
 
-        var tosend = StringExtensions.tsEscape(cmd);
+        let tosend = StringExtensions.tsEscape(cmd);
         options.forEach(v => tosend += " -" + StringExtensions.tsEscape(v));
-        for (var key in params)
+        for (let key in params)
         {
-            var value = params[key];
+            const value = params[key];
             if (isArray(value))
             {
-                var vArray = <Array<string>>value;
+                const vArray = <Array<string>>value;
                 // Multiple values for the same key - concatenate all
-                var doptions = vArray.map<string>(val => StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(val));
+                const doptions = vArray.map<string>(val => StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(val));
                 tosend += " " + doptions.join("|");
             }
             else
@@ -329,20 +331,18 @@ export class TeamSpeakClient extends EventEmitter
      */
     private parseResponse(s: string): QueryResponseItem[]
     {
-        var records = s.split("|");
-
+        const records = s.split("|");
         // Test this
-
-        var response = records.map<QueryResponseItem>(currentItem =>
+        const response = records.map<QueryResponseItem>(currentItem =>
         {
-            var args = currentItem.split(" ");
-            var thisrec: QueryResponseItem = {};
+            const args = currentItem.split(" ");
+            const thisrec: QueryResponseItem = {};
             args.forEach(v =>
             {
                 if (v.indexOf("=") > -1)
                 {
-                    var key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
-                    var value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
+                    const key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
+                    const value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
 
                     if (parseInt(value, 10).toString() == value)
                         thisrec[key] = parseInt(value, 10);
@@ -378,7 +378,7 @@ export class TeamSpeakClient extends EventEmitter
      */
     public clearPending(): QueryCommand[]
     {
-        var q = this._queue;
+        const q = this._queue;
         this._queue = [];
         return q;
     }
@@ -425,7 +425,7 @@ class StringExtensions
      */
     public static tsEscape(s: string): string
     {
-        var r = String(s);
+        let r = String(s);
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
@@ -445,7 +445,7 @@ class StringExtensions
      */
     public static tsUnescape(s: string): string
     {
-        var r = String(s);
+        let r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
         r = r.replace(/\\n/g, "\n");   // Newline
