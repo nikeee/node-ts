@@ -10,7 +10,7 @@ This is a fork of [gwTumm's node-teamspeak](https://github.com/gwTumm/node-teams
 ```bash
 npm install node-ts # install package
 ```
-If you are using TypeScript, you also have to install the definitions for `node` and `Q`.
+If you are using TypeScript, you also have to install the definitions for `node`.
 ```bash
 tsd install node --save
 ```
