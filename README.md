@@ -34,8 +34,8 @@ try
 		client_login_name: "##USERNAME##",
 		client_login_password: "##PASSWORD##"
 	});
-	await cl.send("use", { sid: 1 }));
-	const res = await cl.send("clientlist", {}, []);
+	await cl.send("use", { sid: 1 });
+	const res = await cl.send("clientlist",);
 	console.dir(res);
 }
 catch(err)
