@@ -2,24 +2,22 @@
   "author": "nikeee <holzig@outlook.com> (https://github.com/nikeee)",
   "name": "node-ts",
   "description": "TeamSpeak® 3 Server Query client for node.js implemented using TypeScript",
-  "version": "1.2.3",
+  "version": "2.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/nikeee/node-ts.git"
   },
-  "main": "dist/index.js",
+  "main": "build/node-ts.js",
   "dependencies": {
-    "byline": "~4.2.1",
-    "q": ">=1.0.1"
+    "byline": "~4.2.1"
   },
   "devDependencies": {
     "dts-bundle": "~0.2.0"
   },
-  "typescript": {
-    "definition": "dist/node-ts.d.ts"
-  },
+  "typings": "build/node-ts.d.ts",
   "scripts": {
-    "prepublish": "node prepublish.js"
+    "prepublish": "node_modules/.bin/tsd install && npm test && node bundle.js",
+    "test": "node_modules/.bin/tsc"
   },
   "keywords": [
     "teamspeak",
@@ -30,7 +28,7 @@
   ],
   "optionalDependencies": {},
   "engines": {
-    "node": "*"
+    "node": ">=5.0.0"
   },
   "bugs": {
     "url": "https://github.com/nikeee/node-ts/issues",

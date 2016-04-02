@@ -2,7 +2,7 @@
 *.js
 
 # except the prepublish script
-!prepublish.js
+!bundle.js
 
 # d.ts files can be generated, so don't include them
 *.d.ts

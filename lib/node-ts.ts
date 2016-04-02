@@ -4,21 +4,18 @@
  * @license Beerware/Pizzaware
  */
 
-///<reference path="typings/node/node.d.ts"/>
-///<reference path="typings/q/Q.d.ts"/>
-///<reference path="typings/byline/byline.d.ts"/>
+"use strict";
 
-import Q = require("q");
-import net = require("net");
-import byline = require("byline");
-import events = require("events");
-import util = require("util");
+import * as net from "net";
+import {EventEmitter} from "events";
+import {inspect, isArray} from "util";
+import {LineStream, createStream} from "byline";
 
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
  * @todo unit tests
  */
-export class TeamSpeakClient extends events.EventEmitter
+export class TeamSpeakClient extends EventEmitter
 {
     /**
      * Gets the remote host passed to the constructor. Can be an IP address or a host name.
@@ -37,7 +34,7 @@ export class TeamSpeakClient extends events.EventEmitter
     private _executing: QueryCommand;
 
     private _socket: net.Socket;
-    private _reader: byline.LineStream;
+    private _reader: LineStream;
 
     private static DefaultHost = "localhost";
     private static DefaultPort = 10011;
@@ -91,10 +88,10 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     private onConnect(): void
     {
-        this._reader = byline.createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
+        this._reader = createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
         this._reader.on("data", line =>
         {
-            var s = line.trim();
+            let s = line.trim();
             // Ignore two first lines sent by server ("TS3" and information message)
             if (this._status < 0)
             {
@@ -106,28 +103,24 @@ export class TeamSpeakClient extends events.EventEmitter
             // Server answers with:
             // [- One line containing the answer ]
             // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-            var response: QueryResponseItem[];
-
             if (s.indexOf("error") === 0)
             {
-                response = this.parseResponse(s.substr("error ".length).trim());
-                var res = response.shift();
+                const response = this.parseResponse(s.substr("error ".length).trim());
+                const res = response.shift();
 
-                var currentError: QueryError = {
+                const currentError: QueryError = {
                     id: res["id"] || 0,
                     msg: res["msg"] || ""
                 };
 
                 if (currentError.id !== 0)
                     this._executing.error = currentError;
-                else
-                    currentError = null;
 
-                if (this._executing.defer)
+                if (this._executing.rejectFunction && this._executing.resolveFunction)
                 {
                     //item: this._executing || null,
-                    var e = this._executing;
-                    var data: CallbackData<QueryResponseItem> = {
+                    const e = this._executing;
+                    const data: CallbackData<QueryResponseItem> = {
                         cmd: e.cmd,
                         options: e.options || [],
                         text: e.text || null,
@@ -137,9 +130,9 @@ export class TeamSpeakClient extends events.EventEmitter
                         rawResponse: e.rawResponse || null
                     };
                     if (data.error && data.error.id !== 0)
-                        this._executing.defer.reject(<CallbackData<ErrorResponseData>>data);
+                        this._executing.rejectFunction(data as CallbackData<ErrorResponseData>);
                     else
-                        this._executing.defer.resolve(<CallbackData<QueryResponseItem>>data);
+                        this._executing.resolveFunction(data as CallbackData<QueryResponseItem>);
                 }
 
                 this._executing = null;
@@ -148,14 +141,13 @@ export class TeamSpeakClient extends events.EventEmitter
             else if (s.indexOf("notify") === 0)
             {
                 s = s.substr("notify".length);
-                response = this.parseResponse(s);
+                const response = this.parseResponse(s);
                 this.emit(s.substr(0, s.indexOf(" ")), response);
             }
             else if (this._executing)
             {
-                response = this.parseResponse(s);
                 this._executing.rawResponse = s;
-                this._executing.response = response;
+                this._executing.response = this.parseResponse(s);
             }
         });
         this.emit("connect");
@@ -168,24 +160,24 @@ export class TeamSpeakClient extends events.EventEmitter
 
     // TODO: help
     // TODO: quit
-    public send(cmd: "login", params: LoginParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "logout"): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "version"): Q.Promise<CallbackData<VersionResponseData>>;
-    public send(cmd: "hostinfo"): Q.Promise<CallbackData<HostInfoResponseData>>;
-    public send(cmd: "instanceinfo"): Q.Promise<CallbackData<InstanceInfoResponseData>>;
-    public send(cmd: "instanceedit", params: InstanceEditParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "bindinglist"): Q.Promise<CallbackData<BindingListResponseData>>;
-    public send(cmd: "use", params: UseParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "serverlist", params: IAssoc<any>, options: string[]): Q.Promise<CallbackData<ServerListResponseData>>;
+    public send(cmd: "login", params: LoginParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "logout"): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "version"): Promise<CallbackData<VersionResponseData>>;
+    public send(cmd: "hostinfo"): Promise<CallbackData<HostInfoResponseData>>;
+    public send(cmd: "instanceinfo"): Promise<CallbackData<InstanceInfoResponseData>>;
+    public send(cmd: "instanceedit", params: InstanceEditParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "bindinglist"): Promise<CallbackData<BindingListResponseData>>;
+    public send(cmd: "use", params: UseParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverlist", params: IAssoc<any>, options: string[]): Promise<CallbackData<ServerListResponseData>>;
     // TODO: serveridgetbyport
-    public send(cmd: "serverdelete", params: ServerDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverdelete", params: ServerDeleteParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: servercreate
-    public send(cmd: "serverstart", params: ServerStartStopParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "serverstop", params: ServerStartStopParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "serverprocessstop"): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "serverinfo"): Q.Promise<CallbackData<ServerInfoResponseData>>;
-    public send(cmd: "serverrequestconnectioninfo"): Q.Promise<CallbackData<ServerRequstConnectionInfoResponseData>>;
-    public send(cmd: "serveredit", params: ServerEditParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverstart", params: ServerStartStopParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverstop", params: ServerStartStopParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverprocessstop"): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "serverinfo"): Promise<CallbackData<ServerInfoResponseData>>;
+    public send(cmd: "serverrequestconnectioninfo"): Promise<CallbackData<ServerRequstConnectionInfoResponseData>>;
+    public send(cmd: "serveredit", params: ServerEditParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: servergrouplist
     // TODO: servergroupadd
     // TODO: servergroupdel
@@ -204,16 +196,16 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: serversnapshotdeploy
     // TODO: servernotifyregister
     // TODO: servernotifyunregister
-    public send(cmd: "sendtextmessage", params: SendTextMessageParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "sendtextmessage", params: SendTextMessageParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: logview
-    public send(cmd: "logadd", params: LogAddParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "gm", params: GmParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "channellist", params: IAssoc<any>, options: string[]): Q.Promise<CallbackData<ChannelListResponseData>>; //@todo find anything to make signature better typed
-    public send(cmd: "channelinfo", params: ChannelInfoParams): Q.Promise<CallbackData<ChannelInfoResponseData>>
+    public send(cmd: "logadd", params: LogAddParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "gm", params: GmParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "channellist", params: IAssoc<any>, options: string[]): Promise<CallbackData<ChannelListResponseData>>; //@todo find anything to make signature better typed
+    public send(cmd: "channelinfo", params: ChannelInfoParams): Promise<CallbackData<ChannelInfoResponseData>>
     // TODO: channelfind
     // TODO: channelmove
     // TODO: channelcreate
-    public send(cmd: "channeldelete", params: ChannelDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "channeldelete", params: ChannelDeleteParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: channeledit
     // TODO: channelgrouplist
     // TODO: channelgroupadd
@@ -228,27 +220,27 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: channelpermlist
     // TODO: channeladdperm
     // TODO: channeldelperm
-    public send(cmd: "clientlist", params: ClientListParams): Q.Promise<CallbackData<ClientListResponseData>>;
-    public send(cmd: "clientinfo", params: ClientInfoParams): Q.Promise<CallbackData<ClientInfoResponseData>>;
+    public send(cmd: "clientlist", params: ClientListParams): Promise<CallbackData<ClientListResponseData>>;
+    public send(cmd: "clientinfo", params: ClientInfoParams): Promise<CallbackData<ClientInfoResponseData>>;
     // TODO: clientfind
     // TODO: clientedit
     // TODO: clientdblist
     // TODO: clientdbinfo
     // TODO: clientdbfind
     // TODO: clientdbedit
-    public send(cmd: "clientdbdelete", params: ClientDBDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "clientdbdelete", params: ClientDBDeleteParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: clientgetids
     // TODO: clientgetdbidfromuid
     // TODO: clientgetnamefromuid
     // TODO: clientgetnamefromdbid
     // TODO: clientsetserverquerylogin
     // TODO: clientupdate
-    public send(cmd: "clientmove", params: ClientMoveParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "clientkick", params: ClientKickParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "clientpoke", params: ClientPokeParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "clientpermlist", params: ClientPermListParams, options: string[]): Q.Promise<CallbackData<ClientPermListResponseData>>;
-    public send(cmd: "clientaddperm", params: ClientAddPermParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "clientdelperm", param: ClientDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "clientmove", params: ClientMoveParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "clientkick", params: ClientKickParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "clientpoke", params: ClientPokeParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "clientpermlist", params: ClientPermListParams, options: string[]): Promise<CallbackData<ClientPermListResponseData>>;
+    public send(cmd: "clientaddperm", params: ClientAddPermParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "clientdelperm", param: ClientDeleteParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: channelclientpermlist
     // TODO: channelclientaddperm
     // TODO: channelclientdelperm
@@ -263,58 +255,57 @@ export class TeamSpeakClient extends events.EventEmitter
     // TODO: privilegekeydelete
     // TODO: privilegekeyuse
     // TODO: messageadd
-    public send(cmd: "messagedel", params: MessageDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "messagedel", params: MessageDeleteParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: messageget
     // TODO: messageupdateflag
     // TODO: complainlist
     // TODO: complainadd
-    public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "complaindel", params: ComplainDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "banclient", params: BanClientParams): Q.Promise<CallbackData<GenericResponseData>>; //@todo test
-    public send(cmd: "banlist"): Q.Promise<CallbackData<BanListResponseData>>;
-    public send(cmd: "banadd", params: BanAddParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "bandel", params: BanDeleteParams): Q.Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "bandelall"): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "complaindelall", params: ComplainDeleteAllParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "complaindel", params: ComplainDeleteParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "banclient", params: BanClientParams): Promise<CallbackData<GenericResponseData>>; //@todo test
+    public send(cmd: "banlist"): Promise<CallbackData<BanListResponseData>>;
+    public send(cmd: "banadd", params: BanAddParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "bandel", params: BanDeleteParams): Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "bandelall"): Promise<CallbackData<GenericResponseData>>;
     // TODO: ftinitupload
     // TODO: ftinitdownload
     // TODO: ftlist
     // TODO: ftgetfileinfo
-    public send(cmd: "ftstop", params: FtStopParams): Q.Promise<CallbackData<GenericResponseData>>;
+    public send(cmd: "ftstop", params: FtStopParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: ftdeletefile
     // TODO: ftrenamefile
     // TODO: customsearch
     // TODO: custominfo
     // TODO: whoami
 
-    //public send(cmd: string): Q.Promise<CallbackData<QueryResponseItem>>;
-    //public send(cmd: string, params: IAssoc<Object>): Q.Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object>, options: string[]): Q.Promise<CallbackData<QueryResponseItem>>;
-    public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Q.Promise<CallbackData<QueryResponseItem>>
+    //public send(cmd: string): Promise<CallbackData<QueryResponseItem>>;
+    //public send(cmd: string, params: IAssoc<Object>): Promise<CallbackData>;
+    public send(cmd: string, params: IAssoc<Object>, options: string[]): Promise<CallbackData<QueryResponseItem>>;
+    public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>>
     {
         if (!cmd)
-            return Q.reject<CallbackData<QueryResponseItem>>("Empty command");
+            return Promise.reject<CallbackData<QueryResponseItem>>("Empty command");
 
         let tosend = StringExtensions.tsEscape(cmd);
         for (let v in options)
             tosend += " -" + StringExtensions.tsEscape(v);
 
-        for (var key in params)
+        for (let key in params)
         {
             if (!params.hasOwnProperty(key))
                 continue;
             const value = params[key];
-            if (!util.isArray(value))
+            if (!isArray(value))
             {
                 tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
             }
         }
 
-        var d = Q.defer<CallbackData<QueryResponseItem>>();
         // Handle multiple arrays correctly
         // Get all array in the params
         const arrayParamKeys: string[] = [];
         for (let key in params) {
-            if (params.hasOwnProperty(key) && util.isArray(params[key]))
+            if (params.hasOwnProperty(key) && isArray(params[key]))
                 arrayParamKeys.push(key);
         }
 
@@ -323,7 +314,7 @@ export class TeamSpeakClient extends events.EventEmitter
             const firstArray = params[arrayParamKeys[0]] as [];
             for (let i = 0; i < firstArray.length; ++i) {
                 let segment = "";
-                for (let key of arrayParamKeys) {
+                for (var key of arrayParamKeys) {
                     segment += StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(params[key][i]) + " ";
                 }
                 escapedSegments += segment.slice(0, -1) + "|";
@@ -332,18 +323,19 @@ export class TeamSpeakClient extends events.EventEmitter
                 tosend += " " + escapedSegments.slice(0, -1);
         }
 
-        this._queue.push({
-            cmd: cmd,
-            options: options,
-            parameters: params,
-            text: tosend,
-            defer: d
+        return new Promise<CallbackData<QueryResponseItem>>((resolve, reject) => {
+            this._queue.push({
+                cmd: cmd,
+                options: options,
+                parameters: params,
+                text: tosend,
+                resolveFunction: resolve,
+                rejectFunction: reject
+            });
+
+            if (this._status === 0)
+                this.checkQueue();
         });
-
-        if (this._status === 0)
-            this.checkQueue();
-
-        return d.promise;
     }
 
     /**
@@ -351,37 +343,30 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     private parseResponse(s: string): QueryResponseItem[]
     {
-        var records = s.split("|");
-
+        const records = s.split("|");
         // Test this
-
-        var response = records.map<QueryResponseItem>(currentItem =>
+        const response = records.map<QueryResponseItem>(currentItem =>
         {
-            var args = currentItem.split(" ");
-            var thisrec: QueryResponseItem = {};
-            args.forEach(v =>
-            {
-                if (v.indexOf("=") > -1)
-                {
-                    var key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
-                    var value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
+            const args = currentItem.split(" ");
+            const thisrec: QueryResponseItem = {};
 
-                    if (parseInt(value, 10).toString() == value)
-                        thisrec[key] = parseInt(value, 10);
-                    else
-                        thisrec[key] = value;
-                }
-                else
+            for (let v in args)
+            {
+                if (v.indexOf("=") <= -1)
+                {
                     thisrec[v] = "";
-            });
+                    continue;
+                }
+                const key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
+                const value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
+                thisrec[key] = (parseInt(value, 10).toString() == value) ? parseInt(value, 10) : value;
+            }
             return thisrec;
         });
 
         if (response.length === 0)
             return null;
 
-        //if (response.length === 1)
-        //    response = response.shift();
         return response;
     }
 
@@ -400,7 +385,7 @@ export class TeamSpeakClient extends events.EventEmitter
      */
     public clearPending(): QueryCommand[]
     {
-        var q = this._queue;
+        const q = this._queue;
         this._queue = [];
         return q;
     }
@@ -447,7 +432,7 @@ class StringExtensions
      */
     public static tsEscape(s: string): string
     {
-        var r = String(s);
+        let r = String(s);
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
         r = r.replace(/\|/g, "\\p");    // Pipe
@@ -467,7 +452,7 @@ class StringExtensions
      */
     public static tsUnescape(s: string): string
     {
-        var r = String(s);
+        let r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
         r = r.replace(/\\n/g, "\n");   // Newline
@@ -502,6 +487,11 @@ export interface CallbackData<T extends QueryResponseItem>
     error: QueryError;
     response: T[];
     rawResponse: string;
+
+    cmd?: string,
+    options?: string[];
+    text?: string;
+    parameters: Object;
 }
 
 export interface LoginParams extends IAssoc<any>
@@ -586,7 +576,8 @@ export interface QueryCommand
     options: string[];
     parameters: IAssoc<Object>;
     text: string;
-    defer: Q.Deferred<CallbackData<QueryResponseItem>>;
+    resolveFunction: (data: CallbackData<any>) => void;
+    rejectFunction: (reason: any) => void;
 
     response?: QueryResponseItem[];
     rawResponse?: string;
