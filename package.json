@@ -14,9 +14,7 @@
   "devDependencies": {
     "dts-bundle": "~0.2.0"
   },
-  "typescript": {
-    "definition": "build/node-ts.d.ts"
-  },
+  "typings": "build/node-ts.d.ts",
   "scripts": {
     "prepublish": "node_modules/.bin/tsd install && npm test && node bundle.js",
     "test": "node_modules/.bin/tsc"
