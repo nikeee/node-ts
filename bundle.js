@@ -1,5 +1,5 @@
 require("dts-bundle").bundle({
   name: "node-ts",
-  main: "dist/node-ts.d.ts",
-  out: "node-ts.d.ts"
+  main: "build/node-ts.d.ts",
+  out: "../dist/node-ts.d.ts"
 });
