@@ -284,7 +284,7 @@ export class TeamSpeakClient extends EventEmitter
     public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>>
     {
         if (!cmd)
-            return Promise.reject<CallbackData<QueryResponseItem>>("Empty command")
+            return Promise.reject<CallbackData<QueryResponseItem>>("Empty command");
 
         let tosend = StringExtensions.tsEscape(cmd);
         for (let v in options)
@@ -295,18 +295,32 @@ export class TeamSpeakClient extends EventEmitter
             if (!params.hasOwnProperty(key))
                 continue;
             const value = params[key];
-            if (isArray(value))
-            {
-                const vArray = <Array<string>>value;
-                // Multiple values for the same key - concatenate all
-                const keyEscaped = StringExtensions.tsEscape(key);
-                const doptions = vArray.map<string>(val => keyEscaped + "=" + StringExtensions.tsEscape(val));
-                tosend += " " + doptions.join("|");
-            }
-            else
+            if (!isArray(value))
             {
                 tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
             }
+        }
+
+        // Handle multiple arrays correctly
+        // Get all array in the params
+        const arrayParamKeys: string[] = [];
+        for (let key in params) {
+            if (params.hasOwnProperty(key) && isArray(params[key]))
+                arrayParamKeys.push(key);
+        }
+
+        if (arrayParamKeys.length > 0) {
+            let escapedSegments = "";
+            const firstArray = params[arrayParamKeys[0]] as [];
+            for (let i = 0; i < firstArray.length; ++i) {
+                let segment = "";
+                for (var key of arrayParamKeys) {
+                    segment += StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(params[key][i]) + " ";
+                }
+                escapedSegments += segment.slice(0, -1) + "|";
+            }
+            if(escapedSegments.length > 0)
+                tosend += " " + escapedSegments.slice(0, -1);
         }
 
         return new Promise<CallbackData<QueryResponseItem>>((resolve, reject) => {
