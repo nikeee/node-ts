@@ -294,25 +294,43 @@ export class TeamSpeakClient extends events.EventEmitter
         if (!cmd)
             return Q.reject<CallbackData<QueryResponseItem>>("Empty command");
 
-        var tosend = StringExtensions.tsEscape(cmd);
-        options.forEach(v => tosend += " -" + StringExtensions.tsEscape(v));
+        let tosend = StringExtensions.tsEscape(cmd);
+        for (let v in options)
+            tosend += " -" + StringExtensions.tsEscape(v);
+
         for (var key in params)
         {
-            var value = params[key];
-            if (util.isArray(value))
-            {
-                var vArray = <Array<string>>value;
-                // Multiple values for the same key - concatenate all
-                var doptions = vArray.map<string>(val => StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(val));
-                tosend += " " + doptions.join("|");
-            }
-            else
+            if (!params.hasOwnProperty(key))
+                continue;
+            const value = params[key];
+            if (!util.isArray(value))
             {
                 tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
             }
         }
 
         var d = Q.defer<CallbackData<QueryResponseItem>>();
+        // Handle multiple arrays correctly
+        // Get all array in the params
+        const arrayParamKeys: string[] = [];
+        for (let key in params) {
+            if (params.hasOwnProperty(key) && util.isArray(params[key]))
+                arrayParamKeys.push(key);
+        }
+
+        if (arrayParamKeys.length > 0) {
+            let escapedSegments = "";
+            const firstArray = params[arrayParamKeys[0]] as [];
+            for (let i = 0; i < firstArray.length; ++i) {
+                let segment = "";
+                for (let key of arrayParamKeys) {
+                    segment += StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(params[key][i]) + " ";
+                }
+                escapedSegments += segment.slice(0, -1) + "|";
+            }
+            if(escapedSegments.length > 0)
+                tosend += " " + escapedSegments.slice(0, -1);
+        }
 
         this._queue.push({
             cmd: cmd,
@@ -400,7 +418,7 @@ export class TeamSpeakClient extends events.EventEmitter
     }
 
     /**
-     * Sets the socket to timeout after timeout milliseconds of inactivity on the socket. By default net.Socket do not have a timeout. 
+     * Sets the socket to timeout after timeout milliseconds of inactivity on the socket. By default net.Socket do not have a timeout.
      */
     public setTimeout(timeout: number): void
     {
@@ -476,6 +494,10 @@ export interface IAssoc<T>
  */
 export interface CallbackData<T extends QueryResponseItem>
 {
+    cmd: string;
+    options: string[];
+    text: string;
+    parameters: IAssoc<Object>;
     //item: QueryCommand;
     error: QueryError;
     response: T[];
