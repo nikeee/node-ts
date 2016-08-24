@@ -479,19 +479,19 @@ export interface IAssoc<T>
  */
 export interface CallbackData<T extends QueryResponseItem>
 {
-    cmd: string;
-    options: string[];
-    text: string;
+    cmd?: string;
+    options?: string[];
+    text?: string;
     parameters: IAssoc<Object>;
     //item: QueryCommand;
     error: QueryError;
     response: T[];
     rawResponse: string;
 
-    cmd?: string,
-    options?: string[];
-    text?: string;
-    parameters: Object;
+    // cmd?: string,
+    // options?: string[];
+    // text?: string;
+    // parameters: Object;
 }
 
 export interface LoginParams extends IAssoc<any>
