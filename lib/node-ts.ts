@@ -350,7 +350,7 @@ export class TeamSpeakClient extends EventEmitter
             const args = currentItem.split(" ");
             const thisrec: QueryResponseItem = {};
 
-            for (let v in args)
+            for (let v of args)
             {
                 if (v.indexOf("=") <= -1)
                 {
