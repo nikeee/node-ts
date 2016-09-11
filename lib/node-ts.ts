@@ -287,8 +287,8 @@ export class TeamSpeakClient extends EventEmitter
             return Promise.reject<CallbackData<QueryResponseItem>>("Empty command");
 
         let tosend = StringExtensions.tsEscape(cmd);
-        for (let v in options)
-            tosend += " -" + StringExtensions.tsEscape(v);
+        for (let i = 0; i < options.length; ++i)
+            tosend += " -" + StringExtensions.tsEscape(options[i]);
 
         for (let key in params)
         {
