@@ -29,15 +29,15 @@ export class TeamSpeakClient extends EventEmitter
     private _host: string;
     private _port: number;
 
-    private _queue: QueryCommand[] = null;
+    private _queue: QueryCommand[] = [];
     private _status: number;
-    private _executing: QueryCommand;
+    private _executing: QueryCommand | undefined;
 
-    private _socket: net.Socket;
-    private _reader: LineStream;
+    private _socket!: net.Socket;
+    private _reader!: LineStream;
 
-    private static DefaultHost = "localhost";
-    private static DefaultPort = 10011;
+    private static readonly DefaultHost = "localhost";
+    private static readonly DefaultPort = 10011;
 
     /**
      * Creates a new instance of TeamSpeakClient using the default values.
@@ -91,6 +91,9 @@ export class TeamSpeakClient extends EventEmitter
         this._reader = createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
         this._reader.on("data", line =>
         {
+            if (typeof line !== "string")
+                return;
+
             let s = line.trim();
             // Ignore two first lines sent by server ("TS3" and information message)
             if (this._status < 0)
@@ -106,36 +109,42 @@ export class TeamSpeakClient extends EventEmitter
             if (s.indexOf("error") === 0)
             {
                 const response = this.parseResponse(s.substr("error ".length).trim());
-                const res = response.shift();
-
-                const currentError: QueryError = {
-                    id: res["id"] || 0,
-                    msg: res["msg"] || ""
-                };
-
-                if (currentError.id !== 0)
-                    this._executing.error = currentError;
-
-                if (this._executing.rejectFunction && this._executing.resolveFunction)
+                const executing = this._executing;
+                if (response !== undefined && executing !== undefined)
                 {
-                    //item: this._executing || null,
-                    const e = this._executing;
-                    const data: CallbackData<QueryResponseItem> = {
-                        cmd: e.cmd,
-                        options: e.options || [],
-                        text: e.text || null,
-                        parameters: e.parameters || {},
-                        error: e.error || null,
-                        response: e.response || null,
-                        rawResponse: e.rawResponse || null
-                    };
-                    if (data.error && data.error.id !== 0)
-                        this._executing.rejectFunction(data as CallbackData<ErrorResponseData>);
-                    else
-                        this._executing.resolveFunction(data as CallbackData<QueryResponseItem>);
-                }
+                    const res = response.shift();
 
-                this._executing = null;
+                    if (res !== undefined)
+                    {
+                        const currentError: QueryError = {
+                            id: res["id"] || 0,
+                            msg: res["msg"] || ""
+                        };
+
+                        if (currentError.id !== 0)
+                            executing.error = currentError;
+
+                        if (executing.rejectFunction && executing.resolveFunction)
+                        {
+                            //item: executing || null,
+                            const e = executing;
+                            const data = {
+                                cmd: e.cmd,
+                                options: e.options || [],
+                                text: e.text || null,
+                                parameters: e.parameters || {},
+                                error: e.error || null,
+                                response: e.response || null,
+                                rawResponse: e.rawResponse || null
+                            };
+                            if (data.error && data.error.id !== 0)
+                                executing.rejectFunction(data as CallbackData<ErrorResponseData>);
+                            else
+                                executing.resolveFunction(data as CallbackData<QueryResponseItem>);
+                        }
+                    }
+                }
+                this._executing = undefined;
                 this.checkQueue();
             }
             else if (s.indexOf("notify") === 0)
@@ -280,8 +289,8 @@ export class TeamSpeakClient extends EventEmitter
 
     //public send(cmd: string): Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<Object>, options: string[]): Promise<CallbackData<QueryResponseItem>>;
-    public send(cmd: string, params: IAssoc<Object> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>>
+    public send(cmd: string, params: IAssoc<any>, options: string[]): Promise<CallbackData<QueryResponseItem>>;
+    public send(cmd: string, params: IAssoc<any> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>>
     {
         if (!cmd)
             return Promise.reject<CallbackData<QueryResponseItem>>("Empty command");
@@ -290,7 +299,7 @@ export class TeamSpeakClient extends EventEmitter
         for (let v of options)
             tosend += " -" + StringExtensions.tsEscape(v);
 
-        for (let key in params)
+        for (const key in params)
         {
             if (!params.hasOwnProperty(key))
                 continue;
@@ -304,14 +313,14 @@ export class TeamSpeakClient extends EventEmitter
         // Handle multiple arrays correctly
         // Get all array in the params
         const arrayParamKeys: string[] = [];
-        for (let key in params) {
+        for (const key in params) {
             if (params.hasOwnProperty(key) && isArray(params[key]))
                 arrayParamKeys.push(key);
         }
 
         if (arrayParamKeys.length > 0) {
             let escapedSegments = "";
-            const firstArray = params[arrayParamKeys[0]] as [];
+            const firstArray = params[arrayParamKeys[0]] as string[];
             for (let i = 0; i < firstArray.length; ++i) {
                 let segment = "";
                 for (var key of arrayParamKeys) {
@@ -341,7 +350,7 @@ export class TeamSpeakClient extends EventEmitter
     /**
      * Parses a query API response.
      */
-    private parseResponse(s: string): QueryResponseItem[]
+    private parseResponse(s: string): QueryResponseItem[] | undefined
     {
         const records = s.split("|");
         // Test this
@@ -365,7 +374,7 @@ export class TeamSpeakClient extends EventEmitter
         });
 
         if (response.length === 0)
-            return null;
+            return undefined;
 
         return response;
     }
@@ -395,9 +404,10 @@ export class TeamSpeakClient extends EventEmitter
      */
     private checkQueue(): void
     {
-        if (!this._executing && this._queue.length >= 1)
+        const executing = this._queue.shift();
+        if (executing)
         {
-            this._executing = this._queue.shift();
+            this._executing = executing;
             this._socket.write(this._executing.text + "\n");
         }
     }
@@ -407,7 +417,7 @@ export class TeamSpeakClient extends EventEmitter
      */
     public setTimeout(timeout: number): void
     {
-        return this._socket.setTimeout(timeout, () =>
+        this._socket.setTimeout(timeout, () =>
         {
             this._socket.destroy();
             this.emit("timeout");
