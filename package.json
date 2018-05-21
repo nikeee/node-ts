@@ -1,8 +1,8 @@
 {
-  "author": "nikeee <holzig@outlook.com> (https://github.com/nikeee)",
+  "author": "Niklas Mollenhauer <nikeee@outlook.com>",
   "name": "node-ts",
   "description": "TeamSpeak® 3 Server Query client for node.js implemented using TypeScript",
-  "version": "2.1.2",
+  "version": "3.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/nikeee/node-ts.git"
@@ -18,17 +18,19 @@
   },
   "typings": "build/node-ts.d.ts",
   "scripts": {
-    "prepublish": "npm test && node bundle.js",
-    "test": "tsc"
+    "prepare": "npm run compile",
+    "compile": "tsc"
   },
-  "keywords": ["teamspeak", "serverquery", "ts3", "ts", "typescript"],
+  "keywords": [
+    "teamspeak",
+    "serverquery",
+    "ts3",
+    "ts",
+    "typescript"
+  ],
   "optionalDependencies": {},
   "engines": {
     "node": ">=10.0.0"
-  },
-  "bugs": {
-    "url": "https://github.com/nikeee/node-ts/issues",
-    "email": "holzig@outlook.com"
   },
   "license": "Beerware",
   "readmeFilename": "README.md"
