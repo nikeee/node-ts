@@ -8,6 +8,7 @@
     "url": "git://github.com/nikeee/node-ts.git"
   },
   "main": "build/node-ts.js",
+  "types": "build/node-ts.d.ts",
   "dependencies": {
     "byline": "^5.0.0"
   },
@@ -16,7 +17,6 @@
     "@types/byline": "^4.2.31",
     "typescript": "^2.8.3"
   },
-  "typings": "build/node-ts.d.ts",
   "scripts": {
     "prepare": "npm run compile",
     "compile": "tsc"
