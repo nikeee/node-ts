@@ -10,12 +10,12 @@
   "main": "build/node-ts.js",
   "types": "build/node-ts.d.ts",
   "dependencies": {
+    "@types/node": "^10.5.8",
+    "@types/byline": "^4.2.31",
     "byline": "^5.0.0",
     "rimraf": "^2.6.2"
   },
   "devDependencies": {
-    "@types/node": "^10.5.8",
-    "@types/byline": "^4.2.31",
     "typescript": "^3.0.1"
   },
   "scripts": {

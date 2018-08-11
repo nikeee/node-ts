@@ -6,18 +6,12 @@ The Server Query specification is available [here](http://media.teamspeak.com/ts
 
 This is a fork of [gwTumm's node-teamspeak](https://github.com/gwTumm/node-teamspeak) which has been ported from JS to TS.
 
-## How to install
+## Install
 ```bash
 npm install node-ts # install package
 ```
-If you are using TypeScript, you also have to install the definitions for `node`.
-```bash
-tsd install node --save
-```
-(you need [tsd](http://definitelytyped.org/tsd))
 
 ## Example Usage
-
 After registering a Server Query account using your TeamSpeak Client, you can login using node-ts (Alternatively, you can login as the root account "`ServerAdmin`" which is created during the installation of the server). The following code prints out a JSON-array containing all clients that are currently connected to the first virtual server:
 
 TypeScript sample:
