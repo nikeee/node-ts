@@ -108,9 +108,10 @@ export class TeamSpeakClient extends EventEmitter
                         this._isValidEndpoint = true;
                         break;
                     case -1:
-                        if (!line.startsWith("Welcome to the TeamSpeak 3 ServerQuery interface"))
+                        if (!line.startsWith("Welcome to the TeamSpeak 3 ServerQuery interface")) {
+                            this._isValidEndpoint = false;
                             return this.emit("error", createInvalidEndpointError());
-                        this._isValidEndpoint = true;
+                        }
                         break;
                     case 0:
                         console.assert(this._isValidEndpoint);
