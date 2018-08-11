@@ -1,4 +1,4 @@
-# node-ts [![npm version](https://badge.fury.io/js/node-ts.svg)](http://badge.fury.io/js/node-ts) ![Dependency Status](https://david-dm.org/nikeee/node-ts.svg) ![License](https://img.shields.io/npm/l/node-ts.svg)
+# node-ts [![Build Status](https://travis-ci.com/nikeee/node-ts.svg?branch=master)](https://travis-ci.com/nikeee/node-ts) [![npm version](https://badge.fury.io/js/node-ts.svg)](http://badge.fury.io/js/node-ts) ![Dependency Status](https://david-dm.org/nikeee/node-ts.svg) ![License](https://img.shields.io/npm/l/node-ts.svg)
 
 This is a CommonJS module implemented using [TypeScript](http://typescriptlang.org) which allows you to connect to any TeamSpeak® 3 server which has the Server Query API enabled. Using the Server Query API, you can do everything a normal TeamSpeak user can do (except sending and receiving voice data) automatically via JavaScript/TypeScript (e. g. listing clients logged in on the server).
 
