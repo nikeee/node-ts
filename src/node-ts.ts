@@ -36,6 +36,8 @@ export class TeamSpeakClient extends EventEmitter
     private _socket!: net.Socket;
     private _reader!: LineStream;
 
+    private _isValidEndpoint: boolean = false;
+
     private static readonly DefaultHost = "localhost";
     private static readonly DefaultPort = 10011;
 
@@ -96,13 +98,33 @@ export class TeamSpeakClient extends EventEmitter
 
             let s = line.trim();
             // Ignore two first lines sent by server ("TS3" and information message)
+            // We only have to skip two lines because empty lines are skipped
             if (this._status < 0)
             {
+                switch (this._status) {
+                    case -2:
+                        if (line !== "TS3")
+                            return this.emit("error", createInvalidEndpointError());
+                        this._isValidEndpoint = true;
+                        break;
+                    case -1:
+                        if (!line.startsWith("Welcome to the TeamSpeak 3 ServerQuery interface"))
+                            return this.emit("error", createInvalidEndpointError());
+                            this._isValidEndpoint = true;
+                            break;
+                    case 0:
+                        console.assert(this._isValidEndpoint);
+                }
+
                 this._status++;
                 if (this._status === 0)
                     this.checkQueue();
                 return;
             }
+
+            if (!this._isValidEndpoint)
+                return;
+
             // Server answers with:
             // [- One line containing the answer ]
             // - "error id=XX msg=YY". ID is zero if command was executed successfully.
@@ -293,7 +315,10 @@ export class TeamSpeakClient extends EventEmitter
     public send(cmd: string, params: IAssoc<any> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>>
     {
         if (!cmd)
-            return Promise.reject<CallbackData<QueryResponseItem>>("Empty command");
+            return Promise.reject<CallbackData<QueryResponseItem>>(new Error("Empty command"));
+
+        if (!this._isValidEndpoint)
+            return Promise.reject(createInvalidEndpointError());
 
         let tosend = StringExtensions.tsEscape(cmd);
         for (let v of options)
@@ -339,7 +364,7 @@ export class TeamSpeakClient extends EventEmitter
                 parameters: params,
                 text: tosend,
                 resolveFunction: resolve,
-                rejectFunction: reject
+                rejectFunction: reject,
             });
 
             if (this._status === 0)
@@ -475,6 +500,8 @@ class StringExtensions
         return r;
     }
 }
+
+const createInvalidEndpointError = () => new Error("Remove server is not a TS3 Query Server endpoint.");
 
 /**
  * Represents a Key-Value object.
