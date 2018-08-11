@@ -8,7 +8,7 @@
 
 import * as net from "net";
 import {EventEmitter} from "events";
-import {inspect, isArray} from "util";
+import {isArray} from "util";
 import {LineStream, createStream} from "byline";
 
 /**
