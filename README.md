@@ -16,9 +16,6 @@ After registering a Server Query account using your TeamSpeak Client, you can lo
 
 TypeScript sample:
 ```TypeScript
-///<reference path="./node_modules/node-ts/build/node-ts.d.ts"/>
-// or use "tsd link"
-
 import {TeamSpeakClient} from "node-ts";
 
 var cl = new TeamSpeakClient("##SERVER##"); // create a new client
