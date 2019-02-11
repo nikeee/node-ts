@@ -10,13 +10,13 @@
   "main": "build/node-ts.js",
   "types": "build/node-ts.d.ts",
   "dependencies": {
-    "@types/node": "^10.12.18",
+    "@types/node": "^10.12.24",
     "@types/byline": "^4.2.31",
     "byline": "^5.0.0",
     "rimraf": "^2.6.3"
   },
   "devDependencies": {
-    "typescript": "^3.2.2"
+    "typescript": "^3.3.3"
   },
   "scripts": {
     "test": "tsc --noEmit",
