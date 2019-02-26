@@ -1,15 +1,14 @@
 /**
  * @autor Niklas Mollenhauer <holzig@outlook.com>
  * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
- * @license Beerware/Pizzaware
  */
 
 "use strict";
 
 import * as net from "net";
-import {EventEmitter} from "events";
-import {isArray} from "util";
-import {LineStream, createStream} from "byline";
+import { EventEmitter } from "events";
+import { isArray } from "util";
+import { LineStream, createStream } from "byline";
 
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
