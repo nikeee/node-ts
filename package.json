@@ -11,10 +11,10 @@
   "types": "build/node-ts.d.ts",
   "dependencies": {
     "@types/node": "^11.9.5",
-    "@types/byline": "^4.2.31",
     "byline": "^5.0.0"
   },
   "devDependencies": {
+    "@types/byline": "^4.2.31",
     "rimraf": "^2.6.3",
     "typescript": "^3.3.3333"
   },
