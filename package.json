@@ -7,8 +7,8 @@
     "type": "git",
     "url": "git://github.com/nikeee/node-ts.git"
   },
-  "main": "build/node-ts.js",
-  "types": "build/node-ts.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "dependencies": {
     "@types/node": "^11.9.5",
     "byline": "^5.0.0"
