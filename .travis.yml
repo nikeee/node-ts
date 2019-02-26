@@ -4,6 +4,7 @@ node_js:
   - 8
   - 9
   - 10
+  - node
 
 cache: npm
 
@@ -18,4 +19,4 @@ deploy:
   on:
     branch: master
     tags: true
-    node: 10
+    node: node
