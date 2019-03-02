@@ -29,12 +29,12 @@ export class TeamSpeakClient extends EventEmitter
     private _port: number;
 
     private _queue: QueryCommand[] = [];
-    private _status: number;
     private _executing: QueryCommand | undefined;
 
     private _socket!: net.Socket;
     private _reader!: LineStream;
 
+    private _hasReadFirstLine: boolean = false;
     private _isValidEndpoint: boolean = false;
 
     private static readonly DefaultHost = "localhost";
@@ -71,7 +71,6 @@ export class TeamSpeakClient extends EventEmitter
         this._host = host;
         this._port = port;
         this._queue = [];
-        this._status = -2;
 
         this.initializeConnection();
     }
@@ -82,6 +81,16 @@ export class TeamSpeakClient extends EventEmitter
         this._socket.on("error", err => this.emit("error", err));
         this._socket.on("close",() => this.emit("close", this._queue));
         this._socket.on("connect",() => this.onConnect());
+    }
+
+    private get isInitialized(): boolean
+    {
+        return this._hasReadFirstLine && this._isValidEndpoint;
+    }
+    private setInitialization(success: boolean)
+    {
+        this._hasReadFirstLine = true;
+        this._isValidEndpoint = success;
     }
 
     /**
@@ -98,28 +107,18 @@ export class TeamSpeakClient extends EventEmitter
             let s = line.trim();
             // Ignore two first lines sent by server ("TS3" and information message)
             // We only have to skip two lines because empty lines are skipped
-            if (this._status < 0)
+            if (!this._hasReadFirstLine)
             {
-                switch (this._status) {
-                    case -2:
-                        if (line !== "TS3")
-                            return this.emit("error", createInvalidEndpointError());
-                        this._isValidEndpoint = true;
-                        break;
-                    case -1:
-                        if (!line.startsWith("Welcome to the TeamSpeak 3 ServerQuery interface")) {
-                            this._isValidEndpoint = false;
-                            return this.emit("error", createInvalidEndpointError());
-                        }
-                        break;
-                    case 0:
-                        console.assert(this._isValidEndpoint);
+                if (line !== "TS3")
+                {
+                    this.setInitialization(false);
+                    return this.emit("error", createInvalidEndpointError());
                 }
-
-                this._status++;
-                if (this._status === 0)
-                    this.checkQueue();
-                return;
+                this.setInitialization(true);
+            }
+            else if (this.isInitialized)
+            {
+                this.checkQueue();
             }
 
             if (!this._isValidEndpoint)
@@ -321,7 +320,7 @@ export class TeamSpeakClient extends EventEmitter
             return Promise.reject(createInvalidEndpointError());
 
         let tosend = StringExtensions.tsEscape(cmd);
-        for (let v of options)
+        for (const v of options)
             tosend += " -" + StringExtensions.tsEscape(v);
 
         for (const key in params)
@@ -367,7 +366,7 @@ export class TeamSpeakClient extends EventEmitter
                 rejectFunction: reject,
             });
 
-            if (this._status === 0)
+            if (this.isInitialized)
                 this.checkQueue();
         });
     }
