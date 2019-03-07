@@ -8,7 +8,7 @@
 import * as net from "net";
 import { EventEmitter } from "events";
 import { isArray } from "util";
-import { LineStream, createStream } from "byline";
+import { chunksToLinesAsync, chomp } from "@rauschma/stringio";
 
 import { escape, unescape } from "./queryStrings"
 
@@ -20,11 +20,9 @@ export class TeamSpeakClient extends EventEmitter {
     private queue: QueryCommand[] = [];
     private _executing: QueryCommand | undefined;
 
-    private _socket!: net.Socket;
-    private _reader!: LineStream;
+    private socket!: net.Socket;
 
-    private _hasReadFirstLine: boolean = false;
-    private _isValidEndpoint: boolean = false;
+    private isConnected: boolean = false;
 
     private static readonly DefaultHost = "localhost";
     private static readonly DefaultPort = 10011;
@@ -45,97 +43,101 @@ export class TeamSpeakClient extends EventEmitter {
     }
 
     private initializeConnection() {
-        this._socket = net.connect(this.port, this.host);
-        this._socket.on("error", err => this.emit("error", err));
-        this._socket.on("close", () => this.emit("close", this.queue));
-        this._socket.on("connect", () => this.onConnect());
-    }
-
-    private get isInitialized(): boolean {
-        return this._hasReadFirstLine && this._isValidEndpoint;
-    }
-    private setInitialization(success: boolean) {
-        this._hasReadFirstLine = true;
-        this._isValidEndpoint = success;
+        this.isConnected = false;
+        this.socket = net.connect(this.port, this.host);
+        this.socket.on("error", err => this.emit("error", err));
+        this.socket.on("close", () => this.emit("close", this.queue));
+        this.socket.on("connect", () => this.onConnect());
     }
 
     /**
      * Gets called on an opened connection
      */
-    private onConnect(): void {
-        this._reader = createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
-        this._reader.on("data", line => {
-            if (typeof line !== "string")
-                return;
+    private async onConnect(): Promise<void> {
+        const lineGenerator = chunksToLinesAsync(this.socket);
 
-            let s = line.trim();
-            // Ignore two first lines sent by server ("TS3" and information message)
-            // We only have to skip two lines because empty lines are skipped
-            if (!this._hasReadFirstLine) {
-                if (line !== "TS3") {
-                    this.setInitialization(false);
-                    return this.emit("error", createInvalidEndpointError());
+        let lineCounter = 0;
+
+        for await (const lineWithNewLine of lineGenerator) {
+            const line = chomp(lineWithNewLine).trim();
+            if (line === "")
+                continue;
+            ++lineCounter;
+
+            switch (lineCounter) {
+                case 1: {
+                    if (line !== "TS3") {
+                        this.isConnected = false;
+                        this.emit("error", createInvalidEndpointError())
+                        return;
+                    }
+                    continue;
                 }
-                this.setInitialization(true);
+                case 2:
+                    // We have read a second non-empty line, so we are ready to take commands
+                    this.isConnected = true;
+                    this.emit("connect");
+                    continue; // Welcome message, followed by empty line (which is skipped)
+                default: {
+                    this.handleSingleLine(line);
+                    this.checkQueue();
+                }
             }
-            else if (this.isInitialized) {
-                this.checkQueue();
-            }
+        }
+    }
 
-            if (!this._isValidEndpoint)
-                return;
+    private handleSingleLine(s: string): void {
+        // Server answers with:
+        // [- One line containing the answer ]
+        // - "error id=XX msg=YY". ID is zero if command was executed successfully.
+        if (s.indexOf("error") === 0) {
 
-            // Server answers with:
-            // [- One line containing the answer ]
-            // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-            if (s.indexOf("error") === 0) {
-                const response = this.parseResponse(s.substr("error ".length).trim());
-                const executing = this._executing;
-                if (response !== undefined && executing !== undefined) {
-                    const res = response.shift();
+            const response = this.parseResponse(s.substr("error ".length).trim());
+            const executing = this._executing;
 
-                    if (res !== undefined) {
-                        const currentError: QueryError = {
-                            id: res["id"] || 0,
-                            msg: res["msg"] || ""
+            if (response !== undefined && executing !== undefined) {
+                const res = response.shift();
+
+                if (res !== undefined) {
+                    const currentError: QueryError = {
+                        id: res["id"] || 0,
+                        msg: res["msg"] || ""
+                    };
+
+                    if (currentError.id !== 0)
+                        executing.error = currentError;
+
+                    if (executing.rejectFunction && executing.resolveFunction) {
+                        //item: executing || null,
+                        const e = executing;
+                        const data = {
+                            cmd: e.cmd,
+                            options: e.options || [],
+                            text: e.text || null,
+                            parameters: e.parameters || {},
+                            error: e.error || null,
+                            response: e.response || null,
+                            rawResponse: e.rawResponse || null
                         };
-
-                        if (currentError.id !== 0)
-                            executing.error = currentError;
-
-                        if (executing.rejectFunction && executing.resolveFunction) {
-                            //item: executing || null,
-                            const e = executing;
-                            const data = {
-                                cmd: e.cmd,
-                                options: e.options || [],
-                                text: e.text || null,
-                                parameters: e.parameters || {},
-                                error: e.error || null,
-                                response: e.response || null,
-                                rawResponse: e.rawResponse || null
-                            };
-                            if (data.error && data.error.id !== 0)
-                                executing.rejectFunction(data as CallbackData<ErrorResponseData>);
-                            else
-                                executing.resolveFunction(data as CallbackData<QueryResponseItem>);
-                        }
+                        if (data.error && data.error.id !== 0)
+                            executing.rejectFunction(data as CallbackData<ErrorResponseData>);
+                        else
+                            executing.resolveFunction(data as CallbackData<QueryResponseItem>);
                     }
                 }
-                this._executing = undefined;
-                this.checkQueue();
             }
-            else if (s.indexOf("notify") === 0) {
-                s = s.substr("notify".length);
-                const response = this.parseResponse(s);
-                this.emit(s.substr(0, s.indexOf(" ")), response);
-            }
-            else if (this._executing) {
-                this._executing.rawResponse = s;
-                this._executing.response = this.parseResponse(s);
-            }
-        });
-        this.emit("connect");
+
+            this._executing = undefined;
+            this.checkQueue();
+
+        } else if (s.indexOf("notify") === 0) {
+            s = s.substr("notify".length);
+            const response = this.parseResponse(s);
+            this.emit(s.substr(0, s.indexOf(" ")), response);
+        } else if (this._executing) {
+            this._executing.rawResponse = s;
+            this._executing.response = this.parseResponse(s);
+        }
     }
 
     /**
@@ -270,7 +272,7 @@ export class TeamSpeakClient extends EventEmitter {
         if (!cmd)
             return Promise.reject<CallbackData<QueryResponseItem>>(new Error("Empty command"));
 
-        if (!this._isValidEndpoint)
+        if (!this.isConnected)
             return Promise.reject(createInvalidEndpointError());
 
         let tosend = escape(cmd);
@@ -318,7 +320,7 @@ export class TeamSpeakClient extends EventEmitter {
                 rejectFunction: reject,
             });
 
-            if (this.isInitialized)
+            if(this.isConnected)
                 this.checkQueue();
         });
     }
@@ -376,7 +378,7 @@ export class TeamSpeakClient extends EventEmitter {
         const executing = this.queue.shift();
         if (executing) {
             this._executing = executing;
-            this._socket.write(this._executing.text + "\n");
+            this.socket.write(this._executing.text + "\n");
         }
     }
 
@@ -384,8 +386,8 @@ export class TeamSpeakClient extends EventEmitter {
      * Sets the socket to timeout after timeout milliseconds of inactivity on the socket. By default net.Socket do not have a timeout.
      */
     public setTimeout(timeout: number): void {
-        this._socket.setTimeout(timeout, () => {
-            this._socket.destroy();
+        this.socket.setTimeout(timeout, () => {
+            this.socket.destroy();
             this.emit("timeout");
         });
     }

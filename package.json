@@ -10,8 +10,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "dependencies": {
-    "@types/node": "^11.9.5",
-    "byline": "^5.0.0"
+    "@rauschma/stringio": "^1.4.0",
+    "@types/node": "^11.9.5"
   },
   "devDependencies": {
     "@types/byline": "^4.2.31",
