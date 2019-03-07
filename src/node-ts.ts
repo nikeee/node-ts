@@ -38,22 +38,22 @@ export class TeamSpeakClient extends EventEmitter {
         private readonly port: number = TeamSpeakClient.DefaultPort,
     ) {
         super();
-
-        this.initializeConnection();
     }
 
-    private initializeConnection() {
+    public connect(): Promise<void> {
         this.isConnected = false;
-        this.socket = net.connect(this.port, this.host);
-        this.socket.on("error", err => this.emit("error", err));
-        this.socket.on("close", () => this.emit("close", this.queue));
-        this.socket.on("connect", () => this.onConnect());
+        return new Promise((resolve, reject) => {
+            this.socket = net.connect(this.port, this.host);
+            this.socket.on("error", err => this.emit("error", err));
+            this.socket.on("close", () => this.emit("close", this.queue));
+            this.socket.on("connect", () => this.onConnect(resolve, reject));
+        });
     }
 
     /**
      * Gets called on an opened connection
      */
-    private async onConnect(): Promise<void> {
+    private async onConnect(connectionEstablished: () => void, error: (e: Error) => void): Promise<void> {
         const lineGenerator = chunksToLinesAsync(this.socket);
 
         let lineCounter = 0;
@@ -68,16 +68,18 @@ export class TeamSpeakClient extends EventEmitter {
                 case 1: {
                     if (line !== "TS3") {
                         this.isConnected = false;
-                        this.emit("error", createInvalidEndpointError())
+                        error(new Error("Remove server is not a TS3 Query Server endpoint."));
                         return;
                     }
                     continue;
                 }
+
                 case 2:
                     // We have read a second non-empty line, so we are ready to take commands
                     this.isConnected = true;
-                    this.emit("connect");
+                    connectionEstablished();
                     continue; // Welcome message, followed by empty line (which is skipped)
+
                 default: {
                     this.handleSingleLine(line);
                     this.checkQueue();
@@ -136,8 +138,8 @@ export class TeamSpeakClient extends EventEmitter {
             const notificationResponse = line.substr("notify".length);
             const response = this.parseResponse(notificationResponse);
 
-            const notoficationName = notificationResponse.substr(0, line.indexOf(" "));
-            this.emit(notoficationName, response);
+            const notificationName = notificationResponse.substr(0, line.indexOf(" "));
+            this.emit(notificationName, response);
         } else if (this._executing) {
             this._executing.rawResponse = line;
             this._executing.response = this.parseResponse(line);
@@ -277,7 +279,7 @@ export class TeamSpeakClient extends EventEmitter {
             return Promise.reject<CallbackData<QueryResponseItem>>(new Error("Empty command"));
 
         if (!this.isConnected)
-            return Promise.reject(createInvalidEndpointError());
+            return Promise.reject(new Error("Not connected to any server. Call \"connect()\" before sending anything."));
 
         let tosend = escape(cmd);
         for (const v of options)
@@ -403,8 +405,6 @@ export class TeamSpeakClient extends EventEmitter {
         return this.setTimeout(0);
     }
 }
-
-const createInvalidEndpointError = () => new Error("Remove server is not a TS3 Query Server endpoint.");
 
 /**
  * Represents common data returned by the api.
