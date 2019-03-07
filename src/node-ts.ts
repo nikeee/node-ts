@@ -15,18 +15,7 @@ import { LineStream, createStream } from "byline";
  * @todo unit tests
  */
 export class TeamSpeakClient extends EventEmitter {
-    /**
-     * Gets the remote host passed to the constructor. Can be an IP address or a host name.
-     * @return {string} Remote host of the TeamSpeak server. Can be an IP address or a host name.
-     */
-    public get host(): string {
-        return this._host;
-    }
-
-    private _host: string;
-    private _port: number;
-
-    private _queue: QueryCommand[] = [];
+    private queue: QueryCommand[] = [];
     private _executing: QueryCommand | undefined;
 
     private _socket!: net.Socket;
@@ -39,43 +28,24 @@ export class TeamSpeakClient extends EventEmitter {
     private static readonly DefaultPort = 10011;
 
     /**
-     * Creates a new instance of TeamSpeakClient using the default values.
-     * @constructor
-     */
-    constructor();
-    /**
-     * Creates a new instance of TeamSpeakClient for a specific remote host.
-     * @param {string} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
-     * @constructor
-     */
-    constructor(host: string);
-    /**
      * Creates a new instance of TeamSpeakClient for a specific remote host:port.
      * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
      * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
      * @constructor
      */
-    constructor(host: string, port: number);
-    /**
-     * Creates a new instance of TeamSpeakClient for a specific remote host:port.
-     * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
-     * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
-     * @constructor
-     */
-    constructor(host: string = TeamSpeakClient.DefaultHost, port: number = TeamSpeakClient.DefaultPort) {
+    constructor(
+        private readonly host: string = TeamSpeakClient.DefaultHost,
+        private readonly port: number = TeamSpeakClient.DefaultPort,
+    ) {
         super();
-
-        this._host = host;
-        this._port = port;
-        this._queue = [];
 
         this.initializeConnection();
     }
 
     private initializeConnection() {
-        this._socket = net.connect(this._port, this._host);
+        this._socket = net.connect(this.port, this.host);
         this._socket.on("error", err => this.emit("error", err));
-        this._socket.on("close", () => this.emit("close", this._queue));
+        this._socket.on("close", () => this.emit("close", this.queue));
         this._socket.on("connect", () => this.onConnect());
     }
 
@@ -337,7 +307,7 @@ export class TeamSpeakClient extends EventEmitter {
         }
 
         return new Promise<CallbackData<QueryResponseItem>>((resolve, reject) => {
-            this._queue.push({
+            this.queue.push({
                 cmd: cmd,
                 options: options,
                 parameters: params,
@@ -384,7 +354,7 @@ export class TeamSpeakClient extends EventEmitter {
      * @return {QueryCommand[]} Pending commands that are going to be sent to the server.
      */
     public get pending(): QueryCommand[] {
-        return this._queue.slice(0);
+        return this.queue.slice(0);
     }
 
     /**
@@ -392,8 +362,8 @@ export class TeamSpeakClient extends EventEmitter {
      * @return {QueryCommand[]} Array of commands that have been removed from the queue.
      */
     public clearPending(): QueryCommand[] {
-        const q = this._queue;
-        this._queue = [];
+        const q = this.queue;
+        this.queue = [];
         return q;
     }
 
@@ -401,7 +371,7 @@ export class TeamSpeakClient extends EventEmitter {
      * Checks the current command queue and sends them if needed.
      */
     private checkQueue(): void {
-        const executing = this._queue.shift();
+        const executing = this.queue.shift();
         if (executing) {
             this._executing = executing;
             this._socket.write(this._executing.text + "\n");
