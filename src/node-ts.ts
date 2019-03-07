@@ -320,7 +320,7 @@ export class TeamSpeakClient extends EventEmitter {
                 rejectFunction: reject,
             });
 
-            if(this.isConnected)
+            if (this.isConnected)
                 this.checkQueue();
         });
     }
