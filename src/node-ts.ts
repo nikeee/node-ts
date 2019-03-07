@@ -438,12 +438,6 @@ class StringExtensions {
 
 const createInvalidEndpointError = () => new Error("Remove server is not a TS3 Query Server endpoint.");
 
-/**
- * Represents a Key-Value object.
- */
-export interface IAssoc<T> {
-    [key: string]: T;
-}
 
 /**
  * Represents common data returned by the api.
