@@ -86,13 +86,15 @@ export class TeamSpeakClient extends EventEmitter {
         }
     }
 
-    private handleSingleLine(s: string): void {
+    private handleSingleLine(line: string): void {
         // Server answers with:
         // [- One line containing the answer ]
         // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-        if (s.startsWith("error")) {
+        if (line.startsWith("error")) {
 
-            const response = this.parseResponse(s.substr("error ".length).trim());
+            const errorResponse = line.substr("error ".length);
+
+            const response = this.parseResponse(errorResponse);
             const executing = this._executing;
 
             if (response !== undefined && executing !== undefined) {
@@ -130,13 +132,15 @@ export class TeamSpeakClient extends EventEmitter {
             this._executing = undefined;
             this.checkQueue();
 
-        } else if (s.startsWith("notify")) {
-            s = s.substr("notify".length);
-            const response = this.parseResponse(s);
-            this.emit(s.substr(0, s.indexOf(" ")), response);
+        } else if (line.startsWith("notify")) {
+            const notificationResponse = line.substr("notify".length);
+            const response = this.parseResponse(notificationResponse);
+
+            const notoficationName = notificationResponse.substr(0, line.indexOf(" "));
+            this.emit(notoficationName, response);
         } else if (this._executing) {
-            this._executing.rawResponse = s;
-            this._executing.response = this.parseResponse(s);
+            this._executing.rawResponse = line;
+            this._executing.response = this.parseResponse(line);
         }
     }
 
