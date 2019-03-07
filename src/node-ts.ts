@@ -14,14 +14,12 @@ import { LineStream, createStream } from "byline";
  * Client that can be used to connect to a TeamSpeak server query API.
  * @todo unit tests
  */
-export class TeamSpeakClient extends EventEmitter
-{
+export class TeamSpeakClient extends EventEmitter {
     /**
      * Gets the remote host passed to the constructor. Can be an IP address or a host name.
      * @return {string} Remote host of the TeamSpeak server. Can be an IP address or a host name.
      */
-    public get host(): string
-    {
+    public get host(): string {
         return this._host;
     }
 
@@ -64,8 +62,7 @@ export class TeamSpeakClient extends EventEmitter
      * @param {number = TeamSpeakClient.DefaultPort} port TCP port of the server query instance of the remote host.
      * @constructor
      */
-    constructor(host: string = TeamSpeakClient.DefaultHost, port: number = TeamSpeakClient.DefaultPort)
-    {
+    constructor(host: string = TeamSpeakClient.DefaultHost, port: number = TeamSpeakClient.DefaultPort) {
         super();
 
         this._host = host;
@@ -75,20 +72,17 @@ export class TeamSpeakClient extends EventEmitter
         this.initializeConnection();
     }
 
-    private initializeConnection()
-    {
+    private initializeConnection() {
         this._socket = net.connect(this._port, this._host);
         this._socket.on("error", err => this.emit("error", err));
-        this._socket.on("close",() => this.emit("close", this._queue));
-        this._socket.on("connect",() => this.onConnect());
+        this._socket.on("close", () => this.emit("close", this._queue));
+        this._socket.on("connect", () => this.onConnect());
     }
 
-    private get isInitialized(): boolean
-    {
+    private get isInitialized(): boolean {
         return this._hasReadFirstLine && this._isValidEndpoint;
     }
-    private setInitialization(success: boolean)
-    {
+    private setInitialization(success: boolean) {
         this._hasReadFirstLine = true;
         this._isValidEndpoint = success;
     }
@@ -96,28 +90,23 @@ export class TeamSpeakClient extends EventEmitter
     /**
      * Gets called on an opened connection
      */
-    private onConnect(): void
-    {
+    private onConnect(): void {
         this._reader = createStream(this._socket, { encoding: "utf-8", keepEmptyLines: false });
-        this._reader.on("data", line =>
-        {
+        this._reader.on("data", line => {
             if (typeof line !== "string")
                 return;
 
             let s = line.trim();
             // Ignore two first lines sent by server ("TS3" and information message)
             // We only have to skip two lines because empty lines are skipped
-            if (!this._hasReadFirstLine)
-            {
-                if (line !== "TS3")
-                {
+            if (!this._hasReadFirstLine) {
+                if (line !== "TS3") {
                     this.setInitialization(false);
                     return this.emit("error", createInvalidEndpointError());
                 }
                 this.setInitialization(true);
             }
-            else if (this.isInitialized)
-            {
+            else if (this.isInitialized) {
                 this.checkQueue();
             }
 
@@ -127,16 +116,13 @@ export class TeamSpeakClient extends EventEmitter
             // Server answers with:
             // [- One line containing the answer ]
             // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-            if (s.indexOf("error") === 0)
-            {
+            if (s.indexOf("error") === 0) {
                 const response = this.parseResponse(s.substr("error ".length).trim());
                 const executing = this._executing;
-                if (response !== undefined && executing !== undefined)
-                {
+                if (response !== undefined && executing !== undefined) {
                     const res = response.shift();
 
-                    if (res !== undefined)
-                    {
+                    if (res !== undefined) {
                         const currentError: QueryError = {
                             id: res["id"] || 0,
                             msg: res["msg"] || ""
@@ -145,8 +131,7 @@ export class TeamSpeakClient extends EventEmitter
                         if (currentError.id !== 0)
                             executing.error = currentError;
 
-                        if (executing.rejectFunction && executing.resolveFunction)
-                        {
+                        if (executing.rejectFunction && executing.resolveFunction) {
                             //item: executing || null,
                             const e = executing;
                             const data = {
@@ -168,14 +153,12 @@ export class TeamSpeakClient extends EventEmitter
                 this._executing = undefined;
                 this.checkQueue();
             }
-            else if (s.indexOf("notify") === 0)
-            {
+            else if (s.indexOf("notify") === 0) {
                 s = s.substr("notify".length);
                 const response = this.parseResponse(s);
                 this.emit(s.substr(0, s.indexOf(" ")), response);
             }
-            else if (this._executing)
-            {
+            else if (this._executing) {
                 this._executing.rawResponse = s;
                 this._executing.response = this.parseResponse(s);
             }
@@ -311,8 +294,7 @@ export class TeamSpeakClient extends EventEmitter
     //public send(cmd: string): Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Promise<CallbackData>;
     public send(cmd: string, params: IAssoc<any>, options: string[]): Promise<CallbackData<QueryResponseItem>>;
-    public send(cmd: string, params: IAssoc<any> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>>
-    {
+    public send(cmd: string, params: IAssoc<any> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>> {
         if (!cmd)
             return Promise.reject<CallbackData<QueryResponseItem>>(new Error("Empty command"));
 
@@ -323,13 +305,11 @@ export class TeamSpeakClient extends EventEmitter
         for (const v of options)
             tosend += " -" + StringExtensions.tsEscape(v);
 
-        for (const key in params)
-        {
+        for (const key in params) {
             if (!params.hasOwnProperty(key))
                 continue;
             const value = params[key];
-            if (!isArray(value))
-            {
+            if (!isArray(value)) {
                 tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
             }
         }
@@ -352,7 +332,7 @@ export class TeamSpeakClient extends EventEmitter
                 }
                 escapedSegments += segment.slice(0, -1) + "|";
             }
-            if(escapedSegments.length > 0)
+            if (escapedSegments.length > 0)
                 tosend += " " + escapedSegments.slice(0, -1);
         }
 
@@ -374,19 +354,15 @@ export class TeamSpeakClient extends EventEmitter
     /**
      * Parses a query API response.
      */
-    private parseResponse(s: string): QueryResponseItem[] | undefined
-    {
+    private parseResponse(s: string): QueryResponseItem[] | undefined {
         const records = s.split("|");
         // Test this
-        const response = records.map<QueryResponseItem>(currentItem =>
-        {
+        const response = records.map<QueryResponseItem>(currentItem => {
             const args = currentItem.split(" ");
             const thisrec: QueryResponseItem = {};
 
-            for (let v of args)
-            {
-                if (v.indexOf("=") <= -1)
-                {
+            for (let v of args) {
+                if (v.indexOf("=") <= -1) {
                     thisrec[v] = "";
                     continue;
                 }
@@ -407,8 +383,7 @@ export class TeamSpeakClient extends EventEmitter
      * Gets pending commands that are going to be sent to the server. Note that they have been parsed - Access pending[0].text to get the full text representation of the command.
      * @return {QueryCommand[]} Pending commands that are going to be sent to the server.
      */
-    public get pending(): QueryCommand[]
-    {
+    public get pending(): QueryCommand[] {
         return this._queue.slice(0);
     }
 
@@ -416,8 +391,7 @@ export class TeamSpeakClient extends EventEmitter
      * Clears the queue of pending commands so that any command that is currently queued won't be executed.
      * @return {QueryCommand[]} Array of commands that have been removed from the queue.
      */
-    public clearPending(): QueryCommand[]
-    {
+    public clearPending(): QueryCommand[] {
         const q = this._queue;
         this._queue = [];
         return q;
@@ -426,11 +400,9 @@ export class TeamSpeakClient extends EventEmitter
     /**
      * Checks the current command queue and sends them if needed.
      */
-    private checkQueue(): void
-    {
+    private checkQueue(): void {
         const executing = this._queue.shift();
-        if (executing)
-        {
+        if (executing) {
             this._executing = executing;
             this._socket.write(this._executing.text + "\n");
         }
@@ -439,16 +411,13 @@ export class TeamSpeakClient extends EventEmitter
     /**
      * Sets the socket to timeout after timeout milliseconds of inactivity on the socket. By default net.Socket do not have a timeout.
      */
-    public setTimeout(timeout: number): void
-    {
-        this._socket.setTimeout(timeout, () =>
-        {
+    public setTimeout(timeout: number): void {
+        this._socket.setTimeout(timeout, () => {
             this._socket.destroy();
             this.emit("timeout");
         });
     }
-    public unsetTimeout(): void
-    {
+    public unsetTimeout(): void {
         /*
          * If timeout is 0, then the existing idle timeout is disabled.
          * See: https://nodejs.org/api/net.html#net_socket_settimeout_timeout_callback
@@ -457,15 +426,13 @@ export class TeamSpeakClient extends EventEmitter
     }
 }
 
-class StringExtensions
-{
+class StringExtensions {
     /**
      * Escapes a string so it can be safely used for querying the api.
      * @param  {string} s The string to escape.
      * @return {string}   An escaped string.
      */
-    public static tsEscape(s: string): string
-    {
+    public static tsEscape(s: string): string {
         let r = String(s);
         r = r.replace(/\\/g, "\\\\");   // Backslash
         r = r.replace(/\//g, "\\/");    // Slash
@@ -484,8 +451,7 @@ class StringExtensions
      * @param  {string} s The string to unescape.
      * @return {string}   An unescaped string.
      */
-    public static tsUnescape(s: string): string
-    {
+    public static tsUnescape(s: string): string {
         let r = String(s);
         r = r.replace(/\\s/g, " ");	// Whitespace
         r = r.replace(/\\p/g, "|");    // Pipe
@@ -505,16 +471,14 @@ const createInvalidEndpointError = () => new Error("Remove server is not a TS3 Q
 /**
  * Represents a Key-Value object.
  */
-export interface IAssoc<T>
-{
+export interface IAssoc<T> {
     [key: string]: T;
 }
 
 /**
  * Represents common data returned by the api.
  */
-export interface CallbackData<T extends QueryResponseItem>
-{
+export interface CallbackData<T extends QueryResponseItem> {
     cmd?: string;
     options?: string[];
     text?: string;
@@ -530,61 +494,50 @@ export interface CallbackData<T extends QueryResponseItem>
     // parameters: Object;
 }
 
-export interface LoginParams extends IAssoc<any>
-{
+export interface LoginParams extends IAssoc<any> {
     client_login_name: string;
     client_login_password: string;
 }
 
-export interface VersionResponseData extends QueryResponseItem
-{
+export interface VersionResponseData extends QueryResponseItem {
     version: string;
     build: number;
     platform: string;
 }
 
-export interface UseParams extends IAssoc<any>
-{
+export interface UseParams extends IAssoc<any> {
     sid: number;
 }
-export interface ServerListResponseData extends QueryResponseItem
-{
+export interface ServerListResponseData extends QueryResponseItem {
     //@todo
     virtualserver_id: number;
     virtualserver_port: number;
     virtualserver_status: string;
     virtualserver_clientsonline: number;
 }
-export interface ServerDeleteParams extends UseParams
-{ }
+export interface ServerDeleteParams extends UseParams { }
 
-export interface ServerStartStopParams extends UseParams
-{ }
+export interface ServerStartStopParams extends UseParams { }
 
-export interface ClientListResponseData extends QueryResponseItem
-{
+export interface ClientListResponseData extends QueryResponseItem {
     //TODO
 }
-export interface ClientListParams extends IAssoc<any>
-{ }
+export interface ClientListParams extends IAssoc<any> { }
 
 /**
  * Specialized callback data for a failed request.
  */
-export interface ErrorResponseData extends QueryResponseItem
-{ }
+export interface ErrorResponseData extends QueryResponseItem { }
 
 /**
  * Represents common data returned by the api during a successful response.
  */
-export interface QueryResponseItem extends IAssoc<any>
-{ }
+export interface QueryResponseItem extends IAssoc<any> { }
 
 /**
  * Item that represents a query error.
  */
-export interface QueryError
-{
+export interface QueryError {
     /**
      * The error id.
      * @type {number}
@@ -606,8 +559,7 @@ export interface QueryError
 /**
  * Represents an item in the processing queue for the api.
  */
-export interface QueryCommand
-{
+export interface QueryCommand {
     cmd: string;
     options: string[];
     parameters: IAssoc<Object>;
@@ -635,8 +587,7 @@ export interface QueryCommand
  * @todo lower case imported interfaces
  */
 
-export interface HostInfoResponseData extends QueryResponseItem
-{
+export interface HostInfoResponseData extends QueryResponseItem {
     instance_uptime: number;
     host_timestamp_utc: number;
     virtualservers_running_total: number;
@@ -644,39 +595,30 @@ export interface HostInfoResponseData extends QueryResponseItem
     // TODO
 }
 
-export interface InstanceInfoResponseData extends QueryResponseItem
-{
+export interface InstanceInfoResponseData extends QueryResponseItem {
     // TODO
 }
 
-export interface GenericResponseData extends QueryResponseItem
-{ }
+export interface GenericResponseData extends QueryResponseItem { }
 
-export interface ServerRequstConnectionInfoResponseData extends QueryResponseItem, ServerConnectionProperties
-{ }
+export interface ServerRequstConnectionInfoResponseData extends QueryResponseItem, ServerConnectionProperties { }
 
-export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesChangable
-{ }
+export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesChangable { }
 
-export interface ServerInfoResponseData extends QueryResponseItem, VirtualServerProperties
-{ }
+export interface ServerInfoResponseData extends QueryResponseItem, VirtualServerProperties { }
 
-export interface SendTextMessageParams extends QueryResponseItem
-{
+export interface SendTextMessageParams extends QueryResponseItem {
     targetmode: TextMessageTargetMode;
     target: number;
     msg: string;
 }
 
-export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChangable
-{ }
+export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChangable { }
 
-export interface GmParams extends IAssoc<any>
-{
+export interface GmParams extends IAssoc<any> {
     msg: string;
 }
-export interface ChannelListResponseData extends QueryResponseItem
-{
+export interface ChannelListResponseData extends QueryResponseItem {
     cid: number;
     pid: number;
     channel_order: number;
@@ -684,97 +626,79 @@ export interface ChannelListResponseData extends QueryResponseItem
     channel_topic: string;
     total_clients: number;
 }
-export interface ChannelInfoParams extends IAssoc<any>
-{
+export interface ChannelInfoParams extends IAssoc<any> {
     cid: number;
 }
-export interface ChannelInfoResponseData extends QueryResponseItem, ChannelProperties
-{ }
+export interface ChannelInfoResponseData extends QueryResponseItem, ChannelProperties { }
 
-export interface ChannelDeleteParams extends IAssoc<any>, ChannelInfoParams
-{
+export interface ChannelDeleteParams extends IAssoc<any>, ChannelInfoParams {
     force: YesNo;
 }
 
-export interface ClientInfoResponseData extends QueryResponseItem, ClientProperties
-{ }
-export interface ClientInfoParams extends IAssoc<any>
-{
+export interface ClientInfoResponseData extends QueryResponseItem, ClientProperties { }
+export interface ClientInfoParams extends IAssoc<any> {
     clid: number;
 }
 
-export interface ClientDBDeleteParams extends IAssoc<any>
-{
+export interface ClientDBDeleteParams extends IAssoc<any> {
     cldbid: number;
 }
 
-export interface ClientMoveParams extends IAssoc<any>
-{
+export interface ClientMoveParams extends IAssoc<any> {
     clid: number[];
     cid: number;
     cpw?: string;
 }
-export interface ClientKickParams extends IAssoc<any>
-{
+export interface ClientKickParams extends IAssoc<any> {
     clid: number[];
     reasonid: ReasonIdentifier;
     reasonmsg: string;
 }
-export interface ClientPokeParams extends IAssoc<any>
-{
+export interface ClientPokeParams extends IAssoc<any> {
     clid: number;
     msg: string;
 }
-export interface ClientPermListParams extends IAssoc<any>
-{
+export interface ClientPermListParams extends IAssoc<any> {
     cldbid: number;
 }
-export interface ClientPermListResponseData extends QueryResponseItem
-{
+export interface ClientPermListResponseData extends QueryResponseItem {
     cldbid?: number;
     permid: number;
     permvalue: number;
     permnegated: YesNo;
     permskip: number;
 }
-export interface ClientAddPermParams extends IAssoc<any>
-{
+export interface ClientAddPermParams extends IAssoc<any> {
     cldbid: number;
     permid?: number[];
     permsid?: string[];
     permvalue: number[];
     permskip: YesNo[];
 }
-export interface ClientDeleteParams extends IAssoc<any>
-{
+export interface ClientDeleteParams extends IAssoc<any> {
     cldbid: number;
     permid: number[];
     permsid: string[];
 }
 
-export interface MessageDeleteParams extends IAssoc<any>
-{
+export interface MessageDeleteParams extends IAssoc<any> {
     msgid: number;
 }
 
-export interface ComplainDeleteAllParams extends IAssoc<any>
-{
+export interface ComplainDeleteAllParams extends IAssoc<any> {
     tcldbid: number;
 }
-export interface ComplainDeleteParams extends IAssoc<any>
-{
+export interface ComplainDeleteParams extends IAssoc<any> {
     tcldbid: number;
     fcldbid: number;
 }
-export interface BanClientParams extends IAssoc<any>
-{
+export interface BanClientParams extends IAssoc<any> {
     clid: number;
     time?: number;
     banreason?: string;
 }
 
-export interface BanListResponseData extends QueryResponseItem
-{
+export interface BanListResponseData extends QueryResponseItem {
     banid: number;
     ip: string;
     created: number;
@@ -785,33 +709,28 @@ export interface BanListResponseData extends QueryResponseItem
     enforcements: number;
 }
 
-export interface BanAddParams extends IAssoc<any>
-{
+export interface BanAddParams extends IAssoc<any> {
     ip?: string;
     name?: string;
     uid?: string;
     time?: number;
     banreason?: string;
 }
-export interface BanDeleteParams extends IAssoc<any>
-{
+export interface BanDeleteParams extends IAssoc<any> {
     banid: number;
 }
 
-export interface FtStopParams extends IAssoc<any>
-{
+export interface FtStopParams extends IAssoc<any> {
     serverftfid: number;
     delete: YesNo;
 }
 
-export interface LogAddParams extends IAssoc<any>
-{
+export interface LogAddParams extends IAssoc<any> {
     loglevel: LogLevel;
     logmsg: string;
 }
 
-export interface InstancePropertiesChangable
-{
+export interface InstancePropertiesChangable {
     /**
     * Default ServerQuery group ID
     */
@@ -858,8 +777,7 @@ export interface InstancePropertiesChangable
     SERVERINSTANCE_SERVERQUERY_FLOOD_BAN_TIME: number;
 }
 
-interface InstancePropertiesReadOnly extends ServerConnectionProperties
-{
+interface InstancePropertiesReadOnly extends ServerConnectionProperties {
     /**
      * Uptime in seconds
      */
@@ -890,16 +808,13 @@ interface InstancePropertiesReadOnly extends ServerConnectionProperties
     VIRTUALSERVERS_TOTAL_CHANNELS_ONLINE: number;
 }
 
-interface InstanceProperties extends InstancePropertiesReadOnly, InstancePropertiesChangable
-{ }
+interface InstanceProperties extends InstancePropertiesReadOnly, InstancePropertiesChangable { }
 
-export interface BindingListResponseData extends QueryResponseItem
-{
+export interface BindingListResponseData extends QueryResponseItem {
     //TODO
 }
 
-export interface VirtualServerPropertiesChangable
-{
+export interface VirtualServerPropertiesChangable {
     /**
      * Name of the virtual server
      */
@@ -1082,8 +997,7 @@ export interface VirtualServerPropertiesChangable
     VIRTUALSERVER_CODEC_ENCRYPTION_MODE: any;
 }
 
-export interface ServerConnectionProperties
-{
+export interface ServerConnectionProperties {
     /**
      * Current bandwidth used for outgoing file transfers (Bytes/s)
      */
@@ -1126,8 +1040,7 @@ export interface ServerConnectionProperties
     CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL: number;
 }
 
-export interface VirtualServerPropertiesReadOnly extends ServerConnectionProperties
-{
+export interface VirtualServerPropertiesReadOnly extends ServerConnectionProperties {
     /**
      * Indicates whether the server has a password set or not
      */
@@ -1226,11 +1139,9 @@ export interface VirtualServerPropertiesReadOnly extends ServerConnectionPropert
     VIRTUALSERVER_FILEBASE: string;
 }
 
-export interface VirtualServerProperties extends VirtualServerPropertiesReadOnly, VirtualServerPropertiesChangable
-{ }
+export interface VirtualServerProperties extends VirtualServerPropertiesReadOnly, VirtualServerPropertiesChangable { }
 
-export interface ChannelPropertiesChangable
-{
+export interface ChannelPropertiesChangable {
     /**
     * Name of the channel
     */
@@ -1317,8 +1228,7 @@ export interface ChannelPropertiesChangable
     CPID: number;
 }
 
-export interface ChannelPropertiesReadOnly
-{
+export interface ChannelPropertiesReadOnly {
     /**
     * Indicates whether the channel has a password set or not
     */
@@ -1337,11 +1247,9 @@ export interface ChannelPropertiesReadOnly
     CID: number;
 }
 
-export interface ChannelProperties extends ChannelPropertiesReadOnly, ChannelPropertiesChangable
-{ }
+export interface ChannelProperties extends ChannelPropertiesReadOnly, ChannelPropertiesChangable { }
 
-export interface ClientPropertiesChangable
-{
+export interface ClientPropertiesChangable {
     /**
      * Nickname of the client
      */
@@ -1363,8 +1271,7 @@ export interface ClientPropertiesChangable
      */
     CLIENT_ICON_ID: any;
 }
-export interface ClientPropertiesReadOnly
-{
+export interface ClientPropertiesReadOnly {
     /**
     * Unique ID of the client
     */
@@ -1535,8 +1442,7 @@ export interface ClientPropertiesReadOnly
     CLIENT_COUNTRY: any;
 }
 
-export interface ClientProperties extends ClientPropertiesReadOnly, ClientPropertiesChangable
-{ }
+export interface ClientProperties extends ClientPropertiesReadOnly, ClientPropertiesChangable { }
 
 /*
 
@@ -1544,14 +1450,12 @@ export interface ClientProperties extends ClientPropertiesReadOnly, ClientProper
 
 */
 
-export enum YesNo
-{
+export enum YesNo {
     No = 0,
     Yes = 1
 }
 
-export enum HostMessageMode
-{
+export enum HostMessageMode {
     /**
      * 1: display message in chatlog
      */
@@ -1566,8 +1470,7 @@ export enum HostMessageMode
     HostMessageMode_MODALQUIT
 }
 
-export enum HostBannerMode
-{
+export enum HostBannerMode {
     /**
      * 0: do not adjust
      */
@@ -1582,8 +1485,7 @@ export enum HostBannerMode
     HostMessageMode_KEEPASPECT
 }
 
-export enum Codec
-{
+export enum Codec {
     /**
      * 0: speex narrowband (mono, 16bit, 8kHz)
      */
@@ -1602,8 +1504,7 @@ export enum Codec
     CODEC_CELT_MONO
 }
 
-export enum CodecEncryptionMode
-{
+export enum CodecEncryptionMode {
     /**
      * 0: configure per channel
      */
@@ -1618,8 +1519,7 @@ export enum CodecEncryptionMode
     CODEC_CRYPT_ENABLED
 }
 
-export enum TextMessageTargetMode
-{
+export enum TextMessageTargetMode {
     /**
      * 1: target is a client
      */
@@ -1634,8 +1534,7 @@ export enum TextMessageTargetMode
     TextMessageTarget_SERVER
 }
 
-export enum LogLevel
-{
+export enum LogLevel {
     /**
      * 1: everything that is really bad
      */
@@ -1654,8 +1553,7 @@ export enum LogLevel
     LogLevel_INFO
 }
 
-export enum ReasonIdentifier
-{
+export enum ReasonIdentifier {
     /**
      * 4: kick client from channel
      */
@@ -1666,8 +1564,7 @@ export enum ReasonIdentifier
     REASON_KICK_SERVER
 }
 
-export enum PermissionGroupDatabaseTypes
-{
+export enum PermissionGroupDatabaseTypes {
     /**
      * 0: template group (used for new virtual servers)
      */
@@ -1682,8 +1579,7 @@ export enum PermissionGroupDatabaseTypes
     PermGroupDBTypeQuery
 }
 
-export enum PermissionGroupTypes
-{
+export enum PermissionGroupTypes {
     /**
      * 0: server group permission
      */
@@ -1706,8 +1602,7 @@ export enum PermissionGroupTypes
     PermGroupTypeChannelClient
 }
 
-export enum TokenType
-{
+export enum TokenType {
     /**
      * 0: server group token (id1={groupID} id2=0)
      */
