@@ -1397,7 +1397,7 @@ export enum HostMessageMode {
     /**
      * 3: display message in modal dialog and close connection
      */
-    HostMessageMode_MODALQUIT
+    HostMessageMode_MODALQUIT,
 }
 
 export enum HostBannerMode {
@@ -1412,7 +1412,7 @@ export enum HostBannerMode {
     /**
      * 2: adjust and keep aspect ratio
      */
-    HostMessageMode_KEEPASPECT
+    HostMessageMode_KEEPASPECT,
 }
 
 export enum Codec {
@@ -1431,7 +1431,7 @@ export enum Codec {
     /**
      * 3: celt mono (mono, 16bit, 48kHz)
      */
-    CODEC_CELT_MONO
+    CODEC_CELT_MONO,
 }
 
 export enum CodecEncryptionMode {
@@ -1446,7 +1446,7 @@ export enum CodecEncryptionMode {
     /**
      * 2: globally enabled
      */
-    CODEC_CRYPT_ENABLED
+    CODEC_CRYPT_ENABLED,
 }
 
 export enum TextMessageTargetMode {
@@ -1461,7 +1461,7 @@ export enum TextMessageTargetMode {
     /**
      * 3: target is a virtual server
      */
-    TextMessageTarget_SERVER
+    TextMessageTarget_SERVER,
 }
 
 export enum LogLevel {
@@ -1480,7 +1480,7 @@ export enum LogLevel {
     /**
      * 4: informational output
      */
-    LogLevel_INFO
+    LogLevel_INFO,
 }
 
 export enum ReasonIdentifier {
@@ -1491,7 +1491,7 @@ export enum ReasonIdentifier {
     /**
      * 5: kick client from server
      */
-    REASON_KICK_SERVER
+    REASON_KICK_SERVER,
 }
 
 export enum PermissionGroupDatabaseTypes {
@@ -1506,7 +1506,7 @@ export enum PermissionGroupDatabaseTypes {
     /**
      * 2: global query group (used for ServerQuery clients)
      */
-    PermGroupDBTypeQuery
+    PermGroupDBTypeQuery,
 }
 
 export enum PermissionGroupTypes {
@@ -1529,7 +1529,7 @@ export enum PermissionGroupTypes {
     /**
      * 4: channel-client specific permission
      */
-    PermGroupTypeChannelClient
+    PermGroupTypeChannelClient,
 }
 
 export enum TokenType {
@@ -1540,5 +1540,5 @@ export enum TokenType {
     /**
      * 1: channel group token (id1={groupID} id2={channelID})
      */
-    TokenChannelGroup
+    TokenChannelGroup,
 }
