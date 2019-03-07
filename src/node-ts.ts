@@ -90,7 +90,7 @@ export class TeamSpeakClient extends EventEmitter {
         // Server answers with:
         // [- One line containing the answer ]
         // - "error id=XX msg=YY". ID is zero if command was executed successfully.
-        if (s.indexOf("error") === 0) {
+        if (s.startsWith("error")) {
 
             const response = this.parseResponse(s.substr("error ".length).trim());
             const executing = this._executing;
@@ -130,7 +130,7 @@ export class TeamSpeakClient extends EventEmitter {
             this._executing = undefined;
             this.checkQueue();
 
-        } else if (s.indexOf("notify") === 0) {
+        } else if (s.startsWith("notify")) {
             s = s.substr("notify".length);
             const response = this.parseResponse(s);
             this.emit(s.substr(0, s.indexOf(" ")), response);
