@@ -18,7 +18,7 @@ After registering a Server Query account using your TeamSpeak Client, you can lo
 import { TeamSpeakClient } from "node-ts";
 
 async function main() {
-    const client = new TeamSpeakClient("##SERVER##");
+    const client = new TeamSpeakClient("server.example.com");
 
     try {
         await client.connect();
