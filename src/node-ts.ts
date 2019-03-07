@@ -10,6 +10,8 @@ import { EventEmitter } from "events";
 import { isArray } from "util";
 import { LineStream, createStream } from "byline";
 
+import { escape, unescape } from "./queryStrings"
+
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
  * @todo unit tests
@@ -271,16 +273,16 @@ export class TeamSpeakClient extends EventEmitter {
         if (!this._isValidEndpoint)
             return Promise.reject(createInvalidEndpointError());
 
-        let tosend = StringExtensions.tsEscape(cmd);
+        let tosend = escape(cmd);
         for (const v of options)
-            tosend += " -" + StringExtensions.tsEscape(v);
+            tosend += " -" + escape(v);
 
         for (const key in params) {
             if (!params.hasOwnProperty(key))
                 continue;
             const value = params[key];
             if (!isArray(value)) {
-                tosend += " " + StringExtensions.tsEscape(key.toString()) + "=" + StringExtensions.tsEscape(value.toString());
+                tosend += " " + escape(key.toString()) + "=" + escape(value.toString());
             }
         }
 
@@ -298,7 +300,7 @@ export class TeamSpeakClient extends EventEmitter {
             for (let i = 0; i < firstArray.length; ++i) {
                 let segment = "";
                 for (var key of arrayParamKeys) {
-                    segment += StringExtensions.tsEscape(key) + "=" + StringExtensions.tsEscape(params[key][i]) + " ";
+                    segment += escape(key) + "=" + escape(params[key][i]) + " ";
                 }
                 escapedSegments += segment.slice(0, -1) + "|";
             }
@@ -336,8 +338,8 @@ export class TeamSpeakClient extends EventEmitter {
                     thisrec[v] = "";
                     continue;
                 }
-                const key = StringExtensions.tsUnescape(v.substr(0, v.indexOf("=")));
-                const value = StringExtensions.tsUnescape(v.substr(v.indexOf("=") + 1));
+                const key = unescape(v.substr(0, v.indexOf("=")));
+                const value = unescape(v.substr(v.indexOf("=") + 1));
                 thisrec[key] = (parseInt(value, 10).toString() == value) ? parseInt(value, 10) : value;
             }
             return thisrec;
@@ -396,48 +398,7 @@ export class TeamSpeakClient extends EventEmitter {
     }
 }
 
-class StringExtensions {
-    /**
-     * Escapes a string so it can be safely used for querying the api.
-     * @param  {string} s The string to escape.
-     * @return {string}   An escaped string.
-     */
-    public static tsEscape(s: string): string {
-        let r = String(s);
-        r = r.replace(/\\/g, "\\\\");   // Backslash
-        r = r.replace(/\//g, "\\/");    // Slash
-        r = r.replace(/\|/g, "\\p");    // Pipe
-        r = r.replace(/\n/g, "\\n");    // Newline
-        r = r.replace(/\r/g, "\\r");    // Carriage Return
-        r = r.replace(/\t/g, "\\t");    // Tab
-        r = r.replace(/\v/g, "\\v");    // Vertical Tab
-        r = r.replace(/\f/g, "\\f");    // Formfeed
-        r = r.replace(/ /g, "\\s");    // Whitespace
-        return r;
-    }
-
-    /**
-     * Unescapes a string so it can be used for processing the response of the api.
-     * @param  {string} s The string to unescape.
-     * @return {string}   An unescaped string.
-     */
-    public static tsUnescape(s: string): string {
-        let r = String(s);
-        r = r.replace(/\\s/g, " ");	// Whitespace
-        r = r.replace(/\\p/g, "|");    // Pipe
-        r = r.replace(/\\n/g, "\n");   // Newline
-        r = r.replace(/\\f/g, "\f");   // Formfeed
-        r = r.replace(/\\r/g, "\r");   // Carriage Return
-        r = r.replace(/\\t/g, "\t");   // Tab
-        r = r.replace(/\\v/g, "\v");   // Vertical Tab
-        r = r.replace(/\\\//g, "\/");   // Slash
-        r = r.replace(/\\\\/g, "\\");   // Backslash
-        return r;
-    }
-}
-
 const createInvalidEndpointError = () => new Error("Remove server is not a TS3 Query Server endpoint.");
-
 
 /**
  * Represents common data returned by the api.
