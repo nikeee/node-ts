@@ -39,7 +39,9 @@ async function main() {
 		const clientList = await client.send("clientlist");
 		console.log(clientList);
 
-		client.subscribePrivateTextEvents();
+		await client.subscribePrivateTextEvents(); // Tell the server we want to receive private text events
+
+		// Register a callback for these events
 		client.on("textmessage", data => {
 			console.log(`Message received: ${data.msg}`);
 		});
