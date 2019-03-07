@@ -664,78 +664,78 @@ export interface InstancePropertiesChangable {
     /**
     * Default ServerQuery group ID
     */
-    SERVERINSTANCE_GUEST_SERVERQUERY_GROUP: any;
+    serverinstance_guest_serverquery_group: any;
     /**
      * Default template group ID for administrators on new virtual servers (used to create initial token)
      */
-    SERVERINSTANCE_TEMPLATE_SERVERADMIN_GROUP: any;
+    serverinstance_template_serveradmin_group: any;
     /**
      * TCP port used for file transfers
      */
-    SERVERINSTANCE_FILETRANSFER_PORT: number;
+    serverinstance_filetransfer_port: number;
     /**
      * Max bandwidth available for outgoing file transfers (Bytes/s)
      */
-    SERVERINSTANCE_MAX_DOWNLOAD_TOTAL_BANDWITDH: number;
+    serverinstance_max_download_total_bandwitdh: number;
     /**
      * Max bandwidth available for incoming file transfers (Bytes/s)
      */
-    SERVERINSTANCE_MAX_UPLOAD_TOTAL_BANDWITDH: number;
+    serverinstance_max_upload_total_bandwitdh: number;
     /**
      * Default server group ID used in templates
      */
-    SERVERINSTANCE_TEMPLATE_SERVERDEFAULT_GROUP: any;
+    serverinstance_template_serverdefault_group: any;
     /**
      * Default channel group ID used in templates
      */
-    SERVERINSTANCE_TEMPLATE_CHANNELDEFAULT_GROUP: any;
+    serverinstance_template_channeldefault_group: any;
     /**
      * Default channel administrator group ID used in templates
      */
-    SERVERINSTANCE_TEMPLATE_CHANNELADMIN_GROUP: any;
+    serverinstance_template_channeladmin_group: any;
     /**
-     * Max number of commands allowed in <SERVERINSTANCE_SERVERQUERY_FLOOD_TIME> seconds
+     * Max number of commands allowed in <serverinstance_serverquery_flood_time> seconds
      */
-    SERVERINSTANCE_SERVERQUERY_FLOOD_COMMANDS: number;
+    serverinstance_serverquery_flood_commands: number;
     /**
-     * Timeframe in seconds for <SERVERINSTANCE_SERVERQUERY_FLOOD_COMMANDS> commands
+     * Timeframe in seconds for <serverinstance_serverquery_flood_commands> commands
      */
-    SERVERINSTANCE_SERVERQUERY_FLOOD_TIME: number;
+    serverinstance_serverquery_flood_time: number;
     /**
      * Time in seconds used for automatic bans triggered by the ServerQuery flood protection
      */
-    SERVERINSTANCE_SERVERQUERY_FLOOD_BAN_TIME: number;
+    serverinstance_serverquery_flood_ban_time: number;
 }
 
 interface InstancePropertiesReadOnly extends ServerConnectionProperties {
     /**
      * Uptime in seconds
      */
-    INSTANCE_UPTIME: number;
+    instance_uptime: number;
     /**
      * Current server date and time as UTC timestamp
      */
-    HOST_TIMESTAMP_UTC: any;
+    host_timestamp_utc: any;
     /**
      * Number of virtual servers running
      */
-    VIRTUALSERVERS_RUNNING_TOTAL: number;
+    virtualservers_running_total: number;
     /**
      * Database revision number
      */
-    SERVERINSTANCE_DATABASE_VERSION: any;
+    serverinstance_database_version: any;
     /**
      * Max number of clients for all virtual servers
      */
-    VIRTUALSERVERS_TOTAL_MAXCLIENTS: number;
+    virtualservers_total_maxclients: number;
     /**
      * Number of clients online on all virtual servers
      */
-    VIRTUALSERVERS_TOTAL_CLIENTS_ONLINE: number;
+    virtualservers_total_clients_online: number;
     /**
      * Number of channels on all virtual servers
      */
-    VIRTUALSERVERS_TOTAL_CHANNELS_ONLINE: number;
+    virtualservers_total_channels_online: number;
 }
 
 interface InstanceProperties extends InstancePropertiesReadOnly, InstancePropertiesChangable { }
@@ -748,325 +748,325 @@ export interface VirtualServerPropertiesChangable {
     /**
      * Name of the virtual server
      */
-    VIRTUALSERVER_NAME: string;
+    virtualserver_name: string;
     /**
      * Welcome message of the virtual server
      */
-    VIRTUALSERVER_WELCOMEMESSAGE: string;
+    virtualserver_welcomemessage: string;
     /**
      * Number of slots available on the virtual server
      */
-    VIRTUALSERVER_MAXCLIENTS: number;
+    virtualserver_maxclients: number;
     /**
      * Password of the virtual server
      */
-    VIRTUALSERVER_PASSWORD: string;
+    virtualserver_password: string;
     /**
      * Host message of the virtual server
      */
-    VIRTUALSERVER_HOSTMESSAGE: string;
+    virtualserver_hostmessage: string;
     /**
      * Host message mode of the virtual server (see Definitions)
      */
-    VIRTUALSERVER_HOSTMESSAGE_MODE: any;
+    virtualserver_hostmessage_mode: any;
     /**
      * Default server group ID
      */
-    VIRTUALSERVER_DEFAULT_SERVER_GROUP: any;
+    virtualserver_default_server_group: any;
     /**
      * Default channel group ID
      */
-    VIRTUALSERVER_DEFAULT_CHANNEL_GROUP: any;
+    virtualserver_default_channel_group: any;
     /**
      * Default channel administrator group ID
      */
-    VIRTUALSERVER_DEFAULT_CHANNEL_ADMIN_GROUP: any;
+    virtualserver_default_channel_admin_group: any;
     /**
      * Max bandwidth for outgoing file transfers on the virtual server (Bytes/s)
      */
-    VIRTUALSERVER_MAX_DOWNLOAD_TOTAL_BANDWIDTH: number;
+    virtualserver_max_download_total_bandwidth: number;
     /**
      * Max bandwidth for incoming file transfers on the virtual server (Bytes/s)
      */
-    VIRTUALSERVER_MAX_UPLOAD_TOTAL_BANDWIDTH: number;
+    virtualserver_max_upload_total_bandwidth: number;
     /**
      * Host banner URL opened on click
      */
-    VIRTUALSERVER_HOSTBANNER_URL: string;
+    virtualserver_hostbanner_url: string;
     /**
      * Host banner URL used as image source
      */
-    VIRTUALSERVER_HOSTBANNER_GFX_URL: string;
+    virtualserver_hostbanner_gfx_url: string;
     /**
      * Interval for reloading the banner on client-side
      */
-    VIRTUALSERVER_HOSTBANNER_GFX_INTERVAL: any;
+    virtualserver_hostbanner_gfx_interval: any;
     /**
      * Number of complaints needed to ban a client automatically
      */
-    VIRTUALSERVER_COMPLAIN_AUTOBAN_COUNT: number;
+    virtualserver_complain_autoban_count: number;
     /**
      * Time in seconds used for automatic bans triggered by complaints
      */
-    VIRTUALSERVER_COMPLAIN_AUTOBAN_TIME: number;
+    virtualserver_complain_autoban_time: number;
     /**
      * Time in seconds before a complaint is deleted automatically
      */
-    VIRTUALSERVER_COMPLAIN_REMOVE_TIME: number;
+    virtualserver_complain_remove_time: number;
     /**
      * Number of clients in the same channel needed to force silence
      */
-    VIRTUALSERVER_MIN_CLIENTS_IN_CHANNEL_BEFORE_FORCED_SILENCE: number;
+    virtualserver_min_clients_in_channel_before_forced_silence: number;
     /**
      * Client volume lowered automatically while a priority speaker is talking
      */
-    VIRTUALSERVER_PRIORITY_SPEAKER_DIMM_MODIFICATOR: any;
+    virtualserver_priority_speaker_dimm_modificator: any;
     /**
      * Anti-flood points removed from a client for being good
      */
-    VIRTUALSERVER_ANTIFLOOD_POINTS_TICK_REDUCE: any;
+    virtualserver_antiflood_points_tick_reduce: any;
     /**
      * Anti-flood points needed to block commands being executed by the client
      */
-    VIRTUALSERVER_ANTIFLOOD_POINTS_NEEDED_COMMAND_BLOCK: any;
+    virtualserver_antiflood_points_needed_command_block: any;
     /**
      * Anti-flood points needed to block incoming connections from the client
      */
-    VIRTUALSERVER_ANTIFLOOD_POINTS_NEEDED_IP_BLOCK: any;
+    virtualserver_antiflood_points_needed_ip_block: any;
     /**
      * The display mode for the virtual servers hostbanner (see Definitions)
      */
-    VIRTUALSERVER_HOSTBANNER_MODE: any;
+    virtualserver_hostbanner_mode: any;
     /**
      * Text used for the tooltip of the host button on client-side
      */
-    VIRTUALSERVER_HOSTBUTTON_TOOLTIP: string;
+    virtualserver_hostbutton_tooltip: string;
     /**
      * Text used for the tooltip of the host button on client-side
      */
-    VIRTUALSERVER_HOSTBUTTON_GFX_URL: string;
+    virtualserver_hostbutton_gfx_url: string;
     /**
      * URL opened on click on the host button
      */
-    VIRTUALSERVER_HOSTBUTTON_URL: string;
+    virtualserver_hostbutton_url: string;
     /**
      * Download quota for the virtual server (MByte)
      */
-    VIRTUALSERVER_DOWNLOAD_QUOTA: number;
+    virtualserver_download_quota: number;
     /**
      * Download quota for the virtual server (MByte)
      */
-    VIRTUALSERVER_UPLOAD_QUOTA: number;
+    virtualserver_upload_quota: number;
     /**
      * Machine ID identifying the server instance associated with the virtual server in the database
      */
-    VIRTUALSERVER_MACHINE_ID: any;
+    virtualserver_machine_id: any;
     /**
      * UDP port the virtual server is listening on
      */
-    VIRTUALSERVER_PORT: number;
+    virtualserver_port: number;
     /**
      * Indicates whether the server starts automatically with the server instance or not
      */
-    VIRTUALSERVER_AUTOSTART: any;
+    virtualserver_autostart: any;
     /**
      * Status of the virtual server (online | virtual online | offline | booting up | shutting down | …)
      */
-    VIRTUALSERVER_STATUS: string;
+    virtualserver_status: string;
     /**
      * Indicates whether the server logs events related to clients or not
      */
-    VIRTUALSERVER_LOG_CLIENT: any;
+    virtualserver_log_client: any;
     /**
      * Indicates whether the server logs events related to ServerQuery clients or not
      */
-    VIRTUALSERVER_LOG_QUERY: any;
+    virtualserver_log_query: any;
     /**
      * Indicates whether the server logs events related to channels or not
      */
-    VIRTUALSERVER_LOG_CHANNEL: any;
+    virtualserver_log_channel: any;
     /**
      * Indicates whether the server logs events related to permissions or not
      */
-    VIRTUALSERVER_LOG_PERMISSIONS: any;
+    virtualserver_log_permissions: any;
     /**
      * Indicates whether the server logs events related to server changes or not
      */
-    VIRTUALSERVER_LOG_SERVER: any;
+    virtualserver_log_server: any;
     /**
      * Indicates whether the server logs events related to file transfers or not
      */
-    VIRTUALSERVER_LOG_FILETRANSFER: any;
+    virtualserver_log_filetransfer: any;
     /**
      * Min client version required to connect
      */
-    VIRTUALSERVER_MIN_CLIENT_VERSION: any;
+    virtualserver_min_client_version: any;
     /**
      * Minimum client identity security level required to connect to the virtual server
      */
-    VIRTUALSERVER_NEEDED_IDENTITY_SECURITY_LEVEL: any;
+    virtualserver_needed_identity_security_level: any;
     /**
      * Phonetic name of the virtual server
      */
-    VIRTUALSERVER_NAME_PHONETIC: any;
+    virtualserver_name_phonetic: any;
     /**
      * CRC32 checksum of the virtual server icon
      */
-    VIRTUALSERVER_ICON_ID: any;
+    virtualserver_icon_id: any;
     /**
      * Number of reserved slots available on the virtual server
      */
-    VIRTUALSERVER_RESERVED_SLOTS: number;
+    virtualserver_reserved_slots: number;
     /**
      * Indicates whether the server appears in the global web server list or not
      */
-    VIRTUALSERVER_WEBLIST_ENABLED: any;
+    virtualserver_weblist_enabled: any;
     /**
      * The global codec encryption mode of the virtual server
      */
-    VIRTUALSERVER_CODEC_ENCRYPTION_MODE: any;
+    virtualserver_codec_encryption_mode: any;
 }
 
 export interface ServerConnectionProperties {
     /**
      * Current bandwidth used for outgoing file transfers (Bytes/s)
      */
-    CONNECTION_FILETRANSFER_BANDWIDTH_SENT: number;
+    connection_filetransfer_bandwidth_sent: number;
     /**
      * Current bandwidth used for incoming file transfers (Bytes/s)
      */
-    CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED: number;
+    connection_filetransfer_bandwidth_received: number;
     /**
      * Total amount of packets sent
      */
-    CONNECTION_PACKETS_SENT_TOTAL: number;
+    connection_packets_sent_total: number;
     /**
      * Total amount of packets received
      */
-    CONNECTION_PACKETS_RECEIVED_TOTAL: number;
+    connection_packets_received_total: number;
     /**
      * Total amount of bytes sent
      */
-    CONNECTION_BYTES_SENT_TOTAL: number;
+    connection_bytes_sent_total: number;
     /**
      * Total amount of bytes received
      */
-    CONNECTION_BYTES_RECEIVED_TOTAL: number;
+    connection_bytes_received_total: number;
     /**
      * Average bandwidth used for outgoing data in the last second (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL: number;
+    connection_bandwidth_sent_last_second_total: number;
     /**
      * Average bandwidth used for incoming data in the last second (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL: number;
+    connection_bandwidth_received_last_second_total: number;
     /**
      * Average bandwidth used for outgoing data in the last minute (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL: number;
+    connection_bandwidth_sent_last_minute_total: number;
     /**
      * Average bandwidth used for incoming data in the last minute (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL: number;
+    connection_bandwidth_received_last_minute_total: number;
 }
 
 export interface VirtualServerPropertiesReadOnly extends ServerConnectionProperties {
     /**
      * Indicates whether the server has a password set or not
      */
-    VIRTUALSERVER_FLAG_PASSWORD: any;
+    virtualserver_flag_password: any;
     /**
      * Number of clients connected to the virtual server
      */
-    VIRTUALSERVER_CLIENTSONLINE: number;
+    virtualserver_clientsonline: number;
     /**
      * Number of ServerQuery clients connected to the virtual server
      */
-    VIRTUALSERVER_QUERYCLIENTSONLINE: number;
+    virtualserver_queryclientsonline: number;
     /**
      * Number of channels created on the virtual server
      */
-    VIRTUALSERVER_CHANNELSONLINE: number;
+    virtualserver_channelsonline: number;
     /**
      * Creation date and time of the virtual server as UTC timestamp
      */
-    VIRTUALSERVER_CREATED: any;
+    virtualserver_created: any;
     /**
      * Uptime in seconds
      */
-    VIRTUALSERVER_UPTIME: number;
+    virtualserver_uptime: number;
     /**
      * Operating system the server is running on
      */
-    VIRTUALSERVER_PLATFORM: string;
+    virtualserver_platform: string;
     /**
      * Server version information including build number
      */
-    VIRTUALSERVER_VERSION: any;
+    virtualserver_version: any;
     /**
      * Indicates whether the initial privilege key for the virtual server has been used or not
      */
-    VIRTUALSERVER_ASK_FOR_PRIVILEGEKEY: any;
+    virtualserver_ask_for_privilegekey: any;
     /**
      * Total number of clients connected to the virtual server since it was last started
      */
-    VIRTUALSERVER_CLIENT_CONNECTIONS: number;
+    virtualserver_client_connections: number;
     /**
      * Total number of ServerQuery clients connected to the virtual server since it was last started
      */
-    VIRTUALSERVER_QUERY_CLIENT_CONNECTIONS: number;
+    virtualserver_query_client_connections: number;
     /**
      * Number of bytes downloaded from the virtual server on the current month
      */
-    VIRTUALSERVER_MONTH_BYTES_DOWNLOADED: number;
+    virtualserver_month_bytes_downloaded: number;
     /**
      * Number of bytes uploaded to the virtual server on the current month
      */
-    VIRTUALSERVER_MONTH_BYTES_UPLOADED: number;
+    virtualserver_month_bytes_uploaded: number;
     /**
      * Number of bytes downloaded from the virtual server since it was last started
      */
-    VIRTUALSERVER_TOTAL_BYTES_DOWNLOADED: number;
+    virtualserver_total_bytes_downloaded: number;
     /**
      * Number of bytes uploaded to the virtual server since it was last started
      */
-    VIRTUALSERVER_TOTAL_BYTES_UPLOADED: number;
+    virtualserver_total_bytes_uploaded: number;
     /**
      * Unique ID of the virtual server
      */
-    VIRTUALSERVER_UNIQUE_IDENTIFER: any;
+    virtualserver_unique_identifer: any;
     /**
      * Database ID of the virtual server
      */
-    VIRTUALSERVER_ID: any;
+    virtualserver_id: any;
     /**
      * The average packet loss for speech data on the virtual server
      */
-    VIRTUALSERVER_TOTAL_PACKETLOSS_SPEECH: number;
+    virtualserver_total_packetloss_speech: number;
     /**
      * The average packet loss for keepalive data on the virtual server
      */
-    VIRTUALSERVER_TOTAL_PACKETLOSS_KEEPALIVE: number;
+    virtualserver_total_packetloss_keepalive: number;
     /**
      * The average packet loss for control data on the virtual server
      */
-    VIRTUALSERVER_TOTAL_PACKETLOSS_CONTROL: number;
+    virtualserver_total_packetloss_control: number;
     /**
      * The average packet loss for all data on the virtual server
      */
-    VIRTUALSERVER_TOTAL_PACKETLOSS_TOTAL: number;
+    virtualserver_total_packetloss_total: number;
     /**
      * The average ping of all clients connected to the virtual server
      */
-    VIRTUALSERVER_TOTAL_PING: number;
+    virtualserver_total_ping: number;
     /**
      * The IPv4 address the virtual server is listening on
      */
-    VIRTUALSERVER_IP: any;
+    virtualserver_ip: any;
     /**
      * The directory where the virtual servers filebase is located
      */
-    VIRTUALSERVER_FILEBASE: string;
+    virtualserver_filebase: string;
 }
 
 export interface VirtualServerProperties extends VirtualServerPropertiesReadOnly, VirtualServerPropertiesChangable { }
@@ -1075,83 +1075,83 @@ export interface ChannelPropertiesChangable {
     /**
     * Name of the channel
     */
-    CHANNEL_NAME: string;
+    channel_name: string;
     /**
      * Topic of the channel
      */
-    CHANNEL_TOPIC: string;
+    channel_topic: string;
     /**
      * Description of the channel
      */
-    CHANNEL_DESCRIPTION: string;
+    channel_description: string;
     /**
      * Password of the channel
      */
-    CHANNEL_PASSWORD: string;
+    channel_password: string;
     /**
      * Codec used by the channel (see Definitions)
      */
-    CHANNEL_CODEC: Codec;
+    channel_codec: Codec;
     /**
      * Codec quality used by the channel
      */
-    CHANNEL_CODEC_QUALITY: any;
+    channel_codec_quality: any;
     /**
      * Individual max number of clients for the channel
      */
-    CHANNEL_MAXCLIENTS: number;
+    channel_maxclients: number;
     /**
      * Individual max number of clients for the channel family
      */
-    CHANNEL_MAXFAMILYCLIENTS: number;
+    channel_maxfamilyclients: number;
     /**
      * ID of the channel below which the channel is positioned
      */
-    CHANNEL_ORDER: number;
+    channel_order: number;
     /**
      * Indicates whether the channel is permanent or not
      */
-    CHANNEL_FLAG_PERMANENT: any;
+    channel_flag_permanent: any;
     /**
      * Indicates whether the channel is semi-permanent or not
      */
-    CHANNEL_FLAG_SEMI_PERMANENT: any;
+    channel_flag_semi_permanent: any;
     /**
      * Indicates whether the channel is temporary or not
      */
-    CHANNEL_FLAG_TEMPORARY: any;
+    channel_flag_temporary: any;
     /**
      * Indicates whether the channel is the virtual servers default channel or not
      */
-    CHANNEL_FLAG_DEFAULT: any;
+    channel_flag_default: any;
     /**
      * Indicates whether the channel has a max clients limit or not
      */
-    CHANNEL_FLAG_MAXCLIENTS_UNLIMITED: any;
+    channel_flag_maxclients_unlimited: any;
     /**
      * Indicates whether the channel has a max family clients limit or not
      */
-    CHANNEL_FLAG_MAXFAMILYCLIENTS_UNLIMITED: any;
+    channel_flag_maxfamilyclients_unlimited: any;
     /**
      * Indicates whether the channel inherits the max family clients from his parent channel or not
      */
-    CHANNEL_FLAG_MAXFAMILYCLIENTS_INHERITED: any;
+    channel_flag_maxfamilyclients_inherited: any;
     /**
      * Needed talk power for this channel
      */
-    CHANNEL_NEEDED_TALK_POWER: any;
+    channel_needed_talk_power: any;
     /**
      * Phonetic name of the channel
      */
-    CHANNEL_NAME_PHONETIC: string;
+    channel_name_phonetic: string;
     /**
      * CRC32 checksum of the channel icon
      */
-    CHANNEL_ICON_ID: any;
+    channel_icon_id: any;
     /**
      * Indicates whether speech data transmitted in this channel is encrypted or not
      */
-    CHANNEL_CODEC_IS_UNENCRYPTED: any;
+    channel_codec_is_unencrypted: any;
     /**
      * The channels parent ID
      */
@@ -1162,19 +1162,19 @@ export interface ChannelPropertiesReadOnly {
     /**
     * Indicates whether the channel has a password set or not
     */
-    CHANNEL_FLAG_PASSWORD: any;
+    channel_flag_password: any;
     /**
      * Path of the channels file repository
      */
-    CHANNEL_FILEPATH: string;
+    channel_filepath: string;
     /**
      * Indicates whether the channel is silenced or not
      */
-    CHANNEL_FORCED_SILENCE: any;
+    channel_forced_silence: any;
     /**
      * The channels ID
      */
-    CID: number;
+    cid: number;
 }
 
 export interface ChannelProperties extends ChannelPropertiesReadOnly, ChannelPropertiesChangable { }
@@ -1183,193 +1183,193 @@ export interface ClientPropertiesChangable {
     /**
      * Nickname of the client
      */
-    CLIENT_NICKNAME: string;
+    client_nickname: string;
     /**
      * Indicates whether the client is able to talk or not
      */
-    CLIENT_IS_TALKER: any;
+    client_is_talker: any;
     /**
      * Brief description of the client
      */
-    CLIENT_DESCRIPTION: string;
+    client_description: string;
     /**
      * Indicates whether the client is a channel commander or not
      */
-    CLIENT_IS_CHANNEL_COMMANDER: any;
+    client_is_channel_commander: any;
     /**
      * CRC32 checksum of the client icon
      */
-    CLIENT_ICON_ID: any;
+    client_icon_id: any;
 }
 export interface ClientPropertiesReadOnly {
     /**
     * Unique ID of the client
     */
-    CLIENT_UNIQUE_IDENTIFIER: any;
+    client_unique_identifier: any;
     /**
      * Client version information including build number
      */
-    CLIENT_VERSION: any;
+    client_version: any;
     /**
      * Operating system the client is running on
      */
-    CLIENT_PLATFORM: any;
+    client_platform: any;
     /**
      * Indicates whether the client has their microphone muted or not
      */
-    CLIENT_INPUT_MUTED: any;
+    client_input_muted: any;
     /**
      * Indicates whether the client has their speakers muted or not
      */
-    CLIENT_OUTPUT_MUTED: any;
+    client_output_muted: any;
     /**
      * Indicates whether the client has enabled their capture device or not
      */
-    CLIENT_INPUT_HARDWARE: any;
+    client_input_hardware: any;
     /**
      * Indicates whether the client has enabled their playback device or not
      */
-    CLIENT_OUTPUT_HARDWARE: any;
+    client_output_hardware: any;
     /**
      * Default channel of the client
      */
-    CLIENT_DEFAULT_CHANNEL: any;
+    client_default_channel: any;
     /**
      * Username of a ServerQuery client
      */
-    CLIENT_LOGIN_NAME: any;
+    client_login_name: any;
     /**
      * Database ID of the client
      */
-    CLIENT_DATABASE_ID: any;
+    client_database_id: any;
     /**
      * Current channel group ID of the client
      */
-    CLIENT_CHANNEL_GROUP_ID: any;
+    client_channel_group_id: any;
     /**
      * Current server group IDs of the client separated by a comma
      */
-    CLIENT_SERVER_GROUPS: any;
+    client_server_groups: any;
     /**
      * Creation date and time of the clients first connection to the server as UTC timestamp
      */
-    CLIENT_CREATED: any;
+    client_created: any;
     /**
      * Creation date and time of the clients last connection to the server as UTC timestamp
      */
-    CLIENT_LASTCONNECTED: any;
+    client_lastconnected: any;
     /**
      * Total number of connections from this client since the server was started
      */
-    CLIENT_TOTALCONNECTIONS: any;
+    client_totalconnections: any;
     /**
      * Indicates whether the client is away or not
      */
-    CLIENT_AWAY: any;
+    client_away: any;
     /**
      * Away message of the client
      */
-    CLIENT_AWAY_MESSAGE: any;
+    client_away_message: any;
     /**
      * Indicates whether the client is a ServerQuery client or not
      */
-    CLIENT_TYPE: any;
+    client_type: any;
     /**
      * Indicates whether the client has set an avatar or not
      */
-    CLIENT_FLAG_AVATAR: any;
+    client_flag_avatar: any;
     /**
      * The clients current talk power
      */
-    CLIENT_TALK_POWER: any;
+    client_talk_power: any;
     /**
      * Indicates whether the client is requesting talk power or not
      */
-    CLIENT_TALK_REQUEST: any;
+    client_talk_request: any;
     /**
      * The clients current talk power request message
      */
-    CLIENT_TALK_REQUEST_MSG: any;
+    client_talk_request_msg: any;
     /**
      * Number of bytes downloaded by the client on the current month
      */
-    CLIENT_MONTH_BYTES_DOWNLOADED: any;
+    client_month_bytes_downloaded: any;
     /**
      * Number of bytes uploaded by the client on the current month
      */
-    CLIENT_MONTH_BYTES_UPLOADED: any;
+    client_month_bytes_uploaded: any;
     /**
      * Number of bytes downloaded by the client since the server was started
      */
-    CLIENT_TOTAL_BYTES_DOWNLOADED: any;
+    client_total_bytes_downloaded: any;
     /**
      * Number of bytes uploaded by the client since the server was started
      */
-    CLIENT_TOTAL_BYTES_UPLOADED: any;
+    client_total_bytes_uploaded: any;
     /**
      * Indicates whether the client is a priority speaker or not
      */
-    CLIENT_IS_PRIORITY_SPEAKER: any;
+    client_is_priority_speaker: any;
     /**
      * Number of unread offline messages in this clients inbox
      */
-    CLIENT_UNREAD_MESSAGES: any;
+    client_unread_messages: any;
     /**
      * Phonetic name of the client
      */
-    CLIENT_NICKNAME_PHONETIC: any;
+    client_nickname_phonetic: any;
     /**
      * The clients current ServerQuery view power
      */
-    CLIENT_NEEDED_SERVERQUERY_VIEW_POWER: any;
+    client_needed_serverquery_view_power: any;
     /**
      * Current bandwidth used for outgoing file transfers (Bytes/s)
      */
-    CONNECTION_FILETRANSFER_BANDWIDTH_SENT: any;
+    connection_filetransfer_bandwidth_sent: any;
     /**
      * Current bandwidth used for incoming file transfers (Bytes/s)
      */
-    CONNECTION_FILETRANSFER_BANDWIDTH_RECEIVED: any;
+    connection_filetransfer_bandwidth_received: any;
     /**
      * Total amount of packets sent
      */
-    CONNECTION_PACKETS_SENT_TOTAL: any;
+    connection_packets_sent_total: any;
     /**
      * Total amount of packets received
      */
-    CONNECTION_PACKETS_RECEIVED_TOTAL: any;
+    connection_packets_received_total: any;
     /**
      * Total amount of bytes sent
      */
-    CONNECTION_BYTES_SENT_TOTAL: any;
+    connection_bytes_sent_total: any;
     /**
      * Total amount of bytes received
      */
-    CONNECTION_BYTES_RECEIVED_TOTAL: any;
+    connection_bytes_received_total: any;
     /**
      * Average bandwidth used for outgoing data in the last second (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_SENT_LAST_SECOND_TOTAL: any;
+    connection_bandwidth_sent_last_second_total: any;
     /**
      * Average bandwidth used for incoming data in the last second (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_SECOND_TOTAL: any;
+    connection_bandwidth_received_last_second_total: any;
     /**
      * Average bandwidth used for outgoing data in the last minute (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_SENT_LAST_MINUTE_TOTAL: any;
+    connection_bandwidth_sent_last_minute_total: any;
     /**
      * Average bandwidth used for incoming data in the last minute (Bytes/s)
      */
-    CONNECTION_BANDWIDTH_RECEIVED_LAST_MINUTE_TOTAL: any;
+    connection_bandwidth_received_last_minute_total: any;
     /**
      * The IPv4 address of the client
      */
-    CONNECTION_CLIENT_IP: any;
+    connection_client_ip: any;
     /**
      * The country identifier of the client (i.e. DE)
      */
-    CLIENT_COUNTRY: any;
+    client_country: any;
 }
 
 export interface ClientProperties extends ClientPropertiesReadOnly, ClientPropertiesChangable { }
