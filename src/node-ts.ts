@@ -14,7 +14,6 @@ import { escape, unescape } from "./queryStrings"
 
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
- * @todo unit tests
  */
 export class TeamSpeakClient extends EventEmitter {
     private queue: QueryCommand[] = [];
