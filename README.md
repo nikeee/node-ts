@@ -20,25 +20,29 @@ import { TeamSpeakClient } from "node-ts";
 // const { TeamSpeakClient } = require("node-ts");
 
 async function main() {
-    const client = new TeamSpeakClient("server.example.com");
+	const client = new TeamSpeakClient("server.example.com");
 
-    try {
-        await client.connect();
+	try {
+		await client.connect();
 
-        await client.send("login", {
-            client_login_name: "##USERNAME##",
-            client_login_password: "##PASSWORD##"
-        });
+		await client.send("use", { sid: 1 });
 
-        await client.send("use", { sid: 1 });
+		const me = await client.send("whoami");
+		console.log(me);
 
-        const clientList = await client.send("clientlist");
-        console.log(clientList);
+		// Log in to use more features
+		await client.send("login", {
+			client_login_name: "##USERNAME##",
+			client_login_password: "##PASSWORD##"
+		});
 
-    } catch (err) {
-        console.error("An error occurred:")
-        console.error(err);
-    }
+		const clientList = await client.send("clientlist");
+		console.log(clientList);
+
+	} catch (err) {
+		console.error("An error occurred:")
+		console.error(err);
+	}
 }
 main();
 
