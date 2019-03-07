@@ -160,7 +160,7 @@ export class TeamSpeakClient extends EventEmitter {
     public send(cmd: "instanceedit", params: InstanceEditParams): Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "bindinglist"): Promise<CallbackData<BindingListResponseData>>;
     public send(cmd: "use", params: UseParams): Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "serverlist", params: IAssoc<any>, options: string[]): Promise<CallbackData<ServerListResponseData>>;
+    public send(cmd: "serverlist", params: MapLike<any>, options: string[]): Promise<CallbackData<ServerListResponseData>>;
     // TODO: serveridgetbyport
     public send(cmd: "serverdelete", params: ServerDeleteParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: servercreate
@@ -192,7 +192,7 @@ export class TeamSpeakClient extends EventEmitter {
     // TODO: logview
     public send(cmd: "logadd", params: LogAddParams): Promise<CallbackData<GenericResponseData>>;
     public send(cmd: "gm", params: GmParams): Promise<CallbackData<GenericResponseData>>;
-    public send(cmd: "channellist", params: IAssoc<any>, options: string[]): Promise<CallbackData<ChannelListResponseData>>; //@todo find anything to make signature better typed
+    public send(cmd: "channellist", params: MapLike<any>, options: string[]): Promise<CallbackData<ChannelListResponseData>>; //@todo find anything to make signature better typed
     public send(cmd: "channelinfo", params: ChannelInfoParams): Promise<CallbackData<ChannelInfoResponseData>>
     // TODO: channelfind
     // TODO: channelmove
@@ -272,8 +272,8 @@ export class TeamSpeakClient extends EventEmitter {
 
     //public send(cmd: string): Promise<CallbackData<QueryResponseItem>>;
     //public send(cmd: string, params: IAssoc<Object>): Promise<CallbackData>;
-    public send(cmd: string, params: IAssoc<any>, options: string[]): Promise<CallbackData<QueryResponseItem>>;
-    public send(cmd: string, params: IAssoc<any> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>> {
+    public send(cmd: string, params: MapLike<any>, options: string[]): Promise<CallbackData<QueryResponseItem>>;
+    public send(cmd: string, params: MapLike<any> = {}, options: string[] = []): Promise<CallbackData<QueryResponseItem>> {
         if (!cmd)
             return Promise.reject<CallbackData<QueryResponseItem>>(new Error("Empty command"));
 
@@ -412,7 +412,7 @@ export interface CallbackData<T extends QueryResponseItem> {
     cmd?: string;
     options?: string[];
     text?: string;
-    parameters: IAssoc<Object>;
+    parameters: MapLike<Object>;
     //item: QueryCommand;
     error: QueryError;
     response: T[];
@@ -424,7 +424,7 @@ export interface CallbackData<T extends QueryResponseItem> {
     // parameters: Object;
 }
 
-export interface LoginParams extends IAssoc<any> {
+export interface LoginParams extends MapLike<any> {
     client_login_name: string;
     client_login_password: string;
 }
@@ -435,7 +435,7 @@ export interface VersionResponseData extends QueryResponseItem {
     platform: string;
 }
 
-export interface UseParams extends IAssoc<any> {
+export interface UseParams extends MapLike<any> {
     sid: number;
 }
 export interface ServerListResponseData extends QueryResponseItem {
@@ -452,7 +452,7 @@ export interface ServerStartStopParams extends UseParams { }
 export interface ClientListResponseData extends QueryResponseItem {
     //TODO
 }
-export interface ClientListParams extends IAssoc<any> { }
+export interface ClientListParams extends MapLike<any> { }
 
 /**
  * Specialized callback data for a failed request.
@@ -462,7 +462,7 @@ export interface ErrorResponseData extends QueryResponseItem { }
 /**
  * Represents common data returned by the api during a successful response.
  */
-export interface QueryResponseItem extends IAssoc<any> { }
+export interface QueryResponseItem extends MapLike<any> { }
 
 /**
  * Item that represents a query error.
@@ -492,7 +492,7 @@ export interface QueryError {
 export interface QueryCommand {
     cmd: string;
     options: string[];
-    parameters: IAssoc<Object>;
+    parameters: MapLike<Object>;
     text: string;
     resolveFunction: (data: CallbackData<any>) => void;
     rejectFunction: (reason: any) => void;
@@ -533,7 +533,7 @@ export interface GenericResponseData extends QueryResponseItem { }
 
 export interface ServerRequstConnectionInfoResponseData extends QueryResponseItem, ServerConnectionProperties { }
 
-export interface ServerEditParams extends IAssoc<any>, VirtualServerPropertiesChangable { }
+export interface ServerEditParams extends MapLike<any>, VirtualServerPropertiesChangable { }
 
 export interface ServerInfoResponseData extends QueryResponseItem, VirtualServerProperties { }
 
@@ -543,9 +543,9 @@ export interface SendTextMessageParams extends QueryResponseItem {
     msg: string;
 }
 
-export interface InstanceEditParams extends IAssoc<any>, InstancePropertiesChangable { }
+export interface InstanceEditParams extends MapLike<any>, InstancePropertiesChangable { }
 
-export interface GmParams extends IAssoc<any> {
+export interface GmParams extends MapLike<any> {
     msg: string;
 }
 export interface ChannelListResponseData extends QueryResponseItem {
@@ -556,39 +556,39 @@ export interface ChannelListResponseData extends QueryResponseItem {
     channel_topic: string;
     total_clients: number;
 }
-export interface ChannelInfoParams extends IAssoc<any> {
+export interface ChannelInfoParams extends MapLike<any> {
     cid: number;
 }
 export interface ChannelInfoResponseData extends QueryResponseItem, ChannelProperties { }
 
-export interface ChannelDeleteParams extends IAssoc<any>, ChannelInfoParams {
+export interface ChannelDeleteParams extends MapLike<any>, ChannelInfoParams {
     force: YesNo;
 }
 
 export interface ClientInfoResponseData extends QueryResponseItem, ClientProperties { }
-export interface ClientInfoParams extends IAssoc<any> {
+export interface ClientInfoParams extends MapLike<any> {
     clid: number;
 }
 
-export interface ClientDBDeleteParams extends IAssoc<any> {
+export interface ClientDBDeleteParams extends MapLike<any> {
     cldbid: number;
 }
 
-export interface ClientMoveParams extends IAssoc<any> {
+export interface ClientMoveParams extends MapLike<any> {
     clid: number[];
     cid: number;
     cpw?: string;
 }
-export interface ClientKickParams extends IAssoc<any> {
+export interface ClientKickParams extends MapLike<any> {
     clid: number[];
     reasonid: ReasonIdentifier;
     reasonmsg: string;
 }
-export interface ClientPokeParams extends IAssoc<any> {
+export interface ClientPokeParams extends MapLike<any> {
     clid: number;
     msg: string;
 }
-export interface ClientPermListParams extends IAssoc<any> {
+export interface ClientPermListParams extends MapLike<any> {
     cldbid: number;
 }
 export interface ClientPermListResponseData extends QueryResponseItem {
@@ -598,31 +598,31 @@ export interface ClientPermListResponseData extends QueryResponseItem {
     permnegated: YesNo;
     permskip: number;
 }
-export interface ClientAddPermParams extends IAssoc<any> {
+export interface ClientAddPermParams extends MapLike<any> {
     cldbid: number;
     permid?: number[];
     permsid?: string[];
     permvalue: number[];
     permskip: YesNo[];
 }
-export interface ClientDeleteParams extends IAssoc<any> {
+export interface ClientDeleteParams extends MapLike<any> {
     cldbid: number;
     permid: number[];
     permsid: string[];
 }
 
-export interface MessageDeleteParams extends IAssoc<any> {
+export interface MessageDeleteParams extends MapLike<any> {
     msgid: number;
 }
 
-export interface ComplainDeleteAllParams extends IAssoc<any> {
+export interface ComplainDeleteAllParams extends MapLike<any> {
     tcldbid: number;
 }
-export interface ComplainDeleteParams extends IAssoc<any> {
+export interface ComplainDeleteParams extends MapLike<any> {
     tcldbid: number;
     fcldbid: number;
 }
-export interface BanClientParams extends IAssoc<any> {
+export interface BanClientParams extends MapLike<any> {
     clid: number;
     time?: number;
     banreason?: string;
@@ -639,23 +639,23 @@ export interface BanListResponseData extends QueryResponseItem {
     enforcements: number;
 }
 
-export interface BanAddParams extends IAssoc<any> {
+export interface BanAddParams extends MapLike<any> {
     ip?: string;
     name?: string;
     uid?: string;
     time?: number;
     banreason?: string;
 }
-export interface BanDeleteParams extends IAssoc<any> {
+export interface BanDeleteParams extends MapLike<any> {
     banid: number;
 }
 
-export interface FtStopParams extends IAssoc<any> {
+export interface FtStopParams extends MapLike<any> {
     serverftfid: number;
     delete: YesNo;
 }
 
-export interface LogAddParams extends IAssoc<any> {
+export interface LogAddParams extends MapLike<any> {
     loglevel: LogLevel;
     logmsg: string;
 }

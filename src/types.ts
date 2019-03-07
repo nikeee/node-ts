@@ -2,4 +2,4 @@
  * Represents a Key-Value object.
  */
 
-type IAssoc<T> = Record<string, T>;
+type MapLike<T> = Record<string, T>;
