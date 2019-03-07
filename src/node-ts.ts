@@ -1389,156 +1389,156 @@ export enum HostMessageMode {
     /**
      * 1: display message in chatlog
      */
-    HostMessageMode_LOG = 1,
+    LOG = 1,
     /**
      * 2: display message in modal dialog
      */
-    HostMessageMode_MODAL,
+    MODAL,
     /**
      * 3: display message in modal dialog and close connection
      */
-    HostMessageMode_MODALQUIT,
+    MODALQUIT,
 }
 
 export enum HostBannerMode {
     /**
      * 0: do not adjust
      */
-    HostMessageMode_NOADJUST = 0,
+    NOADJUST = 0,
     /**
      * 1: adjust but ignore aspect ratio (like TeamSpeak 2)
      */
-    HostMessageMode_IGNOREASPECT,
+    IGNOREASPECT,
     /**
      * 2: adjust and keep aspect ratio
      */
-    HostMessageMode_KEEPASPECT,
+    KEEPASPECT,
 }
 
 export enum Codec {
     /**
      * 0: speex narrowband (mono, 16bit, 8kHz)
      */
-    CODEC_SPEEX_NARROWBAND = 0,
+    SPEEX_NARROWBAND = 0,
     /**
      * 1: speex wideband (mono, 16bit, 16kHz)
      */
-    CODEC_SPEEX_WIDEBAND,
+    SPEEX_WIDEBAND,
     /**
      * 2: speex ultra-wideband (mono, 16bit, 32kHz)
      */
-    CODEC_SPEEX_ULTRAWIDEBAND,
+    SPEEX_ULTRAWIDEBAND,
     /**
      * 3: celt mono (mono, 16bit, 48kHz)
      */
-    CODEC_CELT_MONO,
+    CELT_MONO,
 }
 
 export enum CodecEncryptionMode {
     /**
      * 0: configure per channel
      */
-    CODEC_CRYPT_INDIVIDUAL = 0,
+    INDIVIDUAL = 0,
     /**
      * 1: globally disabled
      */
-    CODEC_CRYPT_DISABLED,
+    DISABLED,
     /**
      * 2: globally enabled
      */
-    CODEC_CRYPT_ENABLED,
+    ENABLED,
 }
 
 export enum TextMessageTargetMode {
     /**
      * 1: target is a client
      */
-    TextMessageTarget_CLIENT = 1,
+    CLIENT = 1,
     /**
      * 2: target is a channel
      */
-    TextMessageTarget_CHANNEL,
+    CHANNEL,
     /**
      * 3: target is a virtual server
      */
-    TextMessageTarget_SERVER,
+    SERVER,
 }
 
 export enum LogLevel {
     /**
      * 1: everything that is really bad
      */
-    LogLevel_ERROR = 1,
+    ERROR = 1,
     /**
      * 2: everything that might be bad
      */
-    LogLevel_WARNING,
+    WARNING,
     /**
      * 3: output that might help find a problem
      */
-    LogLevel_DEBUG,
+    DEBUG,
     /**
      * 4: informational output
      */
-    LogLevel_INFO,
+    INFO,
 }
 
 export enum ReasonIdentifier {
     /**
      * 4: kick client from channel
      */
-    REASON_KICK_CHANNEL = 4,
+    CHANNEL = 4,
     /**
      * 5: kick client from server
      */
-    REASON_KICK_SERVER,
+    SERVER,
 }
 
 export enum PermissionGroupDatabaseTypes {
     /**
      * 0: template group (used for new virtual servers)
      */
-    PermGroupDBTypeTemplate = 0,
+    TEMPLATE = 0,
     /**
      * 1: regular group (used for regular clients)
      */
-    PermGroupDBTypeRegular,
+    REGULAR,
     /**
      * 2: global query group (used for ServerQuery clients)
      */
-    PermGroupDBTypeQuery,
+    QUERY,
 }
 
 export enum PermissionGroupTypes {
     /**
      * 0: server group permission
      */
-    PermGroupTypeServerGroup = 0,
+    SERVER_GROUP = 0,
     /**
      * 1: client specific permission
      */
-    PermGroupTypeGlobalClient,
+    GLOBAL_CLIENT,
     /**
      * 2: channel specific permission
      */
-    PermGroupTypeChannel,
+    CHANNEL,
     /**
      * 3: channel group permission
      */
-    PermGroupTypeChannelGroup,
+    CHANNEL_GROUP,
     /**
      * 4: channel-client specific permission
      */
-    PermGroupTypeChannelClient,
+    CHANNEL_CLIENT,
 }
 
 export enum TokenType {
     /**
      * 0: server group token (id1={groupID} id2=0)
      */
-    TokenServerGroup = 0,
+    SERVER_GROUP = 0,
     /**
      * 1: channel group token (id1={groupID} id2={channelID})
      */
-    TokenChannelGroup,
+    CHANNEL_GROUP,
 }
