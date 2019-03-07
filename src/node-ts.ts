@@ -186,7 +186,7 @@ export class TeamSpeakClient extends EventEmitter {
     // TODO: servergroupautodelperm
     // TODO: serversnapshotcreate
     // TODO: serversnapshotdeploy
-    // TODO: servernotifyregister
+    public send(cmd: "servernotifyregister", params: RegisterNotificationsParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: servernotifyunregister
     public send(cmd: "sendtextmessage", params: SendTextMessageParams): Promise<CallbackData<GenericResponseData>>;
     // TODO: logview
@@ -328,6 +328,58 @@ export class TeamSpeakClient extends EventEmitter {
             if (this.isConnected)
                 this.checkQueue();
         });
+    }
+
+    public subscribeChannelEvents(channelId: number): Promise<CallbackData<QueryResponseItem>> {
+        return this.send("servernotifyregister", { event: "channel", channelId });
+    }
+    public subscribeServerEvents(): Promise<CallbackData<QueryResponseItem>> {
+        return this.send("servernotifyregister", { event: "server" });
+    }
+    public subscribeServerTextEvents(): Promise<CallbackData<QueryResponseItem>> {
+        return this.send("servernotifyregister", { event: "textserver" });
+    }
+    public subscribeChannelTextEvents(): Promise<CallbackData<QueryResponseItem>> {
+        return this.send("servernotifyregister", { event: "textchannel" });
+    }
+    public subscribePrivateTextEvents(): Promise<CallbackData<QueryResponseItem>> {
+        return this.send("servernotifyregister", { event: "textprivate" });
+    }
+
+    public on(event: "cliententerview", listener: (data: any) => void): this;
+    public on(event: "clientleftview", listener: (data: any) => void): this;
+    // server notifications
+    public on(event: "serveredited", listener: (data: any) => void): this;
+    // channel notifications
+    public on(event: "channeldescriptionchanged", listener: (data: any) => void): this;
+    public on(event: "channelpasswordchanged", listener: (data: any) => void): this;
+    public on(event: "channelmoved", listener: (data: any) => void): this;
+    public on(event: "channeledited", listener: (data: any) => void): this;
+    public on(event: "channelcreated", listener: (data: any) => void): this;
+    public on(event: "channeldeleted", listener: (data: any) => void): this;
+    public on(event: "clientmoved", listener: (data: any) => void): this;
+    public on(event: "textmessage", listener: (data: TextMessageNotificationData) => void): this;
+    public on(event: "tokenused", listener: (data: any) => void): this;
+    public on(event: string, listener: (...args: any[]) => void): this {
+        return super.on(event, listener);
+    }
+
+    public once(event: "cliententerview", listener: (data: any) => void): this;
+    public once(event: "clientleftview", listener: (data: any) => void): this;
+    // server notifications
+    public once(event: "serveredited", listener: (data: any) => void): this;
+    // channel notifications
+    public once(event: "channeldescriptionchanged", listener: (data: any) => void): this;
+    public once(event: "channelpasswordchanged", listener: (data: any) => void): this;
+    public once(event: "channelmoved", listener: (data: any) => void): this;
+    public once(event: "channeledited", listener: (data: any) => void): this;
+    public once(event: "channelcreated", listener: (data: any) => void): this;
+    public once(event: "channeldeleted", listener: (data: any) => void): this;
+    public once(event: "clientmoved", listener: (data: any) => void): this;
+    public once(event: "textmessage", listener: (data: TextMessageNotificationData) => void): this;
+    public once(event: "tokenused", listener: (data: any) => void): this;
+    public once(event: string, listener: (...args: any[]) => void): this {
+        return super.once(event, listener);
     }
 
     /**
@@ -510,6 +562,16 @@ export interface QueryCommand {
 
 */
 
+
+export interface TextMessageNotificationData {
+    targetmode: TextMessageTargetMode;
+    msg: string;
+    /**
+     * only present in messages of type "textprivate
+     */
+    target?: number;
+}
+
 /**
  * @todo move to seperate file
  * @todo check for encoding mess up/invisible chars caused by copy/pasting from the documentation PDF
@@ -536,6 +598,16 @@ export interface ServerRequstConnectionInfoResponseData extends QueryResponseIte
 export interface ServerEditParams extends MapLike<any>, VirtualServerPropertiesChangable { }
 
 export interface ServerInfoResponseData extends QueryResponseItem, VirtualServerProperties { }
+
+export interface RegisterNotificationsParamsGeneric extends QueryResponseItem {
+    event: "server" | "textserver" | "textchannel" | "textprivate";
+}
+export interface RegisterNotificationsChannelParams extends QueryResponseItem {
+    event: "channel";
+    channelId: number;
+}
+
+export type RegisterNotificationsParams = RegisterNotificationsParamsGeneric | RegisterNotificationsChannelParams;
 
 export interface SendTextMessageParams extends QueryResponseItem {
     targetmode: TextMessageTargetMode;
