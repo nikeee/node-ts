@@ -8,7 +8,7 @@ This is a fork of [gwTumm's node-teamspeak](https://github.com/gwTumm/node-teams
 
 ## Install
 ```bash
-npm install node-ts # install package
+npm install -S node-ts # install package
 ```
 
 ## Example Usage
@@ -39,17 +39,20 @@ async function main() {
 		const clientList = await client.send("clientlist");
 		console.log(clientList);
 
+		client.subscribePrivateTextEvents();
+		client.on("textmessage", data => {
+			console.log(`Message received: ${data.msg}`);
+		});
+
 	} catch (err) {
 		console.error("An error occurred:")
 		console.error(err);
 	}
 }
 main();
-
 ```
 
 ## Usage information
------------------
 
 * TeamSpeakClient.send is the main method that executes a command. An array with options and an object with parameters can be passed to the send-function. The function returns a `Promise`. See the TypeScript file for more information.
 * Every TeamSpeakClient instance is an `EventEmitter`. You can install listeners to the `"close"` and `"error"` event. The error-event will only be fired if there was socket-error, not if a sent command failed.
