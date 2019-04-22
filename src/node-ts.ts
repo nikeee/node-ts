@@ -137,7 +137,7 @@ export class TeamSpeakClient extends EventEmitter {
             const notificationResponse = line.substr("notify".length);
             const response = this.parseResponse(notificationResponse);
 
-            const notificationName = notificationResponse.substr(0, line.indexOf(" "));
+            const notificationName = notificationResponse.substr(0, notificationResponse.indexOf(" "));
             this.emit(notificationName, response);
         } else if (this._executing) {
             this._executing.rawResponse = line;
