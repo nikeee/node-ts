@@ -11,6 +11,7 @@ import { isArray } from "util";
 import { chunksToLinesAsync, chomp } from "@rauschma/stringio";
 
 import { escape, unescape } from "./queryStrings"
+import type { MapLike } from "./types";
 
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
