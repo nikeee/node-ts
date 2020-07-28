@@ -11,11 +11,11 @@
   "types": "lib/index.d.ts",
   "dependencies": {
     "@rauschma/stringio": "^1.4.0",
-    "@types/node": "^13.9.8"
+    "@types/node": "^14.0.26"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.7"
   },
   "scripts": {
     "test": "tsc --noEmit",
