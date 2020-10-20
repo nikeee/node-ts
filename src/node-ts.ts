@@ -433,6 +433,8 @@ export class TeamSpeakClient extends EventEmitter {
      * Checks the current command queue and sends them if needed.
      */
     private checkQueue(): void {
+        if (this._executing !== undefined) return;
+        
         const executing = this.queue.shift();
         if (executing) {
             this._executing = executing;
