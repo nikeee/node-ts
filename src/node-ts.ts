@@ -45,10 +45,10 @@ export class TeamSpeakClient extends EventEmitter {
         return new Promise((resolve, reject) => {
             this.socket = net.connect(this.port, this.host);
             this.socket.on("error", err => this.emit("error", err));
-            // We'll try to reject the promise on the first error that occures, to make sure
+            // We'll try to reject the promise if the connection closes, to make sure
             // the promise gets rejected if we get an error while connecting.
             // (This will just do nothing if the promise is already fulfilled)
-            this.socket.once("error", err => reject(err));
+            this.socket.once("close", err => reject(err));
             this.socket.on("close", () => this.emit("close", this.queue));
             this.socket.on("connect", () => this.onConnect(resolve, reject));
         });
