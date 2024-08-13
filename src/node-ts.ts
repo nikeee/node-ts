@@ -336,7 +336,7 @@ export class TeamSpeakClient extends EventEmitter {
     }
 
     public subscribeChannelEvents(channelId: number): Promise<CallbackData<QueryResponseItem>> {
-        return this.send("servernotifyregister", { event: "channel", channelId });
+        return this.send("servernotifyregister", { event: "channel", id: channelId });
     }
     public subscribeServerEvents(): Promise<CallbackData<QueryResponseItem>> {
         return this.send("servernotifyregister", { event: "server" });
