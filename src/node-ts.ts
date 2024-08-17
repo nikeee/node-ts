@@ -442,7 +442,7 @@ export class TeamSpeakClient extends EventEmitter {
      */
     private checkQueue(): void {
         if (this._executing !== undefined) return;
-        
+
         const executing = this.queue.shift();
         if (executing) {
             this._executing = executing;
@@ -615,7 +615,7 @@ export interface RegisterNotificationsParamsGeneric extends QueryResponseItem {
 }
 export interface RegisterNotificationsChannelParams extends QueryResponseItem {
     event: "channel";
-    channelId: number;
+    id: number;
 }
 
 export type RegisterNotificationsParams = RegisterNotificationsParamsGeneric | RegisterNotificationsChannelParams;
