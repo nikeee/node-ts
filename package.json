@@ -2,7 +2,7 @@
   "author": "Niklas Mollenhauer <nikeee@outlook.com>",
   "name": "node-ts",
   "description": "TeamSpeak® 3 Server Query client for node.js implemented using TypeScript",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/nikeee/node-ts.git"
