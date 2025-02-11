@@ -308,7 +308,7 @@ export class TeamSpeakClient extends EventEmitter {
             const firstArray = params[arrayParamKeys[0]] as string[];
             for (let i = 0; i < firstArray.length; ++i) {
                 let segment = "";
-                for (var key of arrayParamKeys) {
+                for (const key of arrayParamKeys) {
                     segment += `${escape(key)}=${escape(params[key][i])} `;
                 }
                 escapedSegments += `${segment.slice(0, -1)}|`;
