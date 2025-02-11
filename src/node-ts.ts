@@ -19,7 +19,7 @@ export class TeamSpeakClient extends EventEmitter {
 
     private socket!: net.Socket;
 
-    private isConnected: boolean = false;
+    private isConnected = false;
 
     private static readonly DefaultHost = "localhost";
     private static readonly DefaultPort = 10011;
@@ -284,14 +284,14 @@ export class TeamSpeakClient extends EventEmitter {
 
         let tosend = escape(cmd);
         for (const v of options)
-            tosend += " -" + escape(v);
+            tosend += ` -${escape(v)}`;
 
         for (const key in params) {
             if (!params.hasOwnProperty(key))
                 continue;
             const value = params[key];
             if (!Array.isArray(value)) {
-                tosend += " " + escape(key.toString()) + "=" + escape(value.toString());
+                tosend += ` ${escape(key.toString())}=${escape(value.toString())}`;
             }
         }
 
@@ -309,12 +309,12 @@ export class TeamSpeakClient extends EventEmitter {
             for (let i = 0; i < firstArray.length; ++i) {
                 let segment = "";
                 for (var key of arrayParamKeys) {
-                    segment += escape(key) + "=" + escape(params[key][i]) + " ";
+                    segment += `${escape(key)}=${escape(params[key][i])} `;
                 }
-                escapedSegments += segment.slice(0, -1) + "|";
+                escapedSegments += `${segment.slice(0, -1)}|`;
             }
             if (escapedSegments.length > 0)
-                tosend += " " + escapedSegments.slice(0, -1);
+                tosend += ` ${escapedSegments.slice(0, -1)}`;
         }
 
         return new Promise<CallbackData<QueryResponseItem>>((resolve, reject) => {
@@ -405,7 +405,7 @@ export class TeamSpeakClient extends EventEmitter {
                 }
                 const key = unescape(v.substr(0, v.indexOf("=")));
                 const value = unescape(v.substr(v.indexOf("=") + 1));
-                thisrec[key] = (parseInt(value, 10).toString() == value) ? parseInt(value, 10) : value;
+                thisrec[key] = (Number.parseInt(value, 10).toString() == value) ? Number.parseInt(value, 10) : value;
             }
             return thisrec;
         });
