@@ -8,7 +8,9 @@ import { EventEmitter } from "node:events";
 import { chunksToLinesAsync, chomp } from "@rauschma/stringio";
 
 import { escape, unescape } from "./queryStrings.js"
-import type { MapLike } from "./types.js";
+
+/** Represents a Key-Value object. */
+type MapLike<T> = Record<string, T>;
 
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
