@@ -1,7 +1,9 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es6",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"target": "es2022",
+
 		"outDir": "lib",
 		"strict": true,
 		"declaration": true
