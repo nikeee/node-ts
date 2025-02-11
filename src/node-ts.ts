@@ -3,13 +3,13 @@
  * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
  */
 
-import * as net from "net";
-import { EventEmitter } from "events";
-import { isArray } from "util";
+import * as net from "node:net";
+import { EventEmitter } from "node:events";
+import { isArray } from "node:util";
 import { chunksToLinesAsync, chomp } from "@rauschma/stringio";
 
-import { escape, unescape } from "./queryStrings"
-import type { MapLike } from "./types";
+import { escape, unescape } from "./queryStrings.js"
+import type { MapLike } from "./types.js";
 
 /**
  * Client that can be used to connect to a TeamSpeak server query API.
