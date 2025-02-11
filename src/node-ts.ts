@@ -5,7 +5,6 @@
 
 import * as net from "node:net";
 import { EventEmitter } from "node:events";
-import { isArray } from "node:util";
 import { chunksToLinesAsync, chomp } from "@rauschma/stringio";
 
 import { escape, unescape } from "./queryStrings.js"
@@ -291,7 +290,7 @@ export class TeamSpeakClient extends EventEmitter {
             if (!params.hasOwnProperty(key))
                 continue;
             const value = params[key];
-            if (!isArray(value)) {
+            if (!Array.isArray(value)) {
                 tosend += " " + escape(key.toString()) + "=" + escape(value.toString());
             }
         }
@@ -300,7 +299,7 @@ export class TeamSpeakClient extends EventEmitter {
         // Get all array in the params
         const arrayParamKeys: string[] = [];
         for (const key in params) {
-            if (params.hasOwnProperty(key) && isArray(params[key]))
+            if (params.hasOwnProperty(key) && Array.isArray(params[key]))
                 arrayParamKeys.push(key);
         }
 
