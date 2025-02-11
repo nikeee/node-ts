@@ -3,8 +3,6 @@
  * @autor Tim Kluge <timklge@wh2.tu-dresden.de>
  */
 
-"use strict";
-
 import * as net from "net";
 import { EventEmitter } from "events";
 import { isArray } from "util";
