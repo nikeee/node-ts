@@ -7,7 +7,7 @@ import * as net from "node:net";
 import { EventEmitter } from "node:events";
 import { chunksToLinesAsync, chomp } from "@rauschma/stringio";
 
-import { escape, unescape } from "./queryStrings.js"
+import { escapeQueryString, unescapeQueryString } from "./queryStrings.js"
 
 /** Represents a Key-Value object. */
 type MapLike<T> = Record<string, T>;
@@ -284,16 +284,16 @@ export class TeamSpeakClient extends EventEmitter {
         if (!this.isConnected)
             return Promise.reject(new Error("Not connected to any server. Call \"connect()\" before sending anything."));
 
-        let tosend = escape(cmd);
+        let tosend = escapeQueryString(cmd);
         for (const v of options)
-            tosend += ` -${escape(v)}`;
+            tosend += ` -${escapeQueryString(v)}`;
 
         for (const key in params) {
             if (!params.hasOwnProperty(key))
                 continue;
             const value = params[key];
             if (!Array.isArray(value)) {
-                tosend += ` ${escape(key.toString())}=${escape(value.toString())}`;
+                tosend += ` ${escapeQueryString(key.toString())}=${escapeQueryString(value.toString())}`;
             }
         }
 
@@ -311,7 +311,7 @@ export class TeamSpeakClient extends EventEmitter {
             for (let i = 0; i < firstArray.length; ++i) {
                 let segment = "";
                 for (const key of arrayParamKeys) {
-                    segment += `${escape(key)}=${escape(params[key][i])} `;
+                    segment += `${escapeQueryString(key)}=${escapeQueryString(params[key][i])} `;
                 }
                 escapedSegments += `${segment.slice(0, -1)}|`;
             }
@@ -405,8 +405,8 @@ export class TeamSpeakClient extends EventEmitter {
                     thisrec[v] = "";
                     continue;
                 }
-                const key = unescape(v.substr(0, v.indexOf("=")));
-                const value = unescape(v.substr(v.indexOf("=") + 1));
+                const key = unescapeQueryString(v.substr(0, v.indexOf("=")));
+                const value = unescapeQueryString(v.substr(v.indexOf("=") + 1));
                 thisrec[key] = (Number.parseInt(value, 10).toString() == value) ? Number.parseInt(value, 10) : value;
             }
             return thisrec;

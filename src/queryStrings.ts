@@ -3,7 +3,7 @@
  * @param  {string} s The string to escape.
  * @return {string}   An escaped string.
  */
-export function escape(s: string): string {
+export function escapeQueryString(s: string): string {
     let r = String(s);
     r = r.replace(/\\/g, "\\\\");   // Backslash
     r = r.replace(/\//g, "\\/");    // Slash
@@ -22,7 +22,7 @@ export function escape(s: string): string {
  * @param  {string} s The string to unescape.
  * @return {string}   An unescaped string.
  */
-export function unescape(s: string): string {
+export function unescapeQueryString(s: string): string {
     let r = String(s);
     r = r.replace(/\\s/g, " ");	// Whitespace
     r = r.replace(/\\p/g, "|");    // Pipe
