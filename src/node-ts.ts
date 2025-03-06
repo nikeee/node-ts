@@ -26,6 +26,9 @@ export class TeamSpeakClient extends EventEmitter {
     private static readonly DefaultHost = "localhost";
     private static readonly DefaultPort = 10011;
 
+    private readonly host: string;
+    private readonly port: number;
+
     /**
      * Creates a new instance of TeamSpeakClient for a specific remote host:port.
      * @param {string = TeamSpeakClient.DefaultHost} host Remote host of the TeamSpeak server. Can be an IP address or a host name.
@@ -33,10 +36,12 @@ export class TeamSpeakClient extends EventEmitter {
      * @constructor
      */
     constructor(
-        private readonly host: string = TeamSpeakClient.DefaultHost,
-        private readonly port: number = TeamSpeakClient.DefaultPort,
+        host = TeamSpeakClient.DefaultHost,
+        port = TeamSpeakClient.DefaultPort,
     ) {
         super();
+        this.host = host;
+        this.port = port;
     }
 
     public connect(): Promise<void> {
