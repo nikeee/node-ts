@@ -1,8 +1,7 @@
 {
 	"compilerOptions": {
 		"module": "esnext",
-		"moduleResolution": "node",
-		"target": "es2022",
+		"moduleResolution": "nodenext",
 
 		"outDir": "lib",
 		"strict": true,
